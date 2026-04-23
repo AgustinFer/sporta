@@ -14,16 +14,6 @@
   <br>
   <br>
   <br>
-  <button onclick="deploy()">Actualizar sitio</button>
-
-  <script>
-  function deploy() {
-    fetch('/deploy.php?token=sporta2026BFMO')
-      .then(res => res.text())
-      .then(data => alert(data))
-      .catch(err => alert('Error: ' + err));
-  }
-  </script>
 
 </body>
 </html>
