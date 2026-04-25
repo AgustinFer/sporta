@@ -2,39 +2,37 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login - Sporta</title>
+  <title>Sporta Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="container">
+<div class="layout">
 
-  <!-- Panel izquierdo -->
-  <div class="login-panel">
-    <h2>Iniciar Sesión</h2>
+  <!-- IZQUIERDA -->
+  <div class="left-panel">
+    <div class="form-box">
+      <h2>Iniciar Sesión</h2>
 
-    <form>
-      <div class="input-group">
+      <div class="field">
         <label>Correo Electrónico</label>
         <input type="email" placeholder="Correo Electrónico">
       </div>
 
-      <div class="input-group">
+      <div class="field">
         <label>Contraseña</label>
         <input type="password" placeholder="Contraseña">
       </div>
 
-      <button type="submit">Iniciar Sesión</button>
+      <button>Iniciar Sesión</button>
 
-      <p class="forgot">¿Olvidaste la contraseña?</p>
-    </form>
+      <span class="forgot">¿Olvidaste la contraseña?</span>
+    </div>
   </div>
 
-  <!-- Panel derecho -->
-  <div class="branding-panel">
-    <div class="overlay">
-      <img src="logo.png" alt="Sporta Logo">
-    </div>
+  <!-- DERECHA -->
+  <div class="right-panel">
+    <img src="img/logo.png" class="logo">
   </div>
 
 </div>
