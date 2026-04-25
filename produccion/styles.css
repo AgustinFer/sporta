@@ -18,6 +18,7 @@ body {
 
 /* PANEL IZQUIERDO */
 .left-panel {
+  box-shadow: 10px 0 30px rgba(0,0,0,0.15);
   width: 38%;
   background: #f1f2f4;
   position: relative;
@@ -26,7 +27,7 @@ body {
   padding-left: 80px;
 
   /* 🔥 forma exacta del diseño */
-  clip-path: polygon(0 0, 92% 0, 78% 100%, 0% 100%);
+  clip-path: polygon(0 0, 88% 0, 72% 100%, 0% 100%);
   z-index: 2;
 }
 
@@ -97,7 +98,17 @@ button {
   inset: 0;
 
   background:
-    linear-gradient(120deg, rgba(16,185,129,0.65), rgba(0,0,0,0.7));
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.75) 0%,
+      rgba(0,0,0,0.4) 40%,
+      rgba(0,0,0,0.2) 100%
+    ),
+    linear-gradient(
+      120deg,
+      rgba(16,185,129,0.55),
+      rgba(0,0,0,0.6)
+    );
 }
 
 /* 🔥 CAPA GEOMÉTRICA (triángulo oscuro) */
@@ -121,11 +132,10 @@ button {
 /* LOGO */
 .logo {
   position: absolute;
-  top: 50%;
-  left: 55%;
+  top: 52%;
+  left: 58%;
   transform: translate(-50%, -50%);
-  width: 320px;
-  z-index: 2;
+  width: 300px;
 
   /* sombra como en el diseño */
   filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));
