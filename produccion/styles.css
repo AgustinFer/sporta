@@ -29,12 +29,14 @@
   background-position: center;
   background-repeat: no-repeat;
   animation: backgroundScroll 20s linear infinite;
-  transform: scale(1.1);
 }
 
-/* Distribuir las imágenes verticalmente */
-.background-slide:nth-child(1) { top: 0%; animation-delay: 0s; }
-.background-slide:nth-child(2) { top: 100%; animation-delay: 0s; }
+/* Distribuir las imágenes verticalmente - Ahora con 4 imágenes */
+.background-slide:nth-child(1) { top: 0%; }
+.background-slide:nth-child(2) { top: 100%; }
+.background-slide:nth-child(3) { top: 200%; }
+.background-slide:nth-child(4) { top: 300%; }
+
 
 /* OVERLAY - Capa de gradiente sobre el carrusel */
 .background::before {
@@ -294,7 +296,7 @@ button:hover {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-200%); /* Mueve todas las 2 imágenes */
+    transform: translateY(-400%); /* 4 imágenes = -400% */
   }
 }
 
