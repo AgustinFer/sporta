@@ -296,7 +296,7 @@ button:hover {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-400%); /* 4 imágenes = -400% */
+    transform: translateY(-300%); /* 3 imágenes = -300% */
   }
 }
 
