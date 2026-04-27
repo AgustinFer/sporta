@@ -28,7 +28,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  animation: backgroundScroll 20s linear infinite;
+  animation: backgroundScroll 30s linear infinite;
 }
 
 /* Distribuir las imágenes verticalmente - Ahora con 4 imágenes */
