@@ -74,12 +74,23 @@ async function loadPage(route) {
     document.body.className = doc.body.className;
     document.body.dataset.page = doc.body.dataset.page;
 
-    // 3. actualizar título visible
+    // 3. 🔥 CSS DINÁMICO (LA PARTE QUE TE FALTABA)
+    const newStyle = doc.querySelector("#page-style");
+    const currentStyle = document.querySelector("#page-style");
+
+    if (currentStyle) {
+      const href = newStyle ? newStyle.getAttribute("href") : "";
+      currentStyle.setAttribute("href", href);
+
+      console.log("CSS cargado:", href || "ninguno");
+    }
+
+    // 4. actualizar título visible
     const page = doc.body.dataset.page || "Dashboard";
     const titleEl = document.getElementById("page-title");
     if (titleEl) titleEl.textContent = page;
 
-    // 4. fecha
+    // 5. fecha
     const dateEl = document.getElementById("current-date");
     if (dateEl) {
       dateEl.textContent = new Date().toLocaleDateString("es-AR", {
@@ -89,10 +100,10 @@ async function loadPage(route) {
       });
     }
 
-    // 5. activar menú
+    // 6. activar menú
     setActiveMenu();
 
-    // 6. 🔥 reactivar scripts UI básicos
+    // 7. reactivar UI (MUY IMPORTANTE en SPA)
     initUI();
 
   } catch (err) {
