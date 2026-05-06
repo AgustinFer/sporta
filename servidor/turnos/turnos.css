@@ -4,12 +4,11 @@
 
 .screen--turnos {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
   display: flex;
   position: relative;
 }
 
-/* FONDO */
+/* FONDO ESPECÍFICO */
 .background--turnos {
   position: fixed;
   inset: 0;
@@ -20,142 +19,7 @@
 }
 
 /* ======================== */
-/* SIDEBAR */
-/* ======================== */
-
-.sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 260px;
-  height: 100vh;
-  background: rgba(26, 26, 46, 0.95);
-  backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(250, 204, 21, 0.2);
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
-  transition: transform 0.3s ease;
-}
-
-.sidebar-logo {
-  padding: 30px 20px;
-  text-align: center;
-  border-bottom: 1px solid rgba(250, 204, 21, 0.2);
-  margin-bottom: 20px;
-}
-
-.sidebar-logo-img {
-  width: 60px;
-  margin-bottom: 10px;
-}
-
-.sidebar-brand {
-  display: block;
-  font-size: 20px;
-  font-weight: bold;
-  color: #facc15;
-  letter-spacing: 2px;
-}
-
-/* MENÚ */
-
-.sidebar-menu {
-  flex: 1;
-  list-style: none;
-  padding: 0 15px;
-}
-
-.menu-item {
-  margin-bottom: 5px;
-}
-
-.menu-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 15px;
-  border-radius: 10px;
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.7);
-  transition: all 0.3s ease;
-  font-size: 15px;
-}
-
-.menu-link:hover {
-  background: rgba(250, 204, 21, 0.1);
-  color: #facc15;
-}
-
-.menu-item.active .menu-link {
-  background: rgba(250, 204, 21, 0.15);
-  color: #facc15;
-  border-left: 3px solid #facc15;
-}
-
-/* FOOTER */
-
-.sidebar-footer {
-  padding: 20px 15px;
-  border-top: 1px solid rgba(250, 204, 21, 0.2);
-}
-
-.logout {
-  color: #ef4444;
-}
-
-.logout:hover {
-  background: rgba(239, 68, 68, 0.1);
-}
-
-/* BOTÓN MOBILE */
-
-.menu-toggle {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  width: 45px;
-  height: 45px;
-  background: #facc15;
-  border-radius: 10px;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 101;
-  display: none;
-}
-
-/* ======================== */
-/* CONTENIDO */
-/* ======================== */
-
-.main-content {
-  flex: 1;
-  margin-left: 260px;
-  padding: 20px 30px;
-  position: relative;
-  z-index: 1;
-}
-
-/* HEADER */
-
-.header {
-  margin-bottom: 40px;
-  animation: fadeDown 0.8s ease-out;
-}
-
-.header h1 {
-  font-size: 32px;
-  color: #facc15;
-  margin-bottom: 8px;
-}
-
-.date {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* ======================== */
-/* CANCHAS */
+/* CONTENIDO TURNOS */
 /* ======================== */
 
 .courts-container {
@@ -248,22 +112,6 @@
   background: linear-gradient(135deg, #facc15, #fbbf24);
   font-size: 30px;
   cursor: pointer;
-}
-
-/* ======================== */
-/* RESPONSIVE */
-/* ======================== */
-
-@media (max-width: 768px) {
-  .menu-toggle { display: block; }
-
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); }
-
-  .main-content {
-    margin-left: 0;
-    padding-top: 70px;
-  }
 }
 
 /* ======================== */
