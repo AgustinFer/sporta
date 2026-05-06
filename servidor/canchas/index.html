@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sporta - Canchas</title>
+
+  <!-- CSS GLOBAL -->
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/layout.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+
+  <!-- CSS MÓDULO -->
+  <link rel="stylesheet" href="/canchas/canchas.css">
+</head>
+
+<body class="screen--turnos" data-page="Canchas">
+
+  <!-- FONDO -->
+  <div class="background--turnos"></div>
+
+  <!-- SIDEBAR -->
+  <div id="sidebar-container"></div>
+
+  <!-- BOTÓN MOBILE -->
+  <button class="menu-toggle" id="menuToggle">☰</button>
+
+  <!-- CONTENIDO -->
+  <main class="main-content">
+
+    <!-- HEADER -->
+    <div id="header-container"></div>
+
+    <!-- CONTENIDO CANCHAS -->
+    <div class="courts-container">
+
+      <!-- CANCHA 1 -->
+      <div class="court-card">
+        <div class="court-header">
+          <h2>Cancha 1</h2>
+          <span class="court-status available">Activa</span>
+        </div>
+
+        <div class="court-info">
+          <p><strong>Tipo:</strong> Padel Indoor</p>
+          <p><strong>Iluminación:</strong> LED</p>
+          <p><strong>Estado:</strong> Disponible</p>
+        </div>
+
+        <button class="book-btn">Editar</button>
+      </div>
+
+      <!-- CANCHA 2 -->
+      <div class="court-card">
+        <div class="court-header">
+          <h2>Cancha 2</h2>
+          <span class="court-status semi-available">Mantenimiento</span>
+        </div>
+
+        <div class="court-info">
+          <p><strong>Tipo:</strong> Padel Outdoor</p>
+          <p><strong>Iluminación:</strong> Halógena</p>
+          <p><strong>Estado:</strong> En revisión</p>
+        </div>
+
+        <button class="book-btn">Editar</button>
+      </div>
+
+      <!-- CANCHA 3 -->
+      <div class="court-card">
+        <div class="court-header">
+          <h2>Cancha 3</h2>
+          <span class="court-status busy">Inactiva</span>
+        </div>
+
+        <div class="court-info">
+          <p><strong>Tipo:</strong> Sintética</p>
+          <p><strong>Iluminación:</strong> LED</p>
+          <p><strong>Estado:</strong> Fuera de servicio</p>
+        </div>
+
+        <button class="book-btn">Editar</button>
+      </div>
+
+    </div>
+
+    <!-- FAB -->
+    <button class="fab">+</button>
+
+  </main>
+
+  <!-- JS LAYOUT -->
+  <script src="/assets/js/layout.js"></script>
+
+  <!-- JS MENU -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const menuToggle = document.getElementById('menuToggle');
+
+      menuToggle.addEventListener('click', () => {
+        document.querySelector('.sidebar')?.classList.toggle('open');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('menu-link') && window.innerWidth <= 768) {
+          document.querySelector('.sidebar')?.classList.remove('open');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
