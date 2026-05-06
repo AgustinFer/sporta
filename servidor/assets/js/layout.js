@@ -5,6 +5,13 @@ async function loadComponent(id, file) {
 }
 
 /* ========================= */
+/* 🧠 UTIL */
+/* ========================= */
+function normalizeRoute(route) {
+  return route.toLowerCase().replace(/^\/+|\/+$/g, "");
+}
+
+/* ========================= */
 /* 🧠 UI */
 /* ========================= */
 function initUI() {
@@ -23,7 +30,7 @@ function initUI() {
     if (link.dataset.bound) return;
     link.dataset.bound = "true";
 
-    link.onclick = (e) => {
+    link.onclick = () => {
       if (window.innerWidth <= 768) {
         sidebar?.classList.remove("open");
       }
@@ -32,19 +39,20 @@ function initUI() {
 }
 
 /* ========================= */
-/* 🔥 ACTIVE MENU (FIX ROBUSTO) */
+/* 🔥 ACTIVE MENU */
 /* ========================= */
 function setActiveMenu(route) {
   document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+
+  const current = normalizeRoute(route);
 
   document.querySelectorAll(".menu-link").forEach(link => {
     const r = link.dataset.route;
     if (!r) return;
 
-    const cleanRoute = r.replace("/", "");
-    const current = route.replace("/", "");
+    const clean = normalizeRoute(r);
 
-    if (cleanRoute === current) {
+    if (clean === current) {
       link.closest(".menu-item")?.classList.add("active");
     }
   });
@@ -55,15 +63,20 @@ function setActiveMenu(route) {
 /* ========================= */
 async function loadPage(route) {
   try {
-    const cleanRoute = route.replace(/^\/+/, "");
+    const cleanRoute = normalizeRoute(route);
 
     const res = await fetch(`/${cleanRoute}/index.html`);
-    const html = await res.text();
 
+    if (!res.ok) {
+      console.error("Ruta no encontrada:", cleanRoute);
+      return;
+    }
+
+    const html = await res.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
 
-    /* 1. CONTENT */
+    /* 1. CONTENT SWAP */
     const newContent = doc.querySelector(".main-content");
     const currentContent = document.querySelector(".main-content");
 
@@ -71,7 +84,7 @@ async function loadPage(route) {
       currentContent.innerHTML = newContent.innerHTML;
     }
 
-    /* 2. BODY STATE */
+    /* 2. BODY SYNC */
     document.body.className = doc.body.className;
     document.body.dataset.page = doc.body.dataset.page;
 
@@ -89,13 +102,13 @@ async function loadPage(route) {
       });
     }
 
-    /* 5. ACTIVE MENU */
+    /* 5. MENU ACTIVE */
     setActiveMenu(cleanRoute);
 
     /* 6. UI REINIT */
     initUI();
 
-    /* 7. SCROLL RESET */
+    /* 7. RESET SCROLL */
     window.scrollTo(0, 0);
 
   } catch (err) {
@@ -116,14 +129,14 @@ function initRouter() {
 
     e.preventDefault();
 
-    const cleanRoute = route.replace("/", "");
+    const clean = normalizeRoute(route);
 
-    history.pushState({}, "", "/" + cleanRoute);
-    loadPage(cleanRoute);
+    history.pushState({}, "", "/" + clean);
+    loadPage(clean);
   });
 
   window.addEventListener("popstate", () => {
-    const route = window.location.pathname.replace(/^\/+/, "");
+    const route = normalizeRoute(window.location.pathname || "inicio");
     loadPage(route || "inicio");
   });
 }
@@ -150,14 +163,16 @@ async function initLayout(title) {
     });
   }
 
-  setActiveMenu(title.toLowerCase());
+  setActiveMenu(title);
 }
 
 /* ========================= */
 /* 🚀 START */
 /* ========================= */
 document.addEventListener("DOMContentLoaded", async () => {
-  const page = document.body.dataset.page || "inicio";
+  const raw = window.location.pathname;
+
+  const page = raw === "/" ? "inicio" : normalizeRoute(raw);
 
   await initLayout(page);
   await loadPage(page);
