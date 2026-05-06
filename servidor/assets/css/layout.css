@@ -1,76 +1,72 @@
-/* CONTENEDOR GENERAL */
+/* ========================= */
+/* 🧱 LAYOUT BASE APP */
+/* ========================= */
+
 .screen {
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
-  overflow: hidden;
+  display: flex;
 }
 
-/* FONDO */
+/* FONDO GLOBAL APP */
 .background {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
-  overflow: hidden;
+  pointer-events: none;
+
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
 }
 
-.background-slide {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  animation: backgroundScroll 30s linear infinite;
-}
-
-.background-slide:nth-child(1) { top: 0%; }
-.background-slide:nth-child(2) { top: 100%; }
-.background-slide:nth-child(3) { top: 200%; }
-.background-slide:nth-child(4) { top: 300%; }
-
-/* OVERLAY */
-.background::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.2)),
-    linear-gradient(120deg, rgba(16,185,129,0.4), rgba(0,0,0,0.4));
-}
-
-/* LOGO WRAPPER */
-.logo-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 60%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
-}
-
-/* CARD CONTENEDOR */
-.login-card {
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  transform: translateY(-50%);
-  width: min(400px, 90vw);
-  padding: 50px 40px;
-  z-index: 4;
-}
-
-/* CONTENIDO */
-.card-content {
+/* CONTENIDO PRINCIPAL */
+.main-content {
+  flex: 1;
+  margin-left: 260px;
+  padding: 20px 30px;
   position: relative;
-  z-index: 5;
+  z-index: 1;
 }
 
-/* ANIMACIONES */
-@keyframes backgroundScroll {
-  100% {
-    transform: translateY(-300%);
+/* HEADER */
+.header {
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 32px;
+  color: #facc15;
+}
+
+.date {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+}
+
+/* BOTÓN MOBILE */
+.menu-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  width: 45px;
+  height: 45px;
+  background: #facc15;
+  border: none;
+  border-radius: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 101;
+  display: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 20px 15px;
+    padding-top: 70px;
   }
-}
 
-@keyframes logoSlide {
-  from { left: 15%; opacity: 0; }
-  to { left: 60%; opacity: 1; }
+  .menu-toggle {
+    display: block;
+  }
 }
