@@ -99,22 +99,5 @@
   <!-- JS LAYOUT (carga sidebar + header) -->
   <script src="/assets/js/layout.js"></script>
 
-  <!-- JS PROPIO (menú móvil) -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const menuToggle = document.getElementById('menuToggle');
-
-      menuToggle.addEventListener('click', () => {
-        document.querySelector('.sidebar')?.classList.toggle('open');
-      });
-
-      document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('menu-link') && window.innerWidth <= 768) {
-          document.querySelector('.sidebar')?.classList.remove('open');
-        }
-      });
-    });
-  </script>
-
 </body>
 </html>
