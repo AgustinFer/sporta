@@ -1,0 +1,47 @@
+/* LOGO */
+.logo {
+  width: 50vw;
+  max-width: 500px;
+  display: block;
+  position: relative;
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6));
+}
+
+/* EFECTO LOGO */
+.logo::before {
+  content: "";
+  position: absolute;
+  width: 28vw;
+  height: 28vw;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(14px);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+/* CARD VISUAL */
+.login-card::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 50vh;
+  background: rgba(255,255,255,0.95);
+  border-radius: 20px 60px 60px 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+
+/* TEXTOS */
+.login-card h2 {
+  margin-bottom: 25px;
+  font-size: 28px;
+}
+
+/* ANIMACIÓN DE ENTRADA */
+.card-content > * {
+  opacity: 0;
+  animation: fadeUp 0.6s forwards;
+}
+
+.card-content > *:nth-child(1) { animation-delay: 0.2s; }
+.card-content > *:nth-child(2) { animation-delay: 0.35s; }
+.card-content > *:nth-child(3) { animation-delay: 0.5s; }

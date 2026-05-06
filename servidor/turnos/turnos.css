@@ -1,32 +1,28 @@
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
-}
+/* ======================== */
+/* PANTALLA TURNOS */
+/* ======================== */
 
-/* CONTENEDOR GENERAL */
-.screen {
+.screen--turnos {
   min-height: 100vh;
   background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
-  position: relative;
   display: flex;
+  position: relative;
 }
 
 /* FONDO */
-.background {
+.background--turnos {
   position: fixed;
   inset: 0;
-  background: url("img/fondo-padel.jpg") center/cover no-repeat;
+  background: url("/assets/img/fondo1.jpg") center/cover no-repeat;
   opacity: 0.1;
   z-index: 0;
   pointer-events: none;
 }
 
 /* ======================== */
-/* MENÚ LATERAL */
+/* SIDEBAR */
 /* ======================== */
+
 .sidebar {
   position: fixed;
   left: 0;
@@ -62,6 +58,8 @@
   letter-spacing: 2px;
 }
 
+/* MENÚ */
+
 .sidebar-menu {
   flex: 1;
   list-style: none;
@@ -95,11 +93,7 @@
   border-left: 3px solid #facc15;
 }
 
-.menu-icon {
-  font-size: 20px;
-  width: 24px;
-  text-align: center;
-}
+/* FOOTER */
 
 .sidebar-footer {
   padding: 20px 15px;
@@ -112,10 +106,10 @@
 
 .logout:hover {
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
 }
 
-/* BOTÓN MENÚ MÓVIL */
+/* BOTÓN MOBILE */
+
 .menu-toggle {
   position: fixed;
   top: 15px;
@@ -123,18 +117,17 @@
   width: 45px;
   height: 45px;
   background: #facc15;
-  border: none;
   border-radius: 10px;
   font-size: 24px;
   cursor: pointer;
   z-index: 101;
   display: none;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 /* ======================== */
-/* CONTENIDO PRINCIPAL */
+/* CONTENIDO */
 /* ======================== */
+
 .main-content {
   flex: 1;
   margin-left: 260px;
@@ -144,6 +137,7 @@
 }
 
 /* HEADER */
+
 .header {
   margin-bottom: 40px;
   animation: fadeDown 0.8s ease-out;
@@ -160,15 +154,18 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* CONTENEDOR DE CANCHAS */
+/* ======================== */
+/* CANCHAS */
+/* ======================== */
+
 .courts-container {
   display: flex;
   flex-wrap: wrap;
   gap: 25px;
-  justify-content: flex-start;
 }
 
-/* TARJETA DE CANCHA */
+/* CARD */
+
 .court-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -182,29 +179,21 @@
   opacity: 0;
 }
 
-.court-card:nth-child(1) { animation-delay: 0.1s; }
-.court-card:nth-child(2) { animation-delay: 0.2s; }
-.court-card:nth-child(3) { animation-delay: 0.3s; }
-
 .court-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
 }
 
-/* HEADER DE LA TARJETA */
+/* HEADER CARD */
+
 .court-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;
   border-bottom: 2px solid #facc15;
 }
 
-.court-header h2 {
-  font-size: 24px;
-  color: #1a1a2e;
-}
+/* ESTADOS */
 
 .court-status {
   font-size: 12px;
@@ -213,98 +202,42 @@
   font-weight: bold;
 }
 
-.court-status.available {
-  background: #22c55e;
-  color: white;
-}
+.available { background: #22c55e; color: white; }
+.semi-available { background: #facc15; }
+.busy { background: #ef4444; color: white; }
 
-.court-status.semi-available {
-  background: #facc15;
-  color: #1a1a2e;
-}
+/* HORARIOS */
 
-.court-status.busy {
-  background: #ef4444;
-  color: white;
-}
-
-/* LISTA DE HORARIOS */
 .schedule-list {
   margin-bottom: 20px;
   max-height: 350px;
   overflow-y: auto;
 }
 
-.schedule-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.schedule-list::-webkit-scrollbar-track {
-  background: #e2e8f0;
-  border-radius: 10px;
-}
-
-.schedule-list::-webkit-scrollbar-thumb {
-  background: #facc15;
-  border-radius: 10px;
-}
-
 .schedule-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
 }
 
 .schedule-item:hover {
   background: #fef9e3;
-  padding-left: 10px;
-  border-radius: 8px;
 }
 
-.time {
-  font-weight: bold;
-  color: #1a1a2e;
-  font-size: 14px;
-}
+/* BOTÓN */
 
-.partner {
-  color: #6b7280;
-  font-size: 14px;
-}
-
-/* BOTÓN RESERVAR */
 .book-btn {
   width: 100%;
   padding: 12px;
-  border: none;
   border-radius: 10px;
   background: linear-gradient(90deg, #facc15, #fbbf24);
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  color: #1a1a2e;
 }
 
-.book-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(250, 204, 21, 0.3);
-}
+/* FAB */
 
-.book-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.book-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-/* BOTÓN FLOTANTE */
 .fab {
   position: fixed;
   bottom: 30px;
@@ -313,103 +246,31 @@
   height: 60px;
   border-radius: 50%;
   background: linear-gradient(135deg, #facc15, #fbbf24);
-  border: none;
-  color: #1a1a2e;
   font-size: 30px;
-  font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-  z-index: 10;
-}
-
-.fab:hover {
-  transform: scale(1.1) rotate(90deg);
-  box-shadow: 0 6px 20px rgba(250, 204, 21, 0.4);
 }
 
 /* ======================== */
 /* RESPONSIVE */
 /* ======================== */
+
 @media (max-width: 768px) {
-  .menu-toggle {
-    display: block;
-  }
+  .menu-toggle { display: block; }
 
-  .sidebar {
-    transform: translateX(-100%);
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
 
   .main-content {
     margin-left: 0;
-    padding: 20px 15px;
     padding-top: 70px;
-  }
-
-  .header h1 {
-    font-size: 26px;
-  }
-
-  .court-card {
-    max-width: 100%;
-  }
-
-  .court-header h2 {
-    font-size: 20px;
-  }
-
-  .schedule-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-  }
-
-  .fab {
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
-    bottom: 20px;
-    right: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .court-header {
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
-  }
-
-  .header h1 {
-    font-size: 22px;
   }
 }
 
 /* ======================== */
 /* ANIMACIONES */
 /* ======================== */
-@keyframes fadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
