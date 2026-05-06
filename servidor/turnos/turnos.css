@@ -1,22 +1,10 @@
 /* ======================== */
-/* PANTALLA TURNOS */
+/* CONTENIDO TURNOS (SOLO CONTENIDO) */
 /* ======================== */
 
-.screen--turnos {
-  min-height: 100vh;
-  display: flex;
-  position: relative;
-}
-
-/* FONDO ESPECÍFICO */
-.background--turnos {
-  position: fixed;
-  inset: 0;
-  background: url("/assets/img/fondo1.jpg") center/cover no-repeat;
-  opacity: 0.1;
-  z-index: 0;
-  pointer-events: none;
-}
+/* ❌ ELIMINAR ESTO COMPLETAMENTE */
+/* .screen--turnos */
+/* .background--turnos */
 
 /* ======================== */
 /* CONTENIDO TURNOS */
@@ -29,7 +17,6 @@
 }
 
 /* CARD */
-
 .court-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -39,16 +26,13 @@
   max-width: 380px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
-  animation: fadeUp 0.6s ease-out forwards;
-  opacity: 0;
 }
 
 .court-card:hover {
   transform: translateY(-5px);
 }
 
-/* HEADER CARD */
-
+/* HEADER */
 .court-header {
   display: flex;
   justify-content: space-between;
@@ -58,7 +42,6 @@
 }
 
 /* ESTADOS */
-
 .court-status {
   font-size: 12px;
   padding: 4px 12px;
@@ -71,7 +54,6 @@
 .busy { background: #ef4444; color: white; }
 
 /* HORARIOS */
-
 .schedule-list {
   margin-bottom: 20px;
   max-height: 350px;
@@ -90,18 +72,15 @@
 }
 
 /* BOTÓN */
-
 .book-btn {
   width: 100%;
   padding: 12px;
   border-radius: 10px;
   background: linear-gradient(90deg, #facc15, #fbbf24);
   font-weight: bold;
-  cursor: pointer;
 }
 
 /* FAB */
-
 .fab {
   position: fixed;
   bottom: 30px;
@@ -111,14 +90,4 @@
   border-radius: 50%;
   background: linear-gradient(135deg, #facc15, #fbbf24);
   font-size: 30px;
-  cursor: pointer;
-}
-
-/* ======================== */
-/* ANIMACIONES */
-/* ======================== */
-
-@keyframes fadeDown {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
 }
