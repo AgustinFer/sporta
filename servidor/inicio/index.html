@@ -5,15 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sporta - Inicio</title>
 
-  <!-- CSS -->
+  <!-- CSS GLOBAL -->
   <link rel="stylesheet" href="/assets/css/global.css">
   <link rel="stylesheet" href="/assets/css/layout.css">
   <link rel="stylesheet" href="/assets/css/components.css">
+
+  <!-- CSS MÓDULO -->
+  <link rel="stylesheet" href="/inicio/inicio.css">
 </head>
 
-<body class="screen" data-page="Inicio">
-
-  <div class="background"></div>
+<body data-page="Inicio">
 
   <div id="sidebar-container"></div>
 
@@ -22,10 +23,31 @@
   <main class="main-content">
     <div id="header-container"></div>
 
+    <!-- DASHBOARD -->
     <div class="dashboard">
-      <h2>Bienvenido a Sporta</h2>
-      <p>Resumen rápido del sistema</p>
+
+      <div class="card">
+        <h3>Turnos hoy</h3>
+        <p class="value">18</p>
+      </div>
+
+      <div class="card">
+        <h3>Canchas activas</h3>
+        <p class="value">3</p>
+      </div>
+
+      <div class="card">
+        <h3>Clientes registrados</h3>
+        <p class="value">124</p>
+      </div>
+
+      <div class="card">
+        <h3>Ingresos del día</h3>
+        <p class="value">$45.000</p>
+      </div>
+
     </div>
+
   </main>
 
   <script src="/assets/js/layout.js"></script>
