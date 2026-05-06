@@ -1,47 +1,144 @@
+/* ========================= */
+/* 🧩 COMPONENTES LOGIN */
+/* ========================= */
+
 /* LOGO */
 .logo {
   width: 50vw;
   max-width: 500px;
+  min-width: 180px;
   display: block;
   position: relative;
   filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6));
+  z-index: 7;
 }
 
-/* EFECTO LOGO */
+/* EFECTO GLASS DETRÁS DEL LOGO */
 .logo::before {
   content: "";
   position: absolute;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
   width: 28vw;
   height: 28vw;
+  max-width: 340px;
+  max-height: 340px;
+  min-width: 200px;
+  min-height: 200px;
+
   background: rgba(255,255,255,0.25);
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
   border-radius: 50%;
   z-index: -1;
 }
 
-/* CARD VISUAL */
+/* CARD VISUAL (fondo blanco curvo) */
 .login-card::before {
   content: "";
   position: absolute;
+
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+
   width: 100%;
   height: 50vh;
+  min-height: 400px;
+  max-height: 50vh;
+
   background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+
   border-radius: 20px 60px 60px 20px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+
+  z-index: -1;
 }
 
-/* TEXTOS */
+/* CONTENIDO */
+.card-content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+}
+
+/* TITULO */
 .login-card h2 {
   margin-bottom: 25px;
-  font-size: 28px;
+  font-size: clamp(22px, 5vw, 28px);
 }
 
-/* ANIMACIÓN DE ENTRADA */
+/* INPUTS */
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  font-size: 13px;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s ease;
+}
+
+.field input:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+}
+
+.field input::placeholder {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* BOTÓN */
+button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+
+  background: linear-gradient(90deg, #facc15, #fbbf24);
+  font-weight: bold;
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+/* LINK */
+.forgot {
+  display: block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ANIMACIÓN */
 .card-content > * {
   opacity: 0;
-  animation: fadeUp 0.6s forwards;
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .card-content > *:nth-child(1) { animation-delay: 0.2s; }
 .card-content > *:nth-child(2) { animation-delay: 0.35s; }
 .card-content > *:nth-child(3) { animation-delay: 0.5s; }
+.card-content > *:nth-child(4) { animation-delay: 0.65s; }
