@@ -5,10 +5,13 @@ async function loadComponent(id, file) {
 }
 
 /* ========================= */
-/* 🧠 UTIL */
+/* 🧠 NORMALIZADOR DE RUTAS */
 /* ========================= */
 function normalizeRoute(route) {
-  return route.toLowerCase().replace(/^\/+|\/+$/g, "");
+  return route
+    .replace(/^\/+/, "")   // sin slash inicial
+    .replace(/\/+$/, "")   // sin slash final
+    .toLowerCase();
 }
 
 /* ========================= */
@@ -42,41 +45,34 @@ function initUI() {
 /* 🔥 ACTIVE MENU */
 /* ========================= */
 function setActiveMenu(route) {
-  document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
-
   const current = normalizeRoute(route);
 
+  document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+
   document.querySelectorAll(".menu-link").forEach(link => {
-    const r = link.dataset.route;
-    if (!r) return;
+    const r = normalizeRoute(link.dataset.route || "");
 
-    const clean = normalizeRoute(r);
-
-    if (clean === current) {
+    if (r === current) {
       link.closest(".menu-item")?.classList.add("active");
     }
   });
 }
 
 /* ========================= */
-/* 🚀 LOAD PAGE */
+/* 🚀 LOAD PAGE (FIX DEFINITIVO) */
 /* ========================= */
 async function loadPage(route) {
   try {
     const cleanRoute = normalizeRoute(route);
 
     const res = await fetch(`/${cleanRoute}/index.html`);
-
-    if (!res.ok) {
-      console.error("Ruta no encontrada:", cleanRoute);
-      return;
-    }
+    if (!res.ok) throw new Error(`No existe /${cleanRoute}/index.html`);
 
     const html = await res.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
 
-    /* 1. CONTENT SWAP */
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    /* 1. CONTENT */
     const newContent = doc.querySelector(".main-content");
     const currentContent = document.querySelector(".main-content");
 
@@ -84,13 +80,16 @@ async function loadPage(route) {
       currentContent.innerHTML = newContent.innerHTML;
     }
 
-    /* 2. BODY SYNC */
-    document.body.className = doc.body.className;
-    document.body.dataset.page = doc.body.dataset.page;
+    /* 2. BODY STATE */
+    document.body.className = doc.body.className || "";
+    document.body.dataset.page = doc.body.dataset.page || cleanRoute;
 
     /* 3. TITLE */
     const titleEl = document.getElementById("page-title");
-    if (titleEl) titleEl.textContent = doc.body.dataset.page || "Dashboard";
+    if (titleEl) {
+      titleEl.textContent =
+        doc.body.dataset.page || cleanRoute.charAt(0).toUpperCase() + cleanRoute.slice(1);
+    }
 
     /* 4. DATE */
     const dateEl = document.getElementById("current-date");
@@ -102,10 +101,10 @@ async function loadPage(route) {
       });
     }
 
-    /* 5. MENU ACTIVE */
+    /* 5. MENU */
     setActiveMenu(cleanRoute);
 
-    /* 6. UI REINIT */
+    /* 6. UI */
     initUI();
 
     /* 7. RESET SCROLL */
@@ -124,19 +123,15 @@ function initRouter() {
     const link = e.target.closest(".menu-link");
     if (!link) return;
 
-    const route = link.dataset.route;
-    if (!route) return;
-
+    const route = normalizeRoute(link.dataset.route);
     e.preventDefault();
 
-    const clean = normalizeRoute(route);
-
-    history.pushState({}, "", "/" + clean);
-    loadPage(clean);
+    history.pushState({}, "", "/" + route);
+    loadPage(route);
   });
 
   window.addEventListener("popstate", () => {
-    const route = normalizeRoute(window.location.pathname || "inicio");
+    const route = normalizeRoute(window.location.pathname);
     loadPage(route || "inicio");
   });
 }
@@ -144,36 +139,20 @@ function initRouter() {
 /* ========================= */
 /* 🧱 INIT */
 /* ========================= */
-async function initLayout(title) {
+async function initLayout() {
   await loadComponent("sidebar-container", "/components/sidebar.html");
   await loadComponent("header-container", "/components/header.html");
 
   initRouter();
   initUI();
-
-  const titleEl = document.getElementById("page-title");
-  if (titleEl) titleEl.textContent = title;
-
-  const dateEl = document.getElementById("current-date");
-  if (dateEl) {
-    dateEl.textContent = new Date().toLocaleDateString("es-AR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    });
-  }
-
-  setActiveMenu(title);
 }
 
 /* ========================= */
-/* 🚀 START */
+/* 🚀 START (CRÍTICO) */
 /* ========================= */
 document.addEventListener("DOMContentLoaded", async () => {
-  const raw = window.location.pathname;
+  await initLayout();
 
-  const page = raw === "/" ? "inicio" : normalizeRoute(raw);
-
-  await initLayout(page);
-  await loadPage(page);
+  const route = normalizeRoute(window.location.pathname || "inicio");
+  await loadPage(route);
 });
