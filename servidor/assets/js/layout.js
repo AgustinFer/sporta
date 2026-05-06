@@ -4,75 +4,66 @@ async function loadComponent(id, file) {
   document.getElementById(id).innerHTML = html;
 }
 
-function getBasePath() {
-  const depth = window.location.pathname.split("/").length - 2;
-  return "../".repeat(depth);
-}
-
 /* ========================= */
 /* 🧠 UI */
 /* ========================= */
 function initUI() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector(".sidebar");
   const menuToggle = document.getElementById("menuToggle");
 
-  // evitar duplicación de listeners (FIX CLAVE SPA)
   if (menuToggle && !menuToggle.dataset.bound) {
     menuToggle.dataset.bound = "true";
 
     menuToggle.onclick = () => {
-      sidebar?.classList.toggle('open');
+      sidebar?.classList.toggle("open");
     };
   }
 
   document.querySelectorAll(".menu-link").forEach(link => {
     if (link.dataset.bound) return;
-
     link.dataset.bound = "true";
 
-    link.onclick = () => {
+    link.onclick = (e) => {
       if (window.innerWidth <= 768) {
-        sidebar?.classList.remove('open');
+        sidebar?.classList.remove("open");
       }
     };
   });
 }
 
 /* ========================= */
-/* 🔥 ACTIVE MENU */
+/* 🔥 ACTIVE MENU (FIX ROBUSTO) */
 /* ========================= */
-function setActiveMenu() {
-  const currentPath = window.location.pathname.replace(/\/$/, "");
-
-  document.querySelectorAll(".menu-item").forEach(item => {
-    item.classList.remove("active");
-  });
+function setActiveMenu(route) {
+  document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
 
   document.querySelectorAll(".menu-link").forEach(link => {
-    const route = link.dataset.route;
-    if (!route) return;
+    const r = link.dataset.route;
+    if (!r) return;
 
-    if (currentPath.includes(route)) {
-      const item = link.closest(".menu-item");
-      if (item) item.classList.add("active");
+    const cleanRoute = r.replace("/", "");
+    const current = route.replace("/", "");
+
+    if (cleanRoute === current) {
+      link.closest(".menu-item")?.classList.add("active");
     }
   });
 }
 
 /* ========================= */
-/* 🚀 SPA ROUTER LOAD */
+/* 🚀 LOAD PAGE */
 /* ========================= */
 async function loadPage(route) {
   try {
-    const base = getBasePath();
+    const cleanRoute = route.replace(/^\/+/, "");
 
-    const res = await fetch(base + route + "/index.html");
+    const res = await fetch(`/${cleanRoute}/index.html`);
     const html = await res.text();
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
 
-    /* 1. REEMPLAZO CONTENIDO */
+    /* 1. CONTENT */
     const newContent = doc.querySelector(".main-content");
     const currentContent = document.querySelector(".main-content");
 
@@ -84,30 +75,11 @@ async function loadPage(route) {
     document.body.className = doc.body.className;
     document.body.dataset.page = doc.body.dataset.page;
 
-    /* 3. CSS DINÁMICO (FIX ROBUSTO) */
-    const newStyle = doc.querySelector("#page-style");
-
-    let currentStyle = document.querySelector("#page-style");
-
-    if (newStyle) {
-      if (!currentStyle) {
-        currentStyle = document.createElement("link");
-        currentStyle.rel = "stylesheet";
-        currentStyle.id = "page-style";
-        document.head.appendChild(currentStyle);
-      }
-
-      currentStyle.href = newStyle.getAttribute("href");
-    } else if (currentStyle) {
-      currentStyle.remove();
-    }
-
-    /* 4. TÍTULO */
-    const page = doc.body.dataset.page || "Dashboard";
+    /* 3. TITLE */
     const titleEl = document.getElementById("page-title");
-    if (titleEl) titleEl.textContent = page;
+    if (titleEl) titleEl.textContent = doc.body.dataset.page || "Dashboard";
 
-    /* 5. FECHA */
+    /* 4. DATE */
     const dateEl = document.getElementById("current-date");
     if (dateEl) {
       dateEl.textContent = new Date().toLocaleDateString("es-AR", {
@@ -117,14 +89,14 @@ async function loadPage(route) {
       });
     }
 
-    /* 6. FIX VISUAL SPA (REPAINT FORZADO) */
-    requestAnimationFrame(() => {
-      document.documentElement.scrollTop = 0;
-    });
+    /* 5. ACTIVE MENU */
+    setActiveMenu(cleanRoute);
 
-    /* 7. UI REINIT */
+    /* 6. UI REINIT */
     initUI();
-    setActiveMenu();
+
+    /* 7. SCROLL RESET */
+    window.scrollTo(0, 0);
 
   } catch (err) {
     console.error("Error cargando página:", err);
@@ -144,12 +116,14 @@ function initRouter() {
 
     e.preventDefault();
 
-    history.pushState({}, "", "/" + route);
-    loadPage(route);
+    const cleanRoute = route.replace("/", "");
+
+    history.pushState({}, "", "/" + cleanRoute);
+    loadPage(cleanRoute);
   });
 
   window.addEventListener("popstate", () => {
-    const route = window.location.pathname.replace("/", "");
+    const route = window.location.pathname.replace(/^\/+/, "");
     loadPage(route || "inicio");
   });
 }
@@ -158,15 +132,14 @@ function initRouter() {
 /* 🧱 INIT */
 /* ========================= */
 async function initLayout(title) {
-  const base = getBasePath();
-
-  await loadComponent("sidebar-container", base + "components/sidebar.html");
-  await loadComponent("header-container", base + "components/header.html");
+  await loadComponent("sidebar-container", "/components/sidebar.html");
+  await loadComponent("header-container", "/components/header.html");
 
   initRouter();
   initUI();
 
-  document.getElementById("page-title").textContent = title;
+  const titleEl = document.getElementById("page-title");
+  if (titleEl) titleEl.textContent = title;
 
   const dateEl = document.getElementById("current-date");
   if (dateEl) {
@@ -177,7 +150,7 @@ async function initLayout(title) {
     });
   }
 
-  setActiveMenu();
+  setActiveMenu(title.toLowerCase());
 }
 
 /* ========================= */
@@ -187,6 +160,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   const page = document.body.dataset.page || "inicio";
 
   await initLayout(page);
-
-  loadPage(window.location.pathname.replace("/", "") || "inicio");
+  await loadPage(page);
 });
