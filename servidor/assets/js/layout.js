@@ -10,18 +10,21 @@ function getBasePath() {
 }
 
 function initUI() {
-  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.querySelector('.sidebar');
+  const menuToggle = document.getElementById("menuToggle");
 
   if (menuToggle) {
     menuToggle.onclick = () => {
-      document.querySelector('.sidebar')?.classList.toggle('open');
+      sidebar?.classList.toggle('open');
     };
   }
 
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('menu-link') && window.innerWidth <= 768) {
-      document.querySelector('.sidebar')?.classList.remove('open');
-    }
+  document.querySelectorAll(".menu-link").forEach(link => {
+    link.onclick = () => {
+      if (window.innerWidth <= 768) {
+        sidebar?.classList.remove('open');
+      }
+    };
   });
 }
 
@@ -59,6 +62,7 @@ async function loadPage(route) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
 
+    // 1. reemplazar contenido
     const newContent = doc.querySelector(".main-content");
     const currentContent = document.querySelector(".main-content");
 
@@ -66,36 +70,16 @@ async function loadPage(route) {
       currentContent.innerHTML = newContent.innerHTML;
     }
 
-    /* ========================= */
-    /* 🔥 CAMBIO DE CLASE BODY */
-    /* ========================= */
+    // 2. 🔥 actualizar BODY (CLAVE)
     document.body.className = doc.body.className;
+    document.body.dataset.page = doc.body.dataset.page;
 
-    /* ========================= */
-    /* 🎨 FONDO DINÁMICO */
-    /* ========================= */
-    // borrar fondo anterior
-    document.querySelectorAll("[data-dynamic-bg]").forEach(el => el.remove());
-
-    // agregar nuevo fondo si existe
-    const bgClass = doc.body.dataset.bg;
-    if (bgClass) {
-      const bg = document.createElement("div");
-      bg.className = bgClass;
-      bg.setAttribute("data-dynamic-bg", "true");
-      document.body.prepend(bg);
-    }
-
-    /* ========================= */
-    /* 🧾 TÍTULO */
-    /* ========================= */
+    // 3. actualizar título visible
     const page = doc.body.dataset.page || "Dashboard";
     const titleEl = document.getElementById("page-title");
     if (titleEl) titleEl.textContent = page;
 
-    /* ========================= */
-    /* 📅 FECHA */
-    /* ========================= */
+    // 4. fecha
     const dateEl = document.getElementById("current-date");
     if (dateEl) {
       dateEl.textContent = new Date().toLocaleDateString("es-AR", {
@@ -105,7 +89,11 @@ async function loadPage(route) {
       });
     }
 
+    // 5. activar menú
     setActiveMenu();
+
+    // 6. 🔥 reactivar scripts UI básicos
+    initUI();
 
   } catch (err) {
     console.error("Error cargando página:", err);
