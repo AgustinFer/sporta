@@ -1,4 +1,6 @@
-/* Reutiliza casi todo de turnos */
+.background {
+  background: url("/assets/img/fondo2.jpg") center/cover no-repeat;
+}
 
 .court-info {
   font-size: 14px;
