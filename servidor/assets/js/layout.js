@@ -108,6 +108,17 @@ async function loadPage(route) {
         cleanRoute.charAt(0).toUpperCase() + cleanRoute.slice(1);
     }
 
+    const pageTitle =
+      doc.body.dataset.page ||
+      cleanRoute.charAt(0).toUpperCase() + cleanRoute.slice(1);
+
+    if (titleEl) {
+      titleEl.textContent = pageTitle;
+    }
+
+    /* 🔥 TÍTULO DEL NAVEGADOR */
+    document.title = `Sporta - ${pageTitle}`;
+
     /* 5. DATE */
     const dateEl = document.getElementById("current-date");
     if (dateEl) {
