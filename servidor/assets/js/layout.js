@@ -69,7 +69,6 @@ async function loadPage(route) {
     if (!res.ok) throw new Error(`No existe /${cleanRoute}/index.html`);
 
     const html = await res.text();
-
     const doc = new DOMParser().parseFromString(html, "text/html");
 
     /* 1. CONTENT */
@@ -80,18 +79,36 @@ async function loadPage(route) {
       currentContent.innerHTML = newContent.innerHTML;
     }
 
-    /* 2. BODY STATE */
-    document.body.className = doc.body.className || "";
+    /* 2. BODY STATE (FIX ROBUSTO) */
+    // limpiamos clases sin romper estructura base
+    document.body.className = "";
+    doc.body.classList.forEach(c => document.body.classList.add(c));
+
     document.body.dataset.page = doc.body.dataset.page || cleanRoute;
 
-    /* 3. TITLE */
+    /* 3. CSS DINÁMICO (CRÍTICO PARA TU BUG) */
+    const newStyle = doc.querySelector("#page-style");
+    const currentStyle = document.querySelector("#page-style");
+
+    const fallbackCss = `/${cleanRoute}/${cleanRoute}.css`;
+
+    if (currentStyle) {
+      if (newStyle?.getAttribute("href")) {
+        currentStyle.href = newStyle.getAttribute("href");
+      } else {
+        currentStyle.href = fallbackCss;
+      }
+    }
+
+    /* 4. TITLE */
     const titleEl = document.getElementById("page-title");
     if (titleEl) {
       titleEl.textContent =
-        doc.body.dataset.page || cleanRoute.charAt(0).toUpperCase() + cleanRoute.slice(1);
+        doc.body.dataset.page ||
+        cleanRoute.charAt(0).toUpperCase() + cleanRoute.slice(1);
     }
 
-    /* 4. DATE */
+    /* 5. DATE */
     const dateEl = document.getElementById("current-date");
     if (dateEl) {
       dateEl.textContent = new Date().toLocaleDateString("es-AR", {
@@ -101,14 +118,16 @@ async function loadPage(route) {
       });
     }
 
-    /* 5. MENU */
+    /* 6. MENU ACTIVE */
     setActiveMenu(cleanRoute);
 
-    /* 6. UI */
+    /* 7. UI REINIT */
     initUI();
 
-    /* 7. RESET SCROLL */
+    /* 8. RESET VISUAL (EVITA GLITCHES DE FONDO) */
     window.scrollTo(0, 0);
+    document.body.style.background = "";
+    document.documentElement.style.background = "";
 
   } catch (err) {
     console.error("Error cargando página:", err);
@@ -153,6 +172,7 @@ async function initLayout() {
 document.addEventListener("DOMContentLoaded", async () => {
   await initLayout();
 
-  const route = normalizeRoute(window.location.pathname || "inicio");
-  await loadPage(route);
+  const route = normalizeRoute(window.location.pathname);
+
+  await loadPage(route || "inicio");
 });
