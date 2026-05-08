@@ -5,27 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sporta - Clientes</title>
 
+  <!-- CSS GLOBAL -->
   <link rel="stylesheet" href="/assets/css/global.css">
   <link rel="stylesheet" href="/assets/css/layout.css">
   <link rel="stylesheet" href="/assets/css/components.css">
+
+  <!-- CSS MÓDULO -->
+  <link id="page-style" rel="stylesheet" href="/clientes/clientes.css">
 </head>
 
 <body class="screen" data-page="Clientes">
 
+  <!-- FONDO -->
   <div class="background"></div>
+
+  <!-- SIDEBAR DINÁMICO -->
   <div id="sidebar-container"></div>
 
+  <!-- BOTÓN MOBILE -->
   <button class="menu-toggle" id="menuToggle">☰</button>
 
+  <!-- CONTENIDO -->
   <main class="main-content">
+
+    <!-- HEADER DINÁMICO -->
     <div id="header-container"></div>
 
     <div class="list-container">
       <h2>Clientes</h2>
       <p>Listado de clientes registrados</p>
     </div>
+
+    <!-- FAB -->
+    <button class="fab">+</button>
+
   </main>
 
+  <!-- JS LAYOUT (carga sidebar + header) -->
   <script src="/assets/js/layout.js"></script>
+
 </body>
 </html>
