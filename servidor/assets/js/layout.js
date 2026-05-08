@@ -86,7 +86,7 @@ async function loadPage(route) {
 
     document.body.dataset.page = doc.body.dataset.page || cleanRoute;
 
-    /* 3. CSS DINÁMICO (CRÍTICO PARA TU BUG) */
+    /* 3. CSS DINÁMICO (CRÍTICO PARA TU BUG) 
     const newStyle = doc.querySelector("#page-style");
     const currentStyle = document.querySelector("#page-style");
 
@@ -98,6 +98,36 @@ async function loadPage(route) {
       } else {
         currentStyle.href = fallbackCss;
       }
+    } */
+
+    /* 3. CSS DINÁMICO (FIX DEFINITIVO) */
+
+    // borrar CSS anterior
+    const oldStyle = document.querySelector("#page-style");
+    if (oldStyle) {
+      oldStyle.remove();
+    }
+
+    // obtener nuevo CSS
+    const newStyle = doc.querySelector("#page-style");
+
+    if (newStyle) {
+      const style = document.createElement("link");
+
+      style.id = "page-style";
+      style.rel = "stylesheet";
+
+      // anti-cache SPA
+      const href = newStyle.getAttribute("href");
+      style.href = `${href}?v=${Date.now()}`;
+
+      document.head.appendChild(style);
+
+      // esperar carga REAL del CSS
+      await new Promise(resolve => {
+        style.onload = resolve;
+        style.onerror = resolve;
+      });
     }
 
     /* 4. TITLE */
