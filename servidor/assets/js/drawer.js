@@ -1,9 +1,16 @@
-const fab = document.querySelector(".fab");
-const drawer = document.querySelector(".drawer");
-const overlay = document.querySelector(".drawer-overlay");
-const closeBtn = document.querySelector(".drawer-close");
+function initDrawer() {
 
-if (fab && drawer && overlay && closeBtn) {
+  const fab = document.querySelector(".fab");
+  const drawer = document.querySelector(".drawer");
+  const overlay = document.querySelector(".drawer-overlay");
+  const closeBtn = document.querySelector(".drawer-close");
+
+  if (!fab || !drawer || !overlay || !closeBtn) {
+
+    console.error("Drawer: faltan elementos");
+
+    return;
+  }
 
   function openDrawer() {
 

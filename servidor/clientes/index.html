@@ -64,16 +64,12 @@
 
         document.getElementById("drawer-container").innerHTML = html;
 
-        // Cargar JS DESPUÉS de insertar el HTML
-        const script = document.createElement("script");
-
-        script.src = "/assets/js/drawer.js";
-
-        document.body.appendChild(script);
+        // Inicializar drawer DESPUÉS de cargar HTML
+        initDrawer();
 
       } catch (err) {
 
-        console.error("Error cargando drawer:", err);
+        console.error(err);
 
       }
 
@@ -82,6 +78,8 @@
     loadDrawer();
 
   </script>
+
+  <script src="/assets/js/drawer.js"></script>
 
 </body>
 </html>
