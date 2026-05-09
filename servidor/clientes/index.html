@@ -49,28 +49,38 @@
   <script src="/assets/js/layout.js"></script>
 
   <script>
-    fetch("/components/drawer.html")
 
-      .then(res => {
-        if (!res.ok) {
+    async function loadDrawer() {
+
+      try {
+
+        const response = await fetch("/components/drawer.html");
+
+        if (!response.ok) {
           throw new Error("No se pudo cargar drawer.html");
         }
 
-        return res.text();
-      })
+        const html = await response.text();
 
-      .then(data => {
-        document.getElementById("drawer-container").innerHTML = data;
+        document.getElementById("drawer-container").innerHTML = html;
 
+        // Cargar JS DESPUÉS de insertar el HTML
         const script = document.createElement("script");
+
         script.src = "/assets/js/drawer.js";
 
         document.body.appendChild(script);
-      })
 
-      .catch(err => {
+      } catch (err) {
+
         console.error("Error cargando drawer:", err);
-      });
+
+      }
+
+    }
+
+    loadDrawer();
+
   </script>
 
 </body>
