@@ -51,36 +51,26 @@
   <script src="/assets/js/drawer.js"></script>
 
   <script>
-
     async function loadDrawer() {
 
       try {
 
         const response = await fetch("/components/drawer.html");
-
-        if (!response.ok) {
-          throw new Error("No se pudo cargar drawer.html");
-        }
-
         const html = await response.text();
 
         document.getElementById("drawer-container").innerHTML = html;
 
-        // Esperar un frame para asegurar render
-        requestAnimationFrame(() => {
-          initDrawer();
-        });
+        initDrawer();
 
       } catch (err) {
 
-        console.error("Error cargando drawer:", err);
+        console.error(err);
 
       }
 
     }
 
     loadDrawer();
-
   </script>
 
 </body>

@@ -1,86 +1,46 @@
 function initDrawer() {
 
-  console.log("INIT DRAWER");
+  document.addEventListener("click", (e) => {
 
-  const fab = document.querySelector(".fab");
-  const drawer = document.querySelector(".drawer");
-  const overlay = document.querySelector(".drawer-overlay");
-  const closeBtn = document.querySelector(".drawer-close");
+    // ABRIR
+    if (e.target.closest(".fab")) {
 
-  console.log({
-    fab,
-    drawer,
-    overlay,
-    closeBtn
+      const drawer = document.querySelector(".drawer");
+      const overlay = document.querySelector(".drawer-overlay");
+
+      if (!drawer || !overlay) return;
+
+      drawer.classList.add("open");
+      overlay.classList.add("open");
+
+      document.body.style.overflow = "hidden";
+    }
+
+    // CERRAR CON X
+    if (e.target.closest(".drawer-close")) {
+
+      closeDrawer();
+    }
+
+    // CERRAR CON OVERLAY
+    if (e.target.classList.contains("drawer-overlay")) {
+
+      closeDrawer();
+    }
+
   });
-
-  if (!fab || !drawer || !overlay || !closeBtn) {
-
-    console.error("Drawer: faltan elementos");
-
-    return;
-  }
-
-  function openDrawer() {
-
-    console.log("OPEN");
-
-    drawer.classList.add("open");
-    overlay.classList.add("open");
-
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeDrawer() {
-
-    drawer.classList.remove("open");
-    overlay.classList.remove("open");
-
-    document.body.style.overflow = "";
-  }
-
-  fab.addEventListener("click", openDrawer);
-
-  closeBtn.addEventListener("click", closeDrawer);
-
-  overlay.addEventListener("click", closeDrawer);
 
 }
 
-// function initDrawer() {
+function closeDrawer() {
 
-//   const fab = document.querySelector(".fab");
-//   const drawer = document.querySelector(".drawer");
-//   const overlay = document.querySelector(".drawer-overlay");
-//   const closeBtn = document.querySelector(".drawer-close");
+  const drawer = document.querySelector(".drawer");
+  const overlay = document.querySelector(".drawer-overlay");
 
-//   if (!fab || !drawer || !overlay || !closeBtn) {
+  if (!drawer || !overlay) return;
 
-//     console.error("Drawer: faltan elementos");
+  drawer.classList.remove("open");
+  overlay.classList.remove("open");
 
-//     return;
-//   }
-
-//   function openDrawer() {
-
-//     drawer.classList.add("open");
-//     overlay.classList.add("open");
-
-//     document.body.style.overflow = "hidden";
-//   }
-
-//   function closeDrawer() {
-
-//     drawer.classList.remove("open");
-//     overlay.classList.remove("open");
-
-//     document.body.style.overflow = "";
-//   }
-
-//   fab.addEventListener("click", openDrawer);
-
-//   closeBtn.addEventListener("click", closeDrawer);
-
-//   overlay.addEventListener("click", closeDrawer);
-
-// }
+  document.body.style.overflow = "";
+}
