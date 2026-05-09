@@ -1,0 +1,17 @@
+/* =========================
+   CLIENTES
+========================= */
+
+.list-container {
+  padding: 30px;
+  color: white;
+}
+
+.list-container h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.list-container p {
+  opacity: 0.8;
+}
