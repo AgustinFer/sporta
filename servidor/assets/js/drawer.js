@@ -1,36 +1,49 @@
-function initDrawer() {
+/* ========================= */
+/* 🚪 DRAWER GLOBAL */
+/* ========================= */
 
-  document.addEventListener("click", (e) => {
+document.addEventListener("click", (e) => {
 
-    // ABRIR
-    if (e.target.closest(".fab")) {
+  /* ========================= */
+  /* ABRIR DRAWER */
+  /* ========================= */
 
-      const drawer = document.querySelector(".drawer");
-      const overlay = document.querySelector(".drawer-overlay");
+  if (e.target.closest(".fab")) {
 
-      if (!drawer || !overlay) return;
+    const drawer = document.querySelector(".drawer");
+    const overlay = document.querySelector(".drawer-overlay");
 
-      drawer.classList.add("open");
-      overlay.classList.add("open");
+    if (!drawer || !overlay) return;
 
-      document.body.style.overflow = "hidden";
-    }
+    drawer.classList.add("open");
+    overlay.classList.add("open");
 
-    // CERRAR CON X
-    if (e.target.closest(".drawer-close")) {
+    document.body.style.overflow = "hidden";
+  }
 
-      closeDrawer();
-    }
+  /* ========================= */
+  /* CERRAR CON X */
+  /* ========================= */
 
-    // CERRAR CON OVERLAY
-    if (e.target.classList.contains("drawer-overlay")) {
+  if (e.target.closest(".drawer-close")) {
 
-      closeDrawer();
-    }
+    closeDrawer();
+  }
 
-  });
+  /* ========================= */
+  /* CERRAR OVERLAY */
+  /* ========================= */
 
-}
+  if (e.target.classList.contains("drawer-overlay")) {
+
+    closeDrawer();
+  }
+
+});
+
+/* ========================= */
+/* CLOSE */
+/* ========================= */
 
 function closeDrawer() {
 
@@ -43,4 +56,5 @@ function closeDrawer() {
   overlay.classList.remove("open");
 
   document.body.style.overflow = "";
+
 }

@@ -103,11 +103,6 @@ async function loadDrawer() {
 
     container.innerHTML = html;
 
-    // reiniciar drawer
-    if (typeof initDrawer === "function") {
-      initDrawer();
-    }
-
   } catch (err) {
 
     console.error("Error cargando drawer:", err);
