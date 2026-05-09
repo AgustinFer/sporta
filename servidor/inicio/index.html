@@ -25,30 +25,74 @@
   <main class="main-content">
     <div id="header-container"></div>
 
-    <!-- DASHBOARD -->
-    <div class="dashboard">
+    <!-- HERO -->
+    <section class="hero">
 
-      <div class="card">
+      <div class="hero-left">
+        <p class="welcome">Bienvenido</p>
+
+        <h1 id="clock">00:00</h1>
+
+        <p class="date" id="date">
+          Sábado 9 de Mayo
+        </p>
+      </div>
+
+      <div class="weather-card">
+        <div class="weather-icon">☀️</div>
+
+        <div>
+          <h3>Berazategui</h3>
+          <p class="temp">18°C</p>
+          <span>Parcialmente nublado</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- GRID -->
+    <section class="home-grid">
+
+      <div class="info-card large">
+        <h3>Próximos turnos</h3>
+
+        <div class="turno-item">
+          <span>18:00</span>
+          <p>Cancha 1 - Fernández</p>
+        </div>
+
+        <div class="turno-item">
+          <span>19:30</span>
+          <p>Cancha 2 - Gómez</p>
+        </div>
+
+        <div class="turno-item">
+          <span>21:00</span>
+          <p>Cancha 3 - Martínez</p>
+        </div>
+      </div>
+
+      <div class="info-card">
         <h3>Turnos hoy</h3>
-        <p class="value">18</p>
+        <p class="big-number">18</p>
       </div>
 
-      <div class="card">
+      <div class="info-card">
+        <h3>Ingresos</h3>
+        <p class="big-number">$45k</p>
+      </div>
+
+      <div class="info-card">
         <h3>Canchas activas</h3>
-        <p class="value">3</p>
+        <p class="big-number">3</p>
       </div>
 
-      <div class="card">
-        <h3>Clientes registrados</h3>
-        <p class="value">124</p>
+      <div class="info-card">
+        <h3>Clientes</h3>
+        <p class="big-number">124</p>
       </div>
 
-      <div class="card">
-        <h3>Ingresos del día</h3>
-        <p class="value">$45.000</p>
-      </div>
-
-    </div>
+    </section>
 
   </main>
 
@@ -62,6 +106,30 @@
   <!-- JS DRAWER -->
   <script src="/assets/js/drawer.js"></script>
   <!-- FIN CONFIG GLOBAL -->
+
+  <!-- CLOCK -->
+  <script>
+    function updateClock() {
+      const now = new Date();
+
+      const time = now.toLocaleTimeString("es-AR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      const date = now.toLocaleDateString("es-AR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      });
+
+      document.getElementById("clock").textContent = time;
+      document.getElementById("date").textContent = date;
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
 
 </body>
 </html>
