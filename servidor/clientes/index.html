@@ -45,44 +45,8 @@
   <!-- DRAWER -->
   <div id="drawer-container"></div>
 
-  <!-- JS LAYOUT (carga sidebar + header) -->
+  <!-- JS LAYOUT (carga sidebar + header + drawer) -->
   <script src="/assets/js/layout.js"></script>
-
-  <script src="/assets/js/drawer.js"></script>
-
-  <script>
-
-    async function loadDrawer() {
-
-      try {
-
-        const page = document.body.dataset.page.toLowerCase();
-
-        const response = await fetch(
-          `/components/drawers/${page}.html`
-        );
-
-        if (!response.ok) {
-          throw new Error(`No existe drawer para ${page}`);
-        }
-
-        const html = await response.text();
-
-        document.getElementById("drawer-container").innerHTML = html;
-
-        initDrawer();
-
-      } catch (err) {
-
-        console.error("Error cargando drawer:", err);
-
-      }
-
-    }
-
-    loadDrawer();
-
-  </script>
 
 </body>
 </html>

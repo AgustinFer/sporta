@@ -1,6 +1,7 @@
 async function loadComponent(id, file) {
   const res = await fetch(file);
   const html = await res.text();
+
   document.getElementById(id).innerHTML = html;
 }
 
@@ -9,8 +10,8 @@ async function loadComponent(id, file) {
 /* ========================= */
 function normalizeRoute(route) {
   return route
-    .replace(/^\/+/, "")   // sin slash inicial
-    .replace(/\/+$/, "")   // sin slash final
+    .replace(/^\/+/, "")
+    .replace(/\/+$/, "")
     .toLowerCase();
 }
 
@@ -18,10 +19,12 @@ function normalizeRoute(route) {
 /* 🧠 UI */
 /* ========================= */
 function initUI() {
+
   const sidebar = document.querySelector(".sidebar");
   const menuToggle = document.getElementById("menuToggle");
 
   if (menuToggle && !menuToggle.dataset.bound) {
+
     menuToggle.dataset.bound = "true";
 
     menuToggle.onclick = () => {
@@ -30,48 +33,115 @@ function initUI() {
   }
 
   document.querySelectorAll(".menu-link").forEach(link => {
+
     if (link.dataset.bound) return;
+
     link.dataset.bound = "true";
 
     link.onclick = () => {
+
       if (window.innerWidth <= 768) {
         sidebar?.classList.remove("open");
       }
+
     };
+
   });
+
 }
 
 /* ========================= */
 /* 🔥 ACTIVE MENU */
 /* ========================= */
 function setActiveMenu(route) {
+
   const current = normalizeRoute(route);
 
-  document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+  document
+    .querySelectorAll(".menu-item")
+    .forEach(i => i.classList.remove("active"));
 
   document.querySelectorAll(".menu-link").forEach(link => {
+
     const r = normalizeRoute(link.dataset.route || "");
 
     if (r === current) {
       link.closest(".menu-item")?.classList.add("active");
     }
+
   });
+
 }
 
 /* ========================= */
-/* 🚀 LOAD PAGE (FIX DEFINITIVO) */
+/* 🚪 DRAWER */
+/* ========================= */
+async function loadDrawer() {
+
+  try {
+
+    const page = document.body.dataset.page?.toLowerCase();
+
+    if (!page) return;
+
+    const container = document.getElementById("drawer-container");
+
+    if (!container) return;
+
+    const response = await fetch(
+      `/components/drawers/${page}.html`
+    );
+
+    if (!response.ok) {
+
+      container.innerHTML = "";
+
+      return;
+    }
+
+    const html = await response.text();
+
+    container.innerHTML = html;
+
+    // reiniciar drawer
+    if (typeof initDrawer === "function") {
+      initDrawer();
+    }
+
+  } catch (err) {
+
+    console.error("Error cargando drawer:", err);
+
+  }
+
+}
+
+/* ========================= */
+/* 🚀 LOAD PAGE */
 /* ========================= */
 async function loadPage(route) {
+
   try {
+
     const cleanRoute = normalizeRoute(route);
 
     const res = await fetch(`/${cleanRoute}/index.html`);
-    if (!res.ok) throw new Error(`No existe /${cleanRoute}/index.html`);
+
+    if (!res.ok) {
+      throw new Error(`No existe /${cleanRoute}/index.html`);
+    }
 
     const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, "text/html");
 
+    const doc = new DOMParser().parseFromString(
+      html,
+      "text/html"
+    );
+
+    /* ========================= */
     /* 1. CONTENT */
+    /* ========================= */
+
     const newContent = doc.querySelector(".main-content");
     const currentContent = document.querySelector(".main-content");
 
@@ -79,141 +149,198 @@ async function loadPage(route) {
       currentContent.innerHTML = newContent.innerHTML;
     }
 
-    /* 2. BODY STATE (FIX ROBUSTO) */
-    // limpiamos clases sin romper estructura base
+    /* ========================= */
+    /* 2. BODY STATE */
+    /* ========================= */
+
     document.body.className = "";
-    doc.body.classList.forEach(c => document.body.classList.add(c));
 
-    document.body.dataset.page = doc.body.dataset.page || cleanRoute;
+    doc.body.classList.forEach(c => {
+      document.body.classList.add(c);
+    });
 
-    /* 3. CSS DINÁMICO (CRÍTICO PARA TU BUG) 
-    const newStyle = doc.querySelector("#page-style");
-    const currentStyle = document.querySelector("#page-style");
+    document.body.dataset.page =
+      doc.body.dataset.page || cleanRoute;
 
-    const fallbackCss = `/${cleanRoute}/${cleanRoute}.css`;
+    /* ========================= */
+    /* 3. CSS DINÁMICO */
+    /* ========================= */
 
-    if (currentStyle) {
-      if (newStyle?.getAttribute("href")) {
-        currentStyle.href = newStyle.getAttribute("href");
-      } else {
-        currentStyle.href = fallbackCss;
-      }
-    } */
-
-    /* 3. CSS DINÁMICO (FIX DEFINITIVO) */
-
-    // borrar CSS anterior
     const oldStyle = document.querySelector("#page-style");
+
     if (oldStyle) {
       oldStyle.remove();
     }
 
-    // obtener nuevo CSS
     const newStyle = doc.querySelector("#page-style");
 
     if (newStyle) {
+
       const style = document.createElement("link");
 
       style.id = "page-style";
       style.rel = "stylesheet";
 
-      // anti-cache SPA
       const href = newStyle.getAttribute("href");
+
       style.href = `${href}?v=${Date.now()}`;
 
       document.head.appendChild(style);
 
-      // esperar carga REAL del CSS
       await new Promise(resolve => {
+
         style.onload = resolve;
         style.onerror = resolve;
+
       });
+
     }
 
+    /* ========================= */
     /* 4. TITLE */
-    const titleEl = document.getElementById("page-title");
-    if (titleEl) {
-      titleEl.textContent =
-        doc.body.dataset.page ||
-        cleanRoute.charAt(0).toUpperCase() + cleanRoute.slice(1);
-    }
+    /* ========================= */
 
     const pageTitle =
       doc.body.dataset.page ||
-      cleanRoute.charAt(0).toUpperCase() + cleanRoute.slice(1);
+      cleanRoute.charAt(0).toUpperCase() +
+      cleanRoute.slice(1);
+
+    const titleEl = document.getElementById("page-title");
 
     if (titleEl) {
       titleEl.textContent = pageTitle;
     }
 
-    /* 🔥 TÍTULO DEL NAVEGADOR */
     document.title = `Sporta - ${pageTitle}`;
 
+    /* ========================= */
     /* 5. DATE */
+    /* ========================= */
+
     const dateEl = document.getElementById("current-date");
+
     if (dateEl) {
-      dateEl.textContent = new Date().toLocaleDateString("es-AR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      });
+
+      dateEl.textContent = new Date().toLocaleDateString(
+        "es-AR",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric"
+        }
+      );
+
     }
 
+    /* ========================= */
     /* 6. MENU ACTIVE */
+    /* ========================= */
+
     setActiveMenu(cleanRoute);
 
+    /* ========================= */
     /* 7. UI REINIT */
+    /* ========================= */
+
     initUI();
 
-    /* 8. RESET VISUAL (EVITA GLITCHES DE FONDO) */
+    /* ========================= */
+    /* 8. DRAWER */
+    /* ========================= */
+
+    await loadDrawer();
+
+    /* ========================= */
+    /* 9. RESET VISUAL */
+    /* ========================= */
+
     window.scrollTo(0, 0);
+
     document.body.style.background = "";
     document.documentElement.style.background = "";
 
   } catch (err) {
+
     console.error("Error cargando página:", err);
+
   }
+
 }
 
 /* ========================= */
 /* 🧭 ROUTER */
 /* ========================= */
 function initRouter() {
+
   document.addEventListener("click", (e) => {
+
     const link = e.target.closest(".menu-link");
+
     if (!link) return;
 
-    const route = normalizeRoute(link.dataset.route);
+    const route = normalizeRoute(
+      link.dataset.route
+    );
+
     e.preventDefault();
 
-    history.pushState({}, "", "/" + route);
+    history.pushState(
+      {},
+      "",
+      "/" + route
+    );
+
     loadPage(route);
+
   });
 
   window.addEventListener("popstate", () => {
-    const route = normalizeRoute(window.location.pathname);
+
+    const route = normalizeRoute(
+      window.location.pathname
+    );
+
     loadPage(route || "inicio");
+
   });
+
 }
 
 /* ========================= */
 /* 🧱 INIT */
 /* ========================= */
 async function initLayout() {
-  await loadComponent("sidebar-container", "/components/sidebar.html");
-  await loadComponent("header-container", "/components/header.html");
+
+  await loadComponent(
+    "sidebar-container",
+    "/components/sidebar.html"
+  );
+
+  await loadComponent(
+    "header-container",
+    "/components/header.html"
+  );
 
   initRouter();
+
   initUI();
+
 }
 
 /* ========================= */
-/* 🚀 START (CRÍTICO) */
+/* 🚀 START */
 /* ========================= */
-document.addEventListener("DOMContentLoaded", async () => {
-  await initLayout();
+document.addEventListener(
+  "DOMContentLoaded",
+  async () => {
 
-  const route = normalizeRoute(window.location.pathname);
+    await initLayout();
 
-  await loadPage(route || "inicio");
-});
+    const route = normalizeRoute(
+      window.location.pathname
+    );
+
+    await loadPage(route || "inicio");
+
+  }
+);
