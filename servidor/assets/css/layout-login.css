@@ -55,7 +55,6 @@
 /* CARD LOGIN */
 .login-card {
   position: absolute;
-  background-color: rgba(26, 26, 46, 0.95);
   top: 50%;
   left: 0%;
   transform: translateY(-50%);
