@@ -10,8 +10,10 @@
 .list-container h2 {
   font-size: 2rem;
   margin-bottom: 10px;
+  color: rgb(116, 116, 221);
 }
 
 .list-container p {
   opacity: 0.8;
+  color: rgb(116, 116, 221);
 }
