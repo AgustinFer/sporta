@@ -8,6 +8,25 @@
   overflow: hidden;
 }
 
+h2 {
+  color: rgba(26, 26, 46, 0.95);
+}
+
+/* ELEMENTOS BASE */
+button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(26, 26, 46, 0.95);
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 /* FONDO ANIMADO */
 .background {
   position: absolute;
