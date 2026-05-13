@@ -106,35 +106,104 @@ $clientes = $stmt->fetchAll();
     </div>
 
     <!-- LISTADO -->
-    <div class="clientes-grid">
+    <!-- TABLA -->
+    <div class="table-container">
 
-      <?php if (count($clientes) > 0): ?>
+      <table class="clientes-table">
 
-        <?php foreach ($clientes as $cliente): ?>
+        <thead>
 
-          <div class="cliente-card">
+          <tr>
 
-            <h3>
-              <?= htmlspecialchars(
-                $cliente["cliente_nombre"]
-              ) ?>
-            </h3>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Celular</th>
+            <th>DNI</th>
+            <th>Estado</th>
 
-          </div>
+          </tr>
 
-        <?php endforeach; ?>
+        </thead>
 
-      <?php else: ?>
+        <tbody>
 
-        <div class="empty-state">
+          <?php if (count($clientes) > 0): ?>
 
-          <p>
-            No hay clientes registrados
-          </p>
+            <?php foreach ($clientes as $cliente): ?>
 
-        </div>
+              <tr>
 
-      <?php endif; ?>
+                <td>
+                  <?= htmlspecialchars($cliente["cliente_id"]) ?>
+                </td>
+
+                <td>
+                  <?= htmlspecialchars($cliente["cliente_nombre"]) ?>
+                </td>
+
+                <td>
+                  <?= htmlspecialchars($cliente["cliente_apellido"]) ?>
+                </td>
+
+                <td>
+                  <?= htmlspecialchars(
+                    $cliente["cliente_email"] ?? "-"
+                  ) ?>
+                </td>
+
+                <td>
+                  <?= htmlspecialchars(
+                    $cliente["cliente_celular"] ?? "-"
+                  ) ?>
+                </td>
+
+                <td>
+                  <?= htmlspecialchars(
+                    $cliente["cliente_dni"] ?? "-"
+                  ) ?>
+                </td>
+
+                <td>
+
+                  <?php if ($cliente["cliente_estado"]): ?>
+
+                    <span class="status active">
+                      Activo
+                    </span>
+
+                  <?php else: ?>
+
+                    <span class="status inactive">
+                      Inactivo
+                    </span>
+
+                  <?php endif; ?>
+
+                </td>
+
+              </tr>
+
+            <?php endforeach; ?>
+
+          <?php else: ?>
+
+            <tr>
+
+              <td colspan="7">
+
+                No hay clientes registrados
+
+              </td>
+
+            </tr>
+
+          <?php endif; ?>
+
+        </tbody>
+
+      </table>
 
     </div>
 
