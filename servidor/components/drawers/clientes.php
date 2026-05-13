@@ -4,7 +4,6 @@
 <!-- DRAWER -->
 <aside class="drawer">
 
-  <!-- HEADER -->
   <div class="drawer-header">
 
     <h3>
@@ -17,25 +16,22 @@
 
   </div>
 
-  <!-- FORM -->
   <form
     class="drawer-form"
     method="POST"
-    action="/clientes"
+    action=""
   >
 
     <!-- NOMBRE -->
     <div>
 
-      <label for="cliente_nombre">
+      <label>
         Nombre
       </label>
 
       <input
         type="text"
-        id="cliente_nombre"
         name="cliente_nombre"
-        placeholder="Ingresar nombre"
         required
       >
 
@@ -44,31 +40,28 @@
     <!-- APELLIDO -->
     <div>
 
-      <label for="cliente_apellido">
+      <label>
         Apellido
       </label>
 
       <input
         type="text"
-        id="cliente_apellido"
         name="cliente_apellido"
-        placeholder="Ingresar apellido"
+        required
       >
 
     </div>
 
-    <!-- TELÉFONO -->
+    <!-- CELULAR -->
     <div>
 
-      <label for="cliente_telefono">
+      <label>
         Teléfono
       </label>
 
       <input
         type="text"
-        id="cliente_telefono"
-        name="cliente_telefono"
-        placeholder="Ingresar teléfono"
+        name="cliente_celular"
       >
 
     </div>
@@ -76,15 +69,27 @@
     <!-- EMAIL -->
     <div>
 
-      <label for="cliente_email">
+      <label>
         Email
       </label>
 
       <input
         type="email"
-        id="cliente_email"
         name="cliente_email"
-        placeholder="Ingresar email"
+      >
+
+    </div>
+
+    <!-- DNI -->
+    <div>
+
+      <label>
+        DNI
+      </label>
+
+      <input
+        type="text"
+        name="cliente_dni"
       >
 
     </div>

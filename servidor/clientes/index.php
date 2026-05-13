@@ -9,17 +9,34 @@ require "../config/conexion.php";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $nombre = trim($_POST["cliente_nombre"] ?? "");
+    $apellido = trim($_POST["cliente_apellido"] ?? "");
+    $email = trim($_POST["cliente_email"] ?? "");
+    $celular = trim($_POST["cliente_celular"] ?? "");
 
     if (!empty($nombre)) {
 
         $stmt = $pdo->prepare("
             INSERT INTO clientes (
-                cliente_nombre
+                cliente_nombre,
+                cliente_apellido,
+                cliente_email,
+                cliente_celular,
+                cliente_estado,
+                cliente_localidad_id,
+                cliente_provincia_id,
+                cliente_pais_id
             )
-            VALUES (?)
+            VALUES (
+                ?, ?, ?, ?, 1, 1, 1, 1
+            )
         ");
 
-        $stmt->execute([$nombre]);
+        $stmt->execute([
+            $nombre,
+            $apellido,
+            $email,
+            $celular
+        ]);
 
         header("Location: /clientes");
         exit;
