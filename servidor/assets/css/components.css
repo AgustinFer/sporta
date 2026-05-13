@@ -99,10 +99,19 @@
 /* 📦 CONTENEDORES APP */
 /* ========================= */
 
-.dashboard,
 .list-container,
 .settings-container {
-  color: white;
+  padding: 30px;
+  color: rgba(26, 26, 46, 0.95);
+}
+
+.list-container h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.list-container p {
+  opacity: 0.8;
 }
 
 /* FAB */
