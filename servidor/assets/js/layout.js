@@ -1,5 +1,7 @@
 async function loadComponent(id, file) {
-  const res = await fetch(file);
+  const res = await fetch(
+    `${file}?v=${Date.now()}`
+  );
   const html = await res.text();
 
   document.getElementById(id).innerHTML = html;
@@ -89,7 +91,7 @@ async function loadDrawer() {
     if (!container) return;
 
     const response = await fetch(
-      `/components/drawers/${page}.php`
+      `/components/drawers/${page}.php?v=${Date.now()}`
     );
 
     if (!response.ok) {
