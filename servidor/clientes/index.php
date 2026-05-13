@@ -33,6 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $apellido = trim($_POST["cliente_apellido"] ?? "");
     $email = trim($_POST["cliente_email"] ?? "");
     $celular = trim($_POST["cliente_celular"] ?? "");
+    $dni = trim($_POST["cliente_dni"] ?? "");
 
     if (!empty($nombre)) {
 
@@ -42,6 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 cliente_apellido,
                 cliente_email,
                 cliente_celular,
+                cliente_dni,
                 cliente_estado,
                 cliente_localidad_id,
                 cliente_provincia_id,
