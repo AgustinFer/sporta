@@ -10,12 +10,12 @@
 .list-container h2 {
   font-size: 2rem;
   margin-bottom: 10px;
-  color: rgb(116, 116, 221);
+  color: rgba(26, 26, 46, 0.95);
 }
 
 .list-container p {
   opacity: 0.8;
-  color: rgb(116, 116, 221);
+  color: rgba(26, 26, 46, 0.95);
 }
 
 .table-container {
