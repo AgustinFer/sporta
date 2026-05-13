@@ -211,44 +211,25 @@ async function loadPage(route) {
     document.title = `Sporta - ${pageTitle}`;
 
     /* ========================= */
-    /* 5. DATE */
-    /* ========================= */
-
-    const dateEl = document.getElementById("current-date");
-
-    if (dateEl) {
-
-      dateEl.textContent = new Date().toLocaleDateString(
-        "es-AR",
-        {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric"
-        }
-      );
-
-    }
-
-    /* ========================= */
-    /* 6. MENU ACTIVE */
+    /* 5. MENU ACTIVE */
     /* ========================= */
 
     setActiveMenu(cleanRoute);
 
     /* ========================= */
-    /* 7. UI REINIT */
+    /* 6. UI REINIT */
     /* ========================= */
 
     initUI();
 
     /* ========================= */
-    /* 8. DRAWER */
+    /* 7. DRAWER */
     /* ========================= */
 
     await loadDrawer();
 
     /* ========================= */
-    /* 9. RESET VISUAL */
+    /* 8. RESET VISUAL */
     /* ========================= */
 
     window.scrollTo(0, 0);
@@ -261,6 +242,29 @@ async function loadPage(route) {
     console.error("Error cargando página:", err);
 
   }
+
+}
+
+/* ========================= */
+/* DATE */
+/* ========================= */
+
+function updateDate() {
+
+  const dateEl =
+    document.getElementById("current-date");
+
+  if (!dateEl) return;
+
+  dateEl.textContent =
+    new Date().toLocaleDateString(
+      "es-AR",
+      {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      }
+    );
 
 }
 
@@ -317,6 +321,8 @@ async function initLayout() {
     "header-container",
     "/components/header.php"
   );
+
+  updateDate();
 
   initRouter();
 
