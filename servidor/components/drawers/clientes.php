@@ -21,7 +21,7 @@
   <form
     class="drawer-form"
     method="POST"
-    action="/clientes/index.php"
+    action="/clientes"
   >
 
     <!-- NOMBRE -->

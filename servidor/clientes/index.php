@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $stmt->execute([$nombre]);
 
-        header("Location: /clientes/index.php");
+        header("Location: /clientes");
         exit;
 
     }
