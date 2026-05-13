@@ -114,6 +114,10 @@
   opacity: 0.8;
 }
 
+.welcome {
+  color: rgba(26, 26, 46, 0.95);
+}
+
 /* FAB */
 .fab {
   position: fixed;

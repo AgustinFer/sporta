@@ -2,8 +2,6 @@
    CLIENTES
 ========================= */
 
-
-
 /* =========================
    TABLA
 ========================= */
@@ -18,10 +16,16 @@
 .clientes-table {
   width: 100%;
   border-collapse: collapse;
+
   background: rgba(255,255,255,0.04);
+
   border-radius: 16px;
   overflow: hidden;
+
   backdrop-filter: blur(10px);
+
+  /* BORDE EXTERNO */
+  border: 1px solid rgba(26, 26, 46, 0.12);
 }
 
 /* =========================
@@ -34,8 +38,11 @@
 
 .clientes-table th {
   padding: 16px;
+
   text-align: left;
+
   font-weight: 600;
+
   color: rgba(26, 26, 46, 0.95);
 
   border-bottom:
@@ -68,6 +75,14 @@
 .clientes-table th:last-child,
 .clientes-table td:last-child {
   border-right: none;
+}
+
+/* =========================
+   ÚLTIMA FILA
+========================= */
+
+.clientes-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* =========================
