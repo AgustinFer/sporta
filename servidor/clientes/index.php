@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 $stmt = $pdo->query("
     SELECT *
     FROM clientes
-    ORDER BY cliente_id DESC
+    ORDER BY cliente_id
 ");
 
 $clientes = $stmt->fetchAll();
