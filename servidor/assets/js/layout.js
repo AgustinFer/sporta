@@ -89,7 +89,7 @@ async function loadDrawer() {
     if (!container) return;
 
     const response = await fetch(
-      `/components/drawers/${page}.html`
+      `/components/drawers/${page}.php`
     );
 
     if (!response.ok) {
@@ -120,10 +120,10 @@ async function loadPage(route) {
 
     const cleanRoute = normalizeRoute(route);
 
-    const res = await fetch(`/${cleanRoute}/index.html`);
+    const res = await fetch(`/${cleanRoute}/index.php`);
 
     if (!res.ok) {
-      throw new Error(`No existe /${cleanRoute}/index.html`);
+      throw new Error(`No existe /${cleanRoute}/index.php`);
     }
 
     const html = await res.text();
@@ -308,12 +308,12 @@ async function initLayout() {
 
   await loadComponent(
     "sidebar-container",
-    "/components/sidebar.html"
+    "/components/sidebar.php"
   );
 
   await loadComponent(
     "header-container",
-    "/components/header.html"
+    "/components/header.php"
   );
 
   initRouter();
