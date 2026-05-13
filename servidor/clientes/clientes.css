@@ -18,13 +18,16 @@
   color: rgba(26, 26, 46, 0.95);
 }
 
+/* =========================
+   TABLA
+========================= */
+
 .table-container {
   width: 100%;
   overflow-x: auto;
   margin-top: 20px;
+  padding: 0 30px 30px;
 }
-
-/* Prueba tabla */
 
 .clientes-table {
   width: 100%;
@@ -32,41 +35,86 @@
   background: rgba(255,255,255,0.04);
   border-radius: 16px;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
+
+/* =========================
+   CABECERA
+========================= */
 
 .clientes-table thead {
-  background: rgba(255,255,255,0.08);
-}
-
-.clientes-table th,
-.clientes-table td {
-  padding: 14px 16px;
-  text-align: left;
+  background: rgba(26, 26, 46, 0.12);
 }
 
 .clientes-table th {
+  padding: 16px;
+  text-align: left;
   font-weight: 600;
+  color: rgba(26, 26, 46, 0.95);
+
+  border-bottom:
+    1px solid rgba(26, 26, 46, 0.12);
+
+  border-right:
+    1px solid rgba(26, 26, 46, 0.08);
 }
 
-.clientes-table tbody tr {
-  border-top: 1px solid rgba(255,255,255,0.06);
+/* =========================
+   CELDAS
+========================= */
+
+.clientes-table td {
+  padding: 14px 16px;
+
+  color: rgba(26, 26, 46, 0.95);
+
+  border-bottom:
+    1px solid rgba(26, 26, 46, 0.08);
+
+  border-right:
+    1px solid rgba(26, 26, 46, 0.06);
 }
+
+/* =========================
+   ÚLTIMA COLUMNA
+========================= */
+
+.clientes-table th:last-child,
+.clientes-table td:last-child {
+  border-right: none;
+}
+
+/* =========================
+   HOVER
+========================= */
 
 .clientes-table tbody tr:hover {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.05);
 }
 
+/* =========================
+   ESTADOS
+========================= */
+
 .status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   padding: 4px 10px;
+
   border-radius: 999px;
+
   font-size: 12px;
   font-weight: 600;
 }
 
 .status.active {
   background: rgba(0,255,120,0.15);
+  color: rgb(0,120,60);
 }
 
 .status.inactive {
   background: rgba(255,80,80,0.15);
+  color: rgb(180,40,40);
 }
