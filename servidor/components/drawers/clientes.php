@@ -4,36 +4,92 @@
 <!-- DRAWER -->
 <aside class="drawer">
 
+  <!-- HEADER -->
   <div class="drawer-header">
-    <h3>Nuevo cliente</h3>
+
+    <h3>
+      Nuevo cliente
+    </h3>
 
     <button class="drawer-close">
       ✕
     </button>
+
   </div>
 
-  <form class="drawer-form">
+  <!-- FORM -->
+  <form
+    class="drawer-form"
+    method="POST"
+    action="/clientes/index.php"
+  >
 
+    <!-- NOMBRE -->
     <div>
-      <label>Nombre</label>
-      <input type="text">
+
+      <label for="cliente_nombre">
+        Nombre
+      </label>
+
+      <input
+        type="text"
+        id="cliente_nombre"
+        name="cliente_nombre"
+        placeholder="Ingresar nombre"
+        required
+      >
+
     </div>
 
+    <!-- APELLIDO -->
     <div>
-      <label>Apellido</label>
-      <input type="text">
+
+      <label for="cliente_apellido">
+        Apellido
+      </label>
+
+      <input
+        type="text"
+        id="cliente_apellido"
+        name="cliente_apellido"
+        placeholder="Ingresar apellido"
+      >
+
     </div>
 
+    <!-- TELÉFONO -->
     <div>
-      <label>Teléfono</label>
-      <input type="text">
+
+      <label for="cliente_telefono">
+        Teléfono
+      </label>
+
+      <input
+        type="text"
+        id="cliente_telefono"
+        name="cliente_telefono"
+        placeholder="Ingresar teléfono"
+      >
+
     </div>
 
+    <!-- EMAIL -->
     <div>
-      <label>Email</label>
-      <input type="email">
+
+      <label for="cliente_email">
+        Email
+      </label>
+
+      <input
+        type="email"
+        id="cliente_email"
+        name="cliente_email"
+        placeholder="Ingresar email"
+      >
+
     </div>
 
+    <!-- SUBMIT -->
     <button
       type="submit"
       class="drawer-submit"
