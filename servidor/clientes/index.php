@@ -35,7 +35,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $celular = trim($_POST["cliente_celular"] ?? "");
     $dni = trim($_POST["cliente_dni"] ?? "");
 
-    if (!empty($nombre)) {
+    if (
+        !empty($nombre) &&
+        !empty($apellido)
+    ) {
 
         $stmt = $pdo->prepare("
             INSERT INTO clientes (
@@ -50,15 +53,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 cliente_pais_id
             )
             VALUES (
-                ?, ?, ?, ?, 1, 1, 1, 1
+                ?, ?, ?, ?, ?, 1, 1, 1, 1
             )
         ");
 
         $stmt->execute([
             $nombre,
             $apellido,
-            $email,
-            $celular
+            $email ?: null,
+            $celular ?: null,
+            $dni ?: null
         ]);
 
         header("Location: /clientes");
@@ -161,15 +165,21 @@ $clientes = $stmt->fetchAll();
               <tr>
 
                 <td>
-                  <?= htmlspecialchars($cliente["cliente_id"]) ?>
+                  <?= htmlspecialchars(
+                    $cliente["cliente_id"]
+                  ) ?>
                 </td>
 
                 <td>
-                  <?= htmlspecialchars($cliente["cliente_nombre"]) ?>
+                  <?= htmlspecialchars(
+                    $cliente["cliente_nombre"]
+                  ) ?>
                 </td>
 
                 <td>
-                  <?= htmlspecialchars($cliente["cliente_apellido"]) ?>
+                  <?= htmlspecialchars(
+                    $cliente["cliente_apellido"]
+                  ) ?>
                 </td>
 
                 <td>
