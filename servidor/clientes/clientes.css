@@ -24,7 +24,6 @@
 
   backdrop-filter: blur(10px);
 
-  /* BORDE EXTERNO */
   border: 1px solid rgba(26, 26, 46, 0.12);
 }
 
@@ -118,4 +117,41 @@
 .status.inactive {
   background: rgba(255,80,80,0.15);
   color: rgb(180,40,40);
+}
+
+/* =========================
+   ACCIONES
+========================= */
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =========================
+   BOTÓN ELIMINAR
+========================= */
+
+.delete-btn {
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: rgba(255,80,80,0.12);
+  color: rgb(180,40,40);
+
+  transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: rgba(255,80,80,0.20);
+  transform: translateY(-1px);
 }

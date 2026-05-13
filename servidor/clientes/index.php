@@ -3,6 +3,27 @@
 require "../config/conexion.php";
 
 /* ========================= */
+/* 🗑️ ELIMINAR CLIENTE */
+/* ========================= */
+
+if (isset($_POST["delete_cliente_id"])) {
+
+    $id = (int) $_POST["delete_cliente_id"];
+
+    $stmt = $pdo->prepare("
+        UPDATE clientes
+        SET cliente_estado = 0
+        WHERE cliente_id = ?
+    ");
+
+    $stmt->execute([$id]);
+
+    header("Location: /clientes");
+    exit;
+
+}
+
+/* ========================= */
 /* 📥 ALTA CLIENTE */
 /* ========================= */
 
@@ -52,6 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 $stmt = $pdo->query("
     SELECT *
     FROM clientes
+    WHERE cliente_estado = 1
     ORDER BY cliente_id
 ");
 
@@ -122,6 +144,7 @@ $clientes = $stmt->fetchAll();
             <th>Celular</th>
             <th>DNI</th>
             <th>Estado</th>
+            <th>Acciones</th>
 
           </tr>
 
@@ -167,19 +190,40 @@ $clientes = $stmt->fetchAll();
 
                 <td>
 
-                  <?php if ($cliente["cliente_estado"]): ?>
+                  <span class="status active">
+                    Activo
+                  </span>
 
-                    <span class="status active">
-                      Activo
-                    </span>
+                </td>
 
-                  <?php else: ?>
+                <!-- ACCIONES -->
+                <td>
 
-                    <span class="status inactive">
-                      Inactivo
-                    </span>
+                  <div class="table-actions">
 
-                  <?php endif; ?>
+                    <form method="POST">
+
+                      <input
+                        type="hidden"
+                        name="delete_cliente_id"
+                        value="<?= $cliente["cliente_id"] ?>"
+                      >
+
+                      <button
+                        type="submit"
+                        class="delete-btn"
+                        onclick="
+                          return confirm(
+                            '¿Eliminar cliente?'
+                          )
+                        "
+                      >
+                        Eliminar
+                      </button>
+
+                    </form>
+
+                  </div>
 
                 </td>
 
@@ -191,7 +235,7 @@ $clientes = $stmt->fetchAll();
 
             <tr>
 
-              <td colspan="7">
+              <td colspan="8">
 
                 No hay clientes registrados
 
