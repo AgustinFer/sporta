@@ -229,7 +229,15 @@ async function loadPage(route) {
     await loadDrawer();
 
     /* ========================= */
-    /* 8. RESET VISUAL */
+    /* 8. PAGE INIT */
+    /* ========================= */
+
+    if (cleanRoute === "inicio") {
+      initInicio();
+    }
+
+    /* ========================= */
+    /* 9. RESET VISUAL */
     /* ========================= */
 
     window.scrollTo(0, 0);
@@ -265,6 +273,148 @@ function updateDate() {
         year: "numeric"
       }
     );
+
+}
+
+/* ========================= */
+/* 🏠 INICIO */
+/* ========================= */
+
+let clockInterval = null;
+
+function initInicio() {
+
+  initClock();
+
+  loadWeather();
+
+}
+
+/* ========================= */
+/* ⏰ CLOCK */
+/* ========================= */
+
+function initClock() {
+
+  if (clockInterval) {
+    clearInterval(clockInterval);
+  }
+
+  function updateClock() {
+
+    const clock =
+      document.getElementById("clock");
+
+    const date =
+      document.getElementById("date");
+
+    if (!clock || !date) return;
+
+    const now = new Date();
+
+    clock.textContent =
+      now.toLocaleTimeString(
+        "es-AR",
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
+
+    date.textContent =
+      now.toLocaleDateString(
+        "es-AR",
+        {
+          weekday: "long",
+          day: "numeric",
+          month: "long"
+        }
+      );
+
+  }
+
+  updateClock();
+
+  clockInterval =
+    setInterval(updateClock, 1000);
+
+}
+
+/* ========================= */
+/* 🌤️ WEATHER */
+/* ========================= */
+
+async function loadWeather() {
+
+  try {
+
+    const tempEl =
+      document.getElementById("weatherTemp");
+
+    const descEl =
+      document.getElementById("weatherDesc");
+
+    const iconEl =
+      document.getElementById("weatherIcon");
+
+    if (!tempEl || !descEl || !iconEl) {
+      return;
+    }
+
+    const lat = -34.7653;
+    const lon = -58.2128;
+
+    const response = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code`
+    );
+
+    const data = await response.json();
+
+    const temp =
+      Math.round(
+        data.current.temperature_2m
+      );
+
+    const code =
+      data.current.weather_code;
+
+    const weatherMap = {
+
+      0: ["☀️", "Despejado"],
+      1: ["🌤️", "Mayormente despejado"],
+      2: ["⛅", "Parcialmente nublado"],
+      3: ["☁️", "Nublado"],
+      45: ["🌫️", "Niebla"],
+      48: ["🌫️", "Niebla"],
+      51: ["🌦️", "Llovizna"],
+      61: ["🌧️", "Lluvia"],
+      63: ["🌧️", "Lluvia"],
+      65: ["⛈️", "Tormenta"],
+      71: ["❄️", "Nieve"]
+
+    };
+
+    const weather =
+      weatherMap[code] ||
+      ["🌡️", "Clima"];
+
+    tempEl.textContent =
+      `${temp}°C`;
+
+    descEl.textContent =
+      weather[1];
+
+    iconEl.textContent =
+      weather[0];
+
+  } catch (err) {
+
+    console.error(
+      "Error clima:",
+      err
+    );
+
+  }
 
 }
 
