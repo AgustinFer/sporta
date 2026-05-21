@@ -6,13 +6,13 @@
   <title>Sporta - Inicio</title>
 
   <!-- CSS GLOBAL -->
-  <link rel="stylesheet" href="/assets/css/global.css">
-  <link rel="stylesheet" href="/assets/css/layout.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
-  <link rel="stylesheet" href="/assets/css/drawer.css">
+  <link rel="stylesheet" href="../assets/css/global.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/drawer.css">
 
   <!-- CSS MÓDULO -->
-  <link id="page-style" rel="stylesheet" href="/inicio/inicio.css">
+  <link id="page-style" rel="stylesheet" href="inicio.css">
 </head>
 
 <body class="screen" data-page="Inicio">
@@ -111,10 +111,10 @@
   <div id="drawer-container"></div>
 
   <!-- JS LAYOUT (carga sidebar + header) -->
-  <script src="/assets/js/layout.js"></script>
+  <script src="../assets/js/layout.js"></script>
 
   <!-- JS DRAWER -->
-  <script src="/assets/js/drawer.js"></script>
+  <script src="../assets/js/drawer.js"></script>
   <!-- FIN CONFIG GLOBAL -->
 
 </body>
