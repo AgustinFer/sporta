@@ -2,6 +2,8 @@
 
 require "../config/conexion.php";
 
+$pdo = conexion();
+
 /* ========================= */
 /* 🗑️ ELIMINAR CLIENTE */
 /* ========================= */
