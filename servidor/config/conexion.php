@@ -1,10 +1,9 @@
 <?php
 
-function conexion(){
 $host = "localhost";
 $db   = "sporta";
-$user = "root";
-$pass = "BJ/2StZxjvnc";
+$user = "sporta";
+$pass = "sporta";
 
 try {
 
@@ -19,11 +18,8 @@ try {
         PDO::ERRMODE_EXCEPTION
     );
 
-    return $pdo;
-
 } catch (PDOException $e) {
 
     die("Error DB: " . $e->getMessage());
 
-}
 }
