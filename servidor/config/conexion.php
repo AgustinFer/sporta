@@ -1,29 +1,29 @@
 <?php
 
 function conexion(){
-$host = "localhost";
-$db   = "sporta";
-$user = "root";
-$pass = "BJ/2StZxjvnc";
+    $host = "localhost";
+    $db   = "sporta";
+    $user = "sporta";
+    $pass = "sporta";
 
-try {
+    try {
 
-    $pdo = new PDO(
-        "mysql:host=$host;dbname=$db;charset=utf8",
-        $user,
-        $pass
-    );
+        $pdo = new PDO(
+            "mysql:host=$host;dbname=$db;charset=utf8",
+            $user,
+            $pass
+        );
 
-    $pdo->setAttribute(
-        PDO::ATTR_ERRMODE,
-        PDO::ERRMODE_EXCEPTION
-    );
+        $pdo->setAttribute(
+            PDO::ATTR_ERRMODE,
+            PDO::ERRMODE_EXCEPTION
+        );
 
-    return $pdo;
+        return $pdo;
 
-} catch (PDOException $e) {
+    } catch (PDOException $e) {
 
-    die("Error DB: " . $e->getMessage());
+        die("Error DB: " . $e->getMessage());
 
-}
+    }
 }
