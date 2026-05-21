@@ -1,10 +1,30 @@
 async function loadComponent(id, file) {
   const res = await fetch(
-    `${file}?v=${Date.now()}`
+    resolveAppPath(`${file}?v=${Date.now()}`)
   );
   const html = await res.text();
 
   document.getElementById(id).innerHTML = html;
+}
+
+const APP_BASE = (function() {
+  const script = document.currentScript || document.querySelector('script[src*="layout.js"]');
+  const pathname = new URL(script.src, window.location.origin).pathname;
+  return pathname.replace(/\/assets\/js\/layout\.js$/, "") || "/";
+})();
+
+function resolveAppPath(path) {
+  const base = APP_BASE.endsWith("/") ? APP_BASE : APP_BASE + "/";
+  return new URL(path, window.location.origin + base).href;
+}
+
+function getRoutePath(route) {
+  const clean = normalizeRoute(route);
+  if (!clean) {
+    return APP_BASE;
+  }
+  const path = APP_BASE === "/" ? `/${clean}` : `${APP_BASE}/${clean}`;
+  return path.replace(/\/+/g, "/");
 }
 
 /* ========================= */
@@ -91,7 +111,7 @@ async function loadDrawer() {
     if (!container) return;
 
     const response = await fetch(
-      `/components/drawers/${page}.php?v=${Date.now()}`
+      resolveAppPath(`components/drawers/${page}.php?v=${Date.now()}`)
     );
 
     if (!response.ok) {
@@ -121,11 +141,10 @@ async function loadPage(route) {
   try {
 
     const cleanRoute = normalizeRoute(route);
-
-    const res = await fetch(`/${cleanRoute}/index.php`);
+    const res = await fetch(resolveAppPath(`${cleanRoute}/index.php`));
 
     if (!res.ok) {
-      throw new Error(`No existe /${cleanRoute}/index.php`);
+      throw new Error(`No existe ${resolveAppPath(`${cleanRoute}/index.php`)}`);
     }
 
     const html = await res.text();
@@ -163,35 +182,42 @@ async function loadPage(route) {
     /* 3. CSS DINÁMICO */
     /* ========================= */
 
-    const oldStyle = document.querySelector("#page-style");
+      const oldStyle = document.querySelector("#page-style");
+      const newStyle = doc.querySelector("#page-style");
 
-    if (oldStyle) {
-      oldStyle.remove();
-    }
+      if (newStyle) {
+        const style = document.createElement("link");
 
-    const newStyle = doc.querySelector("#page-style");
+        style.id = "page-style";
+        style.rel = "stylesheet";
 
-    if (newStyle) {
+        const href = newStyle.getAttribute("href");
 
-      const style = document.createElement("link");
+        // Resolver rutas relativas del CSS respecto a la URL del documento cargado
+        const resolvedHref = (function() {
+          try {
+            return new URL(href, res.url).href;
+          } catch (e) {
+            return href;
+          }
+        })();
 
-      style.id = "page-style";
-      style.rel = "stylesheet";
+        style.href = `${resolvedHref}?v=${Date.now()}`;
 
-      const href = newStyle.getAttribute("href");
+        // Primero añadimos la nueva hoja y esperamos a que cargue
+        document.head.appendChild(style);
 
-      style.href = `${href}?v=${Date.now()}`;
+        await new Promise(resolve => {
+          style.onload = resolve;
+          style.onerror = resolve;
+        });
 
-      document.head.appendChild(style);
+        // Una vez cargada (o fallida), eliminamos la antigua para evitar perder estilos
+        if (oldStyle) {
+          oldStyle.remove();
+        }
 
-      await new Promise(resolve => {
-
-        style.onload = resolve;
-        style.onerror = resolve;
-
-      });
-
-    }
+      }
 
     /* ========================= */
     /* 4. TITLE */
@@ -429,6 +455,9 @@ function initRouter() {
 
     if (!link) return;
 
+    // Si el enlace no tiene `data-route`, dejar que el navegador lo maneje (ej. logout)
+    if (!link.dataset.route) return;
+
     const route = normalizeRoute(
       link.dataset.route
     );
@@ -438,7 +467,7 @@ function initRouter() {
     history.pushState(
       {},
       "",
-      "/" + route
+      getRoutePath(route)
     );
 
     loadPage(route);
@@ -447,9 +476,11 @@ function initRouter() {
 
   window.addEventListener("popstate", () => {
 
-    const route = normalizeRoute(
-      window.location.pathname
-    );
+    const path = APP_BASE === "/"
+      ? window.location.pathname
+      : window.location.pathname.replace(APP_BASE, "");
+
+    const route = normalizeRoute(path);
 
     loadPage(route || "inicio");
 
@@ -464,12 +495,12 @@ async function initLayout() {
 
   await loadComponent(
     "sidebar-container",
-    "/components/sidebar.php"
+    "components/sidebar.php"
   );
 
   await loadComponent(
     "header-container",
-    "/components/header.php"
+    "components/header.php"
   );
 
   updateDate();
@@ -489,9 +520,11 @@ document.addEventListener(
 
     await initLayout();
 
-    const route = normalizeRoute(
-      window.location.pathname
-    );
+    const path = APP_BASE === "/"
+      ? window.location.pathname
+      : window.location.pathname.replace(APP_BASE, "");
+
+    const route = normalizeRoute(path);
 
     await loadPage(route || "inicio");
 
