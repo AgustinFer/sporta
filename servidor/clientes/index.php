@@ -1,7 +1,7 @@
 <?php
 
-require_once "../config/conexion.php";
 require_once '../config/init.php';
+require "../config/conexion.php";
 
 $pdo = conexion();
 
