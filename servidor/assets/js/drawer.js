@@ -5,17 +5,166 @@
 document.addEventListener("click", (e) => {
 
   /* ========================= */
-  /* ABRIR DRAWER */
+  /* ➕ ABRIR DESDE FAB */
   /* ========================= */
 
   if (e.target.closest(".fab")) {
+
+    const form =
+      document.querySelector(".drawer form");
+
+    /* ========================= */
+    /* RESET FORM */
+    /* ========================= */
+
+    if (form) {
+
+      form.reset();
+
+    }
+
+    /* ========================= */
+    /* LIMPIAR ID EDIT */
+    /* ========================= */
+
+    const editId =
+      document.getElementById(
+        "edit_cliente_id"
+      );
+
+    if (editId) {
+
+      editId.value = "";
+
+    }
+
+    /* ========================= */
+    /* TÍTULO */
+    /* ========================= */
+
+    const title =
+      document.getElementById(
+        "drawer-title"
+      );
+
+    if (title) {
+
+      title.textContent =
+        "Nuevo cliente";
+
+    }
 
     openDrawer();
 
   }
 
   /* ========================= */
-  /* CERRAR CON X */
+  /* ✏️ EDITAR */
+  /* ========================= */
+
+  if (e.target.closest(".edit-btn")) {
+
+    const button =
+      e.target.closest(".edit-btn");
+
+    /* ========================= */
+    /* CARGAR DATOS */
+    /* ========================= */
+
+    const editId =
+      document.getElementById(
+        "edit_cliente_id"
+      );
+
+    if (editId) {
+
+      editId.value =
+        button.dataset.id;
+
+    }
+
+    const nombre =
+      document.getElementById(
+        "cliente_nombre"
+      );
+
+    if (nombre) {
+
+      nombre.value =
+        button.dataset.nombre;
+
+    }
+
+    const apellido =
+      document.getElementById(
+        "cliente_apellido"
+      );
+
+    if (apellido) {
+
+      apellido.value =
+        button.dataset.apellido;
+
+    }
+
+    const email =
+      document.getElementById(
+        "cliente_email"
+      );
+
+    if (email) {
+
+      email.value =
+        button.dataset.email;
+
+    }
+
+    const celular =
+      document.getElementById(
+        "cliente_celular"
+      );
+
+    if (celular) {
+
+      celular.value =
+        button.dataset.celular;
+
+    }
+
+    const dni =
+      document.getElementById(
+        "cliente_dni"
+      );
+
+    if (dni) {
+
+      dni.value =
+        button.dataset.dni;
+
+    }
+
+    /* ========================= */
+    /* TÍTULO */
+    /* ========================= */
+
+    const title =
+      document.getElementById(
+        "drawer-title"
+      );
+
+    if (title) {
+
+      title.textContent =
+        "Modificar cliente";
+
+    }
+
+    openDrawer();
+
+  }
+
+  /* ========================= */
+  /* ❌ CERRAR CON X */
   /* ========================= */
 
   if (e.target.closest(".drawer-close")) {
@@ -25,10 +174,14 @@ document.addEventListener("click", (e) => {
   }
 
   /* ========================= */
-  /* CERRAR OVERLAY */
+  /* 🌑 CERRAR OVERLAY */
   /* ========================= */
 
-  if (e.target.classList.contains("drawer-overlay")) {
+  if (
+    e.target.classList.contains(
+      "drawer-overlay"
+    )
+  ) {
 
     closeDrawer();
 
@@ -37,14 +190,18 @@ document.addEventListener("click", (e) => {
 });
 
 /* ========================= */
-/* OPEN */
+/* 🚪 OPEN */
 /* ========================= */
 
 function openDrawer() {
 
-  const drawer = document.querySelector(".drawer");
+  const drawer =
+    document.querySelector(".drawer");
 
-  const overlay = document.querySelector(".drawer-overlay");
+  const overlay =
+    document.querySelector(
+      ".drawer-overlay"
+    );
 
   if (!drawer || !overlay) return;
 
@@ -52,19 +209,24 @@ function openDrawer() {
 
   overlay.classList.add("open");
 
-  document.body.style.overflow = "hidden";
+  document.body.style.overflow =
+    "hidden";
 
 }
 
 /* ========================= */
-/* CLOSE */
+/* 🚪 CLOSE */
 /* ========================= */
 
 function closeDrawer() {
 
-  const drawer = document.querySelector(".drawer");
+  const drawer =
+    document.querySelector(".drawer");
 
-  const overlay = document.querySelector(".drawer-overlay");
+  const overlay =
+    document.querySelector(
+      ".drawer-overlay"
+    );
 
   if (!drawer || !overlay) return;
 
@@ -72,6 +234,7 @@ function closeDrawer() {
 
   overlay.classList.remove("open");
 
-  document.body.style.overflow = "";
+  document.body.style.overflow =
+    "";
 
 }
