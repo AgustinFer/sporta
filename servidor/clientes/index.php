@@ -21,7 +21,7 @@ if (isset($_POST["delete_cliente_id"])) {
 
     $stmt->execute([$id]);
 
-    header("Location: /clientes");
+    header("Location: " . BASE_URL . "/clientes");
     exit;
 
 }
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $dni ?: null
         ]);
 
-        header("Location: /clientes");
+        header("Location: " . BASE_URL . "/clientes");
         exit;
 
     }
