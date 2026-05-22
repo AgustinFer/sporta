@@ -72,6 +72,15 @@ document.addEventListener("click", (e) => {
       e.target.closest(".edit-btn");
 
     /* ========================= */
+    /* DEBUG */
+    /* ========================= */
+
+    console.log(
+      "ID DATASET:",
+      button.dataset.id
+    );
+
+    /* ========================= */
     /* ABRIR */
     /* ========================= */
 
@@ -86,12 +95,22 @@ document.addEventListener("click", (e) => {
         "edit_cliente_id"
       );
 
+    console.log(
+      "INPUT EDIT:",
+      editId
+    );
+
     if (editId) {
 
       editId.value =
         button.dataset.id;
 
     }
+
+    console.log(
+      "VALOR FINAL:",
+      editId.value
+    );
 
     const nombre =
       document.getElementById(
