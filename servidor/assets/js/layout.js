@@ -476,12 +476,12 @@ async function initLayout() {
 
   await loadComponent(
     "sidebar-container",
-    "`${BASE_URL}/components/sidebar.php`"
+    `${BASE_URL}/components/sidebar.php`
   );
 
   await loadComponent(
     "header-container",
-    "`${BASE_URL}/components/header.php`"
+    `${BASE_URL}/components/header.php`
   );
 
   updateDate();
