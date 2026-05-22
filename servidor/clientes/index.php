@@ -92,19 +92,18 @@ $clientes = $stmt->fetchAll();
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sporta - Clientes</title>
 
   <!-- CSS GLOBAL -->
-  <link rel="stylesheet" href="../assets/css/global.css">
-  <link rel="stylesheet" href="../assets/css/layout.css">
-  <link rel="stylesheet" href="../assets/css/components.css">
-  <link rel="stylesheet" href="../assets/css/drawer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/global.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/layout.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/components.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/drawer.css">
 
   <!-- CSS MÓDULO -->
-  <link id="page-style" rel="stylesheet" href="clientes.css">
+  <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/clientes/clientes.css">
 </head>
 
 <body class="screen" data-page="Clientes">
@@ -274,11 +273,15 @@ $clientes = $stmt->fetchAll();
   <!-- DRAWER (aunque no se use) -->
   <div id="drawer-container"></div>
 
+  <script>
+    const BASE_URL = "<?= BASE_URL ?>";
+  </script>
+
   <!-- JS LAYOUT (carga sidebar + header) -->
-  <script src="../assets/js/layout.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/layout.js"></script>
 
   <!-- JS DRAWER -->
-  <script src="../assets/js/drawer.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/drawer.js"></script>
   <!-- FIN CONFIG GLOBAL -->
 
 </body>
