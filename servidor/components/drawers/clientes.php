@@ -6,11 +6,14 @@
 
   <div class="drawer-header">
 
-    <h3>
+    <h3 id="drawer-title">
       Nuevo cliente
     </h3>
 
-    <button class="drawer-close">
+    <button
+      type="button"
+      class="drawer-close"
+    >
       ✕
     </button>
 
@@ -22,6 +25,13 @@
     action=""
   >
 
+    <!-- ID OCULTO -->
+    <input
+      type="hidden"
+      name="edit_cliente_id"
+      id="edit_cliente_id"
+    >
+
     <!-- NOMBRE -->
     <div>
 
@@ -32,6 +42,7 @@
       <input
         type="text"
         name="cliente_nombre"
+        id="cliente_nombre"
         required
       >
 
@@ -47,6 +58,7 @@
       <input
         type="text"
         name="cliente_apellido"
+        id="cliente_apellido"
         required
       >
 
@@ -62,6 +74,7 @@
       <input
         type="text"
         name="cliente_celular"
+        id="cliente_celular"
       >
 
     </div>
@@ -76,6 +89,7 @@
       <input
         type="email"
         name="cliente_email"
+        id="cliente_email"
       >
 
     </div>
@@ -90,6 +104,7 @@
       <input
         type="text"
         name="cliente_dni"
+        id="cliente_dni"
       >
 
     </div>
