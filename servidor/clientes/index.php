@@ -346,7 +346,7 @@ $clientes = $stmt->fetchAll();
           Nuevo cliente
         </h2>
 
-        <button class="drawer-close">
+        <button type="button" class="drawer-close">
           ✕
         </button>
 
@@ -433,7 +433,7 @@ $clientes = $stmt->fetchAll();
 
   </div>
 
-  <script>
+  <!-- <script>
 
     /* ========================= */
     /* DRAWER */
@@ -537,7 +537,7 @@ $clientes = $stmt->fetchAll();
 
     });
 
-  </script>
+  </script> -->
 
   <script>
     const BASE_URL = "<?= BASE_URL ?>";
