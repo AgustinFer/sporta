@@ -10,15 +10,8 @@ document.addEventListener("click", (e) => {
 
   if (e.target.closest(".fab")) {
 
-    const drawer = document.querySelector(".drawer");
-    const overlay = document.querySelector(".drawer-overlay");
+    openDrawer();
 
-    if (!drawer || !overlay) return;
-
-    drawer.classList.add("open");
-    overlay.classList.add("open");
-
-    document.body.style.overflow = "hidden";
   }
 
   /* ========================= */
@@ -28,6 +21,7 @@ document.addEventListener("click", (e) => {
   if (e.target.closest(".drawer-close")) {
 
     closeDrawer();
+
   }
 
   /* ========================= */
@@ -37,9 +31,30 @@ document.addEventListener("click", (e) => {
   if (e.target.classList.contains("drawer-overlay")) {
 
     closeDrawer();
+
   }
 
 });
+
+/* ========================= */
+/* OPEN */
+/* ========================= */
+
+function openDrawer() {
+
+  const drawer = document.querySelector(".drawer");
+
+  const overlay = document.querySelector(".drawer-overlay");
+
+  if (!drawer || !overlay) return;
+
+  drawer.classList.add("open");
+
+  overlay.classList.add("open");
+
+  document.body.style.overflow = "hidden";
+
+}
 
 /* ========================= */
 /* CLOSE */
@@ -48,11 +63,13 @@ document.addEventListener("click", (e) => {
 function closeDrawer() {
 
   const drawer = document.querySelector(".drawer");
+
   const overlay = document.querySelector(".drawer-overlay");
 
   if (!drawer || !overlay) return;
 
   drawer.classList.remove("open");
+
   overlay.classList.remove("open");
 
   document.body.style.overflow = "";
