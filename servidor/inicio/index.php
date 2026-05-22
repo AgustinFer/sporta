@@ -1,5 +1,10 @@
-<?php require_once __DIR__ . '/../config/init.php'; ?>
+<?php require_once __DIR__ . '/../config/init.php';
 
+if(!isset($_SESSION['usuario'])){
+  header("Location: ../index.php");
+  exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
