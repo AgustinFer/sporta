@@ -21,12 +21,14 @@
       </a>
     </li>
 
+    <?php if(isset($_SESSION['usuario']) && is_object($_SESSION['usuario']) && method_exists($_SESSION['usuario'], 'isAdmin') && $_SESSION['usuario']->isAdmin()): ?>
     <li class="menu-item">
       <a href="<?= BASE_URL ?>/canchas" class="menu-link" data-route="canchas">
         <span class="menu-icon">🎾</span>
         Canchas
       </a>
     </li>
+    <?php endif; ?>
 
     <li class="menu-item">
       <a href="<?= BASE_URL ?>/clientes" class="menu-link" data-route="clientes">
