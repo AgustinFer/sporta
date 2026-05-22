@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/init.php';
 include_once __DIR__ . '/functions.php';
 
 

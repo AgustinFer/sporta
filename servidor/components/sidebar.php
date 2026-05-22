@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../config/init.php';
+<?php require_once __DIR__ . '/../config/init.php'; ?>
 
 <div class="sidebar">
   <div class="sidebar-logo">
