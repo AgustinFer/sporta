@@ -19,12 +19,19 @@
 
 <body class="screen" data-page="Inicio">
 
+  <!-- FONDO -->
   <div class="background"></div>
+
+  <!-- SIDEBAR DINÁMICO -->
   <div id="sidebar-container"></div>
 
+  <!-- BOTÓN MOBILE -->
   <button class="menu-toggle" id="menuToggle">☰</button>
 
+  <!-- CONTENIDO -->
   <main class="main-content">
+
+    <!-- HEADER DINÁMICO -->
     <div id="header-container"></div>
 
     <!-- HERO -->
