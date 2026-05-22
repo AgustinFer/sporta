@@ -1,3 +1,15 @@
+function getBaseRoute() {
+
+  const path = window.location.pathname;
+
+  if (!BASE_URL) {
+    return path;
+  }
+
+  return path.replace(BASE_URL, "");
+
+}
+
 async function loadComponent(id, file) {
   const res = await fetch(
     `${file}?v=${Date.now()}`
@@ -91,7 +103,7 @@ async function loadDrawer() {
     if (!container) return;
 
     const response = await fetch(
-      `/components/drawers/${page}.php?v=${Date.now()}`
+      `${BASE_URL}/components/drawers/${page}.php?v=${Date.now()}`
     );
 
     if (!response.ok) {
@@ -122,7 +134,7 @@ async function loadPage(route) {
 
     const cleanRoute = normalizeRoute(route);
 
-    const res = await fetch(`/${cleanRoute}/index.php`);
+    const res = await fetch(`${BASE_URL}/${cleanRoute}/index.php`);
 
     if (!res.ok) {
       throw new Error(`No existe /${cleanRoute}/index.php`);
@@ -438,7 +450,7 @@ function initRouter() {
     history.pushState(
       {},
       "",
-      "/" + route
+      `${BASE_URL}/${route}`
     );
 
     loadPage(route);
@@ -448,7 +460,7 @@ function initRouter() {
   window.addEventListener("popstate", () => {
 
     const route = normalizeRoute(
-      window.location.pathname
+      getBaseRoute()
     );
 
     loadPage(route || "inicio");
@@ -464,12 +476,12 @@ async function initLayout() {
 
   await loadComponent(
     "sidebar-container",
-    "/components/sidebar.php"
+    "`${BASE_URL}/components/sidebar.php`"
   );
 
   await loadComponent(
     "header-container",
-    "/components/header.php"
+    "`${BASE_URL}/components/header.php`"
   );
 
   updateDate();
