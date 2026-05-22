@@ -1,47 +1,49 @@
+<?php require_once __DIR__ . '/../config/init.php'; ?>
+
 <div class="sidebar">
   <div class="sidebar-logo">
-    <img src="/assets/img/logo.png" class="sidebar-logo-img">
+    <img src="<?= BASE_URL ?>/assets/img/logo.png" class="sidebar-logo-img">
     <span class="sidebar-brand">Sporta</span>
   </div>
 
   <ul class="sidebar-menu">
     <li class="menu-item">
-      <a href="/inicio" class="menu-link" data-route="inicio">
+      <a href="<?= BASE_URL ?>/inicio" class="menu-link" data-route="inicio">
         <span class="menu-icon">🏠</span>
         Inicio
       </a>
     </li>
 
     <li class="menu-item">
-      <a href="/turnos" class="menu-link" data-route="turnos">
+      <a href="<?= BASE_URL ?>/turnos" class="menu-link" data-route="turnos">
         <span class="menu-icon">📅</span>
         Turnos
       </a>
     </li>
 
     <li class="menu-item">
-      <a href="/canchas" class="menu-link" data-route="canchas">
+      <a href="<?= BASE_URL ?>/canchas" class="menu-link" data-route="canchas">
         <span class="menu-icon">🎾</span>
         Canchas
       </a>
     </li>
 
     <li class="menu-item">
-      <a href="/clientes" class="menu-link" data-route="clientes">
+      <a href="<?= BASE_URL ?>/clientes" class="menu-link" data-route="clientes">
         <span class="menu-icon">👤</span>
         Clientes
       </a>
     </li>
 
     <li class="menu-item">
-      <a href="/empleados" class="menu-link" data-route="empleados">
+      <a href="<?= BASE_URL ?>/empleados" class="menu-link" data-route="empleados">
         <span class="menu-icon">🧑‍💼</span>
         Empleados
       </a>
     </li>
 
     <li class="menu-item">
-      <a href="/reservas" class="menu-link" data-route="reservas">
+      <a href="<?= BASE_URL ?>/reservas" class="menu-link" data-route="reservas">
         <span class="menu-icon">🧾</span>
         Señas y Reservas
       </a>
@@ -49,11 +51,11 @@
   </ul>
 
   <div class="sidebar-footer">
-    <a href="/ajustes" class="menu-link" data-route="ajustes">
+    <a href="<?= BASE_URL ?>/ajustes" class="menu-link" data-route="ajustes">
       <span class="menu-icon">⚙️</span>
       Ajustes
     </a>
-    <a href="/" class="menu-link logout">
+    <a href="<?= BASE_URL ?>/" class="menu-link logout">
       <span class="menu-icon">🔚</span>
       Cerrar sesión
     </a>
