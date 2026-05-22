@@ -30,7 +30,7 @@ if (isset($_POST["delete_cliente_id"])) {
 /* ✏️ MODIFICAR CLIENTE */
 /* ========================= */
 
-if (isset($_POST["edit_cliente_id"])) {
+if (!empty($_POST["edit_cliente_id"])) {
 
     $id = (int) $_POST["edit_cliente_id"];
 
@@ -78,7 +78,7 @@ if (isset($_POST["edit_cliente_id"])) {
 
 if (
     $_SERVER["REQUEST_METHOD"] === "POST" &&
-    !isset($_POST["edit_cliente_id"]) &&
+    empty($_POST["edit_cliente_id"]) &&
     !isset($_POST["delete_cliente_id"])
 ) {
 
@@ -538,7 +538,7 @@ $clientes = $stmt->fetchAll();
     });
 
   </script>
-  
+
   <script>
     const BASE_URL = "<?= BASE_URL ?>";
   </script>
