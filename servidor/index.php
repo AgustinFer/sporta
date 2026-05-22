@@ -1,3 +1,5 @@
+<?php require_once __DIR__ . '/../config/init.php'; ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- CSS -->
-  <link rel="stylesheet" href="/assets/css/global.css">
-  <link rel="stylesheet" href="/assets/css/layout-login.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/global.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/layout-login.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/components.css">
 </head>
 
 <body>
@@ -17,15 +19,15 @@
 
     <!-- 🔥 FONDO CON CARRUSEL DE MÚLTIPLES IMÁGENES -->
     <div class="background">
-      <div class="background-slide" style="background-image: url('assets/img/fondo1.jpg')"></div>
-      <div class="background-slide" style="background-image: url('assets/img/fondo2.jpg')"></div>
-      <div class="background-slide" style="background-image: url('assets/img/fondo3.jpg')"></div>
-      <div class="background-slide" style="background-image: url('assets/img/fondo1.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/assets/img/fondo1.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/assets/img/fondo2.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/assets/img/fondo3.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/assets/img/fondo1.jpg')"></div>
     </div>
 
     <!-- LOGO -->
     <div class="logo-wrapper">
-      <img src="assets/img/logo.png" alt="Sporta Logo" class="logo">
+      <img src="<?= BASE_URL ?>/assets/img/logo.png" alt="Sporta Logo" class="logo">
     </div>
 
     <!-- CARD LOGIN -->
