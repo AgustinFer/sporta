@@ -64,8 +64,18 @@ document.addEventListener("click", (e) => {
 
   if (e.target.closest(".edit-btn")) {
 
+    e.preventDefault();
+
+    e.stopPropagation();
+
     const button =
       e.target.closest(".edit-btn");
+
+    /* ========================= */
+    /* ABRIR */
+    /* ========================= */
+
+    openDrawer();
 
     /* ========================= */
     /* CARGAR DATOS */
@@ -158,8 +168,6 @@ document.addEventListener("click", (e) => {
         "Modificar cliente";
 
     }
-
-    openDrawer();
 
   }
 
