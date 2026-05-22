@@ -27,10 +27,60 @@ if (isset($_POST["delete_cliente_id"])) {
 }
 
 /* ========================= */
+/* ✏️ MODIFICAR CLIENTE */
+/* ========================= */
+
+if (isset($_POST["edit_cliente_id"])) {
+
+    $id = (int) $_POST["edit_cliente_id"];
+
+    $nombre = trim($_POST["cliente_nombre"] ?? "");
+    $apellido = trim($_POST["cliente_apellido"] ?? "");
+    $email = trim($_POST["cliente_email"] ?? "");
+    $celular = trim($_POST["cliente_celular"] ?? "");
+    $dni = trim($_POST["cliente_dni"] ?? "");
+
+    if (
+        !empty($nombre) &&
+        !empty($apellido)
+    ) {
+
+        $stmt = $pdo->prepare("
+            UPDATE clientes
+            SET
+                cliente_nombre = ?,
+                cliente_apellido = ?,
+                cliente_email = ?,
+                cliente_celular = ?,
+                cliente_dni = ?
+            WHERE cliente_id = ?
+        ");
+
+        $stmt->execute([
+            $nombre,
+            $apellido,
+            $email ?: null,
+            $celular ?: null,
+            $dni ?: null,
+            $id
+        ]);
+
+        header("Location: " . BASE_URL . "/clientes");
+        exit;
+
+    }
+
+}
+
+/* ========================= */
 /* 📥 ALTA CLIENTE */
 /* ========================= */
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if (
+    $_SERVER["REQUEST_METHOD"] === "POST" &&
+    !isset($_POST["edit_cliente_id"]) &&
+    !isset($_POST["delete_cliente_id"])
+) {
 
     $nombre = trim($_POST["cliente_nombre"] ?? "");
     $apellido = trim($_POST["cliente_apellido"] ?? "");
@@ -214,6 +264,18 @@ $clientes = $stmt->fetchAll();
                 <td>
 
                   <div class="table-actions">
+                    <button
+                      type="button"
+                      class="edit-btn"
+                      data-id="<?= $cliente["cliente_id"] ?>"
+                      data-nombre="<?= htmlspecialchars($cliente["cliente_nombre"]) ?>"
+                      data-apellido="<?= htmlspecialchars($cliente["cliente_apellido"]) ?>"
+                      data-email="<?= htmlspecialchars($cliente["cliente_email"] ?? "") ?>"
+                      data-celular="<?= htmlspecialchars($cliente["cliente_celular"] ?? "") ?>"
+                      data-dni="<?= htmlspecialchars($cliente["cliente_dni"] ?? "") ?>"
+                    >
+                      Modificar
+                    </button>
 
                     <form method="POST">
 
@@ -272,8 +334,211 @@ $clientes = $stmt->fetchAll();
 
   <!-- INICIO CONFIG GLOBAL -->
   <!-- DRAWER (aunque no se use) -->
-  <div id="drawer-container"></div>
+  <div id="drawer-container">
 
+    <div class="drawer-overlay"></div>
+
+    <div class="drawer">
+
+      <div class="drawer-header">
+
+        <h2 id="drawer-title">
+          Nuevo cliente
+        </h2>
+
+        <button class="drawer-close">
+          ✕
+        </button>
+
+      </div>
+
+      <form method="POST" id="cliente-form">
+
+        <!-- ID OCULTO PARA EDIT -->
+        <input
+          type="hidden"
+          name="edit_cliente_id"
+          id="edit_cliente_id"
+        >
+
+        <div class="form-group">
+
+          <label>Nombre</label>
+
+          <input
+            type="text"
+            name="cliente_nombre"
+            id="cliente_nombre"
+            required
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Apellido</label>
+
+          <input
+            type="text"
+            name="cliente_apellido"
+            id="cliente_apellido"
+            required
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Email</label>
+
+          <input
+            type="email"
+            name="cliente_email"
+            id="cliente_email"
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Celular</label>
+
+          <input
+            type="text"
+            name="cliente_celular"
+            id="cliente_celular"
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>DNI</label>
+
+          <input
+            type="text"
+            name="cliente_dni"
+            id="cliente_dni"
+          >
+
+        </div>
+
+        <button type="submit" class="primary-btn">
+          Guardar
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    /* ========================= */
+    /* DRAWER */
+    /* ========================= */
+
+    const fab = document.querySelector(".fab");
+
+    const drawer = document.querySelector(".drawer");
+
+    const overlay = document.querySelector(".drawer-overlay");
+
+    const closeBtn = document.querySelector(".drawer-close");
+
+    const form = document.getElementById("cliente-form");
+
+    const drawerTitle =
+      document.getElementById("drawer-title");
+
+    function openDrawer() {
+
+      drawer.classList.add("open");
+
+      overlay.classList.add("show");
+
+    }
+
+    function closeDrawer() {
+
+      drawer.classList.remove("open");
+
+      overlay.classList.remove("show");
+
+    }
+
+    fab.addEventListener("click", () => {
+
+      form.reset();
+
+      document.getElementById(
+        "edit_cliente_id"
+      ).value = "";
+
+      drawerTitle.textContent =
+        "Nuevo cliente";
+
+      openDrawer();
+
+    });
+
+    closeBtn.addEventListener(
+      "click",
+      closeDrawer
+    );
+
+    overlay.addEventListener(
+      "click",
+      closeDrawer
+    );
+
+    /* ========================= */
+    /* EDITAR */
+    /* ========================= */
+
+    const editButtons =
+      document.querySelectorAll(".edit-btn");
+
+    editButtons.forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        document.getElementById(
+          "edit_cliente_id"
+        ).value = button.dataset.id;
+
+        document.getElementById(
+          "cliente_nombre"
+        ).value = button.dataset.nombre;
+
+        document.getElementById(
+          "cliente_apellido"
+        ).value = button.dataset.apellido;
+
+        document.getElementById(
+          "cliente_email"
+        ).value = button.dataset.email;
+
+        document.getElementById(
+          "cliente_celular"
+        ).value = button.dataset.celular;
+
+        document.getElementById(
+          "cliente_dni"
+        ).value = button.dataset.dni;
+
+        drawerTitle.textContent =
+          "Modificar cliente";
+
+        openDrawer();
+
+      });
+
+    });
+
+  </script>
+  
   <script>
     const BASE_URL = "<?= BASE_URL ?>";
   </script>
