@@ -1,5 +1,14 @@
-<?php require_once __DIR__ . '/config/init.php'; ?>
+<?php require_once __DIR__ . '/config/init.php';
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if(isset($_POST['iniciar'])){
+    Usuario::iniciarSesion($_POST['email'],$_POST['password']);
+  }
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -36,19 +45,33 @@
 
         <h2>Iniciar Sesión</h2>
 
-        <div class="field">
-          <label>Correo Electrónico</label>
-          <input type="email" placeholder="tu@email.com">
-        </div>
+        <form method="POST">
 
-        <div class="field">
-          <label>Contraseña</label>
-          <input type="password" placeholder="Ingresa tu contraseña">
-        </div>
+          <div class="field">
+            <label>Correo Electrónico</label>
+            <input 
+              type="email" 
+              name="email"
+              placeholder="tu@email.com"
+              required
+            >
+          </div>
 
-        <a href="/inicio">
-          <button>Iniciar Sesión</button>
-        </a>
+          <div class="field">
+            <label>Contraseña</label>
+            <input 
+              type="password" 
+              name="password"
+              placeholder="Ingresa tu contraseña"
+              required
+            >
+          </div>
+
+          <button type="submit" name="iniciar">
+            Iniciar Sesión
+          </button>
+
+        </form>
 
         <span class="forgot">¿Olvidaste la contraseña?</span>
 
