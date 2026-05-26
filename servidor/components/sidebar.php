@@ -21,7 +21,7 @@
       </a>
     </li>
 
-    <?php if(isset($_SESSION['usuario']) && is_object($_SESSION['usuario']) && method_exists($_SESSION['usuario'], 'isAdmin') && $_SESSION['usuario']->isAdmin()): ?>
+    <?php if(isset($_SESSION['usuario']) && $_SESSION['usuario']->isAdmin()): ?>
     <li class="menu-item">
       <a href="<?= BASE_URL ?>/canchas" class="menu-link" data-route="canchas">
         <span class="menu-icon">🎾</span>
@@ -37,7 +37,7 @@
       </a>
     </li>
     
-    <?php if(isset($_SESSION['usuario']) && is_object($_SESSION['usuario']) && method_exists($_SESSION['usuario'], 'isAdmin') && $_SESSION['usuario']->isAdmin()): ?>
+    <?php if(isset($_SESSION['usuario']) && $_SESSION['usuario']->isAdmin()): ?>
     <li class="menu-item">
       <a href="<?= BASE_URL ?>/empleados" class="menu-link" data-route="empleados">
         <span class="menu-icon">🧑‍💼</span>
