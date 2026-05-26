@@ -5,14 +5,19 @@
 function loadEnv($envPath = null) {
     if ($envPath === null) {
         // Buscar .env en la raíz del proyecto (3 niveles arriba de config/)
-        $envPath = __DIR__ . '/../.env';
+        $envPath = __DIR__ . '/../../.env';
     }
 
     if (!file_exists($envPath)) {
-        throw new Exception("Archivo .env no encontrado en: $envPath, probando un directorio más arriba..");
-        $envPath = __DIR__ . '/../../.env';
 
-    }
+        // Busco un directorio más arriba
+        $envPath = __DIR__ . '/../.env';
+
+        if (!file_exists($envPath)) {
+            throw new Exception("Archivo .env no encontrado en: $envPath");
+        }
+
+}
 
     $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
