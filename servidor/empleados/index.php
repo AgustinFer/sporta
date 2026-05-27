@@ -1,13 +1,18 @@
-<?php require_once __DIR__ . '/../config/init.php';
-
-if(!isset($_SESSION['usuario'])){
-  header("Location: ../index.php");
-  exit;
-}
-
-$esAdmin = isset($_SESSION['usuario']) && $_SESSION['usuario']->isAdmin();
+<?php
 
 require_once __DIR__ . '/../config/init.php';
+
+if (!isset($_SESSION['usuario'])) {
+
+  header("Location: ../index.php");
+  exit;
+
+}
+
+$esAdmin =
+  isset($_SESSION['usuario']) &&
+  $_SESSION['usuario']->isAdmin();
+
 require_once __DIR__ . '/../config/conexion.php';
 
 $pdo = conexion();
@@ -40,13 +45,26 @@ if (!empty($_POST["edit_empleado_id"])) {
 
     $id = (int) $_POST["edit_empleado_id"];
 
-    $nombre = trim($_POST["empleado_nombre"] ?? "");
-    $apellido = trim($_POST["empleado_apellido"] ?? "");
-    $email = trim($_POST["empleado_email"] ?? "");
-    $celular = trim($_POST["empleado_celular"] ?? "");
-    $dni = trim($_POST["empleado_dni"] ?? "");
-    $usuario = trim($_POST["empleado_usuario"] ?? "");
-    $direccion = trim($_POST["empleado_direccion"] ?? "");
+    $nombre =
+      trim($_POST["empleado_nombre"] ?? "");
+
+    $apellido =
+      trim($_POST["empleado_apellido"] ?? "");
+
+    $email =
+      trim($_POST["empleado_email"] ?? "");
+
+    $celular =
+      trim($_POST["empleado_celular"] ?? "");
+
+    $dni =
+      trim($_POST["empleado_dni"] ?? "");
+
+    $usuario =
+      trim($_POST["empleado_usuario"] ?? "");
+
+    $direccion =
+      trim($_POST["empleado_direccion"] ?? "");
 
     if (
         !empty($nombre) &&
@@ -94,13 +112,26 @@ if (
     !isset($_POST["delete_empleado_id"])
 ) {
 
-    $nombre = trim($_POST["empleado_nombre"] ?? "");
-    $apellido = trim($_POST["empleado_apellido"] ?? "");
-    $email = trim($_POST["empleado_email"] ?? "");
-    $celular = trim($_POST["empleado_celular"] ?? "");
-    $dni = trim($_POST["empleado_dni"] ?? "");
-    $usuario = trim($_POST["empleado_usuario"] ?? "");
-    $direccion = trim($_POST["empleado_direccion"] ?? "");
+    $nombre =
+      trim($_POST["empleado_nombre"] ?? "");
+
+    $apellido =
+      trim($_POST["empleado_apellido"] ?? "");
+
+    $email =
+      trim($_POST["empleado_email"] ?? "");
+
+    $celular =
+      trim($_POST["empleado_celular"] ?? "");
+
+    $dni =
+      trim($_POST["empleado_dni"] ?? "");
+
+    $usuario =
+      trim($_POST["empleado_usuario"] ?? "");
+
+    $direccion =
+      trim($_POST["empleado_direccion"] ?? "");
 
     if (
         !empty($nombre) &&
@@ -116,10 +147,11 @@ if (
                 usu_dni,
                 usu_usuario,
                 usu_direccion,
+                usu_contrasena,
                 usu_estado
             )
             VALUES (
-                ?, ?, ?, ?, ?, ?, ?, 1
+                ?, ?, ?, ?, ?, ?, ?, ?, 1
             )
         ");
 
@@ -130,7 +162,11 @@ if (
             $celular ?: null,
             $dni ?: null,
             $usuario ?: null,
-            $direccion ?: null
+            $direccion ?: null,
+            password_hash(
+              "1234",
+              PASSWORD_DEFAULT
+            )
         ]);
 
         header("Location: " . BASE_URL . "/empleados");
@@ -158,41 +194,79 @@ $empleados = $stmt->fetchAll();
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sporta - Empleados</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Sporta - Empleados
+  </title>
 
   <!-- CSS GLOBAL -->
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/global.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/layout.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/components.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/drawer.css">
+  <link
+    rel="stylesheet"
+    href="<?= BASE_URL ?>/assets/css/global.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="<?= BASE_URL ?>/assets/css/layout.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="<?= BASE_URL ?>/assets/css/components.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="<?= BASE_URL ?>/assets/css/drawer.css"
+  >
 
   <!-- CSS MÓDULO -->
-  <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/empleados/empleados.css">
+  <link
+    id="page-style"
+    rel="stylesheet"
+    href="<?= BASE_URL ?>/empleados/empleados.css"
+  >
+
 </head>
 
-<body class="screen" data-page="Empleados">
+<body
+  class="screen"
+  data-page="Empleados"
+>
 
   <!-- FONDO -->
   <div class="background"></div>
 
-  <!-- SIDEBAR DINÁMICO -->
+  <!-- SIDEBAR -->
   <div id="sidebar-container"></div>
 
-  <!-- BOTÓN MOBILE -->
-  <button class="menu-toggle" id="menuToggle">☰</button>
+  <!-- MOBILE -->
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+  >
+    ☰
+  </button>
 
   <!-- CONTENIDO -->
   <main class="main-content">
 
-    <!-- HEADER DINÁMICO -->
+    <!-- HEADER -->
     <div id="header-container"></div>
 
     <!-- CABECERA -->
     <div class="list-container">
 
-      <h2>Empleados</h2>
+      <h2>
+        Empleados
+      </h2>
 
       <p>
         Listado de empleados registrados
@@ -200,7 +274,6 @@ $empleados = $stmt->fetchAll();
 
     </div>
 
-    <!-- LISTADO -->
     <!-- TABLA -->
     <div class="table-container">
 
@@ -284,6 +357,7 @@ $empleados = $stmt->fetchAll();
                 <td>
 
                   <div class="table-actions">
+
                     <button
                       type="button"
                       class="edit-btn"
@@ -350,24 +424,24 @@ $empleados = $stmt->fetchAll();
     </div>
 
     <!-- FAB -->
-    <button class="fab">+</button>
+    <button class="fab">
+      +
+    </button>
 
   </main>
 
-  <!-- INICIO CONFIG GLOBAL -->
-  <!-- DRAWER (aunque no se use) -->
+  <!-- DRAWER -->
   <div id="drawer-container"></div>
 
   <script>
-    const BASE_URL = "<?= BASE_URL ?>";
+    const BASE_URL =
+      "<?= BASE_URL ?>";
   </script>
 
-  <!-- JS LAYOUT (carga sidebar + header) -->
+  <!-- JS -->
   <script src="<?= BASE_URL ?>/assets/js/layout.js"></script>
 
-  <!-- JS DRAWER -->
   <script src="<?= BASE_URL ?>/assets/js/drawer.js"></script>
-  <!-- FIN CONFIG GLOBAL -->
 
 </body>
 </html>
