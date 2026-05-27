@@ -43,7 +43,8 @@ if (isset($_POST["delete_empleado_id"])) {
 
 if (!empty($_POST["edit_empleado_id"])) {
 
-    $id = (int) $_POST["edit_empleado_id"];
+    $id =
+      (int) $_POST["edit_empleado_id"];
 
     $nombre =
       trim($_POST["empleado_nombre"] ?? "");
@@ -66,9 +67,14 @@ if (!empty($_POST["edit_empleado_id"])) {
     $direccion =
       trim($_POST["empleado_direccion"] ?? "");
 
+    $rol =
+      (int) ($_POST["empleado_rol"] ?? 0);
+
     if (
         !empty($nombre) &&
-        !empty($apellido)
+        !empty($apellido) &&
+        !empty($usuario) &&
+        $rol > 0
     ) {
 
         $stmt = $pdo->prepare("
@@ -80,7 +86,8 @@ if (!empty($_POST["edit_empleado_id"])) {
                 usu_celular = ?,
                 usu_dni = ?,
                 usu_usuario = ?,
-                usu_direccion = ?
+                usu_direccion = ?,
+                usu_rol = ?
             WHERE usu_id = ?
         ");
 
@@ -90,12 +97,18 @@ if (!empty($_POST["edit_empleado_id"])) {
             $email ?: null,
             $celular ?: null,
             $dni ?: null,
-            $usuario ?: null,
+            $usuario,
             $direccion ?: null,
+            $rol,
             $id
         ]);
 
-        header("Location: " . BASE_URL . "/empleados");
+        header(
+          "Location: " .
+          BASE_URL .
+          "/empleados"
+        );
+
         exit;
 
     }
@@ -133,19 +146,14 @@ if (
     $direccion =
       trim($_POST["empleado_direccion"] ?? "");
 
-    /* ========================= */
-    /* PASSWORD DEFAULT */
-    /* ========================= */
-
-    $contrasena =
-      password_hash(
-        "1234",
-        PASSWORD_DEFAULT
-      );
+    $rol =
+      (int) ($_POST["empleado_rol"] ?? 0);
 
     if (
         !empty($nombre) &&
-        !empty($apellido)
+        !empty($apellido) &&
+        !empty($usuario) &&
+        $rol > 0
     ) {
 
         try {
@@ -159,11 +167,12 @@ if (
                     usu_dni,
                     usu_usuario,
                     usu_direccion,
+                    usu_rol,
                     usu_contrasena,
                     usu_estado
                 )
                 VALUES (
-                    ?, ?, ?, ?, ?, ?, ?, ?, 1
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, 1
                 )
             ");
 
@@ -173,9 +182,13 @@ if (
                 $email ?: null,
                 $celular ?: null,
                 $dni ?: null,
-                $usuario ?: null,
+                $usuario,
                 $direccion ?: null,
-                $contrasena
+                $rol,
+                password_hash(
+                  "1234",
+                  PASSWORD_DEFAULT
+                )
             ]);
 
             header(
@@ -188,10 +201,10 @@ if (
 
         } catch (PDOException $e) {
 
-            die(
-              "Error al crear empleado: " .
-              $e->getMessage()
-            );
+            echo "<pre>";
+            echo "Error al crear empleado:\n";
+            echo $e->getMessage();
+            echo "</pre>";
 
         }
 
@@ -314,6 +327,7 @@ $empleados = $stmt->fetchAll();
             <th>DNI</th>
             <th>Usuario</th>
             <th>Dirección</th>
+            <th>Rol</th>
             <th>Acciones</th>
 
           </tr>
@@ -366,13 +380,19 @@ $empleados = $stmt->fetchAll();
 
                 <td>
                   <?= htmlspecialchars(
-                    $empleado["usu_usuario"] ?? "-"
+                    $empleado["usu_usuario"]
                   ) ?>
                 </td>
 
                 <td>
                   <?= htmlspecialchars(
                     $empleado["usu_direccion"] ?? "-"
+                  ) ?>
+                </td>
+
+                <td>
+                  <?= htmlspecialchars(
+                    $empleado["usu_rol"]
                   ) ?>
                 </td>
 
@@ -390,8 +410,9 @@ $empleados = $stmt->fetchAll();
                       data-email="<?= htmlspecialchars($empleado["usu_email"] ?? "") ?>"
                       data-celular="<?= htmlspecialchars($empleado["usu_celular"] ?? "") ?>"
                       data-dni="<?= htmlspecialchars($empleado["usu_dni"] ?? "") ?>"
-                      data-usuario="<?= htmlspecialchars($empleado["usu_usuario"] ?? "") ?>"
+                      data-usuario="<?= htmlspecialchars($empleado["usu_usuario"]) ?>"
                       data-direccion="<?= htmlspecialchars($empleado["usu_direccion"] ?? "") ?>"
+                      data-rol="<?= htmlspecialchars($empleado["usu_rol"]) ?>"
                     >
                       Modificar
                     </button>
@@ -430,7 +451,7 @@ $empleados = $stmt->fetchAll();
 
             <tr>
 
-              <td colspan="9">
+              <td colspan="10">
 
                 No hay empleados registrados
 

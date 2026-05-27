@@ -37,6 +37,7 @@
 
       <label>
         Nombre
+        <span class="required">*</span>
       </label>
 
       <input
@@ -53,6 +54,7 @@
 
       <label>
         Apellido
+        <span class="required">*</span>
       </label>
 
       <input
@@ -61,6 +63,54 @@
         id="empleado_apellido"
         required
       >
+
+    </div>
+
+    <!-- USUARIO -->
+    <div>
+
+      <label>
+        Usuario
+        <span class="required">*</span>
+      </label>
+
+      <input
+        type="text"
+        name="empleado_usuario"
+        id="empleado_usuario"
+        required
+      >
+
+    </div>
+
+    <!-- ROL -->
+    <div>
+
+      <label>
+        Rol
+        <span class="required">*</span>
+      </label>
+
+      <select
+        name="empleado_rol"
+        id="empleado_rol"
+        required
+      >
+
+        <option value="">
+          Seleccionar rol
+        </option>
+
+        <!-- Ajustar IDs según tu tabla roles -->
+        <option value="1">
+          Administrador
+        </option>
+
+        <option value="2">
+          Empleado
+        </option>
+
+      </select>
 
     </div>
 
@@ -105,21 +155,6 @@
         type="text"
         name="empleado_dni"
         id="empleado_dni"
-      >
-
-    </div>
-
-    <!-- USUARIO -->
-    <div>
-
-      <label>
-        Usuario
-      </label>
-
-      <input
-        type="text"
-        name="empleado_usuario"
-        id="empleado_usuario"
       >
 
     </div>
