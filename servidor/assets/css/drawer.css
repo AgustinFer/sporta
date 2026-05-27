@@ -27,6 +27,11 @@
    DRAWER
 ========================= */
 
+.required {
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
 .drawer {
   position: fixed;
   top: 0;
