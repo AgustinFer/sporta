@@ -133,44 +133,67 @@ if (
     $direccion =
       trim($_POST["empleado_direccion"] ?? "");
 
+    /* ========================= */
+    /* PASSWORD DEFAULT */
+    /* ========================= */
+
+    $contrasena =
+      password_hash(
+        "1234",
+        PASSWORD_DEFAULT
+      );
+
     if (
         !empty($nombre) &&
         !empty($apellido)
     ) {
 
-        $stmt = $pdo->prepare("
-            INSERT INTO usuarios (
-                usu_nombre,
-                usu_apellido,
-                usu_email,
-                usu_celular,
-                usu_dni,
-                usu_usuario,
-                usu_direccion,
-                usu_contrasena,
-                usu_estado
-            )
-            VALUES (
-                ?, ?, ?, ?, ?, ?, ?, ?, 1
-            )
-        ");
+        try {
 
-        $stmt->execute([
-            $nombre,
-            $apellido,
-            $email ?: null,
-            $celular ?: null,
-            $dni ?: null,
-            $usuario ?: null,
-            $direccion ?: null,
-            password_hash(
-              "1234",
-              PASSWORD_DEFAULT
-            )
-        ]);
+            $stmt = $pdo->prepare("
+                INSERT INTO usuarios (
+                    usu_nombre,
+                    usu_apellido,
+                    usu_email,
+                    usu_celular,
+                    usu_dni,
+                    usu_usuario,
+                    usu_direccion,
+                    usu_contrasena,
+                    usu_estado
+                )
+                VALUES (
+                    ?, ?, ?, ?, ?, ?, ?, ?, 1
+                )
+            ");
 
-        header("Location: " . BASE_URL . "/empleados");
-        exit;
+            $stmt->execute([
+                $nombre,
+                $apellido,
+                $email ?: null,
+                $celular ?: null,
+                $dni ?: null,
+                $usuario ?: null,
+                $direccion ?: null,
+                $contrasena
+            ]);
+
+            header(
+              "Location: " .
+              BASE_URL .
+              "/empleados"
+            );
+
+            exit;
+
+        } catch (PDOException $e) {
+
+            die(
+              "Error al crear empleado: " .
+              $e->getMessage()
+            );
+
+        }
 
     }
 
