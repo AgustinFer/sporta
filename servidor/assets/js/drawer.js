@@ -1,21 +1,78 @@
 /* ========================= */
+/* ⚙️ CONFIG */
+/* ========================= */
+
+const drawerConfig = {
+
+  clientes: {
+
+    prefix: "cliente",
+
+    titleNew:
+      "Nuevo cliente",
+
+    titleEdit:
+      "Modificar cliente",
+
+    fields: [
+      "nombre",
+      "apellido",
+      "email",
+      "celular",
+      "dni"
+    ]
+
+  },
+
+  empleados: {
+
+    prefix: "empleado",
+
+    titleNew:
+      "Nuevo empleado",
+
+    titleEdit:
+      "Modificar empleado",
+
+    fields: [
+      "nombre",
+      "apellido",
+      "email",
+      "celular",
+      "dni",
+      "usuario",
+      "direccion"
+    ]
+
+  }
+
+};
+
+/* ========================= */
 /* 🚪 DRAWER GLOBAL */
 /* ========================= */
 
 document.addEventListener("click", (e) => {
 
+  const page =
+    document.body.dataset.page
+      ?.toLowerCase();
+
+  const config =
+    drawerConfig[page];
+
+  if (!config) return;
+
   /* ========================= */
-  /* ➕ ABRIR DESDE FAB */
+  /* ➕ FAB */
   /* ========================= */
 
   if (e.target.closest(".fab")) {
 
     const form =
-      document.querySelector(".drawer form");
-
-    /* ========================= */
-    /* RESET FORM */
-    /* ========================= */
+      document.querySelector(
+        ".drawer form"
+      );
 
     if (form) {
 
@@ -23,13 +80,9 @@ document.addEventListener("click", (e) => {
 
     }
 
-    /* ========================= */
-    /* LIMPIAR ID EDIT */
-    /* ========================= */
-
     const editId =
       document.getElementById(
-        "edit_cliente_id"
+        `edit_${config.prefix}_id`
       );
 
     if (editId) {
@@ -37,10 +90,6 @@ document.addEventListener("click", (e) => {
       editId.value = "";
 
     }
-
-    /* ========================= */
-    /* TÍTULO */
-    /* ========================= */
 
     const title =
       document.getElementById(
@@ -50,7 +99,7 @@ document.addEventListener("click", (e) => {
     if (title) {
 
       title.textContent =
-        "Nuevo cliente";
+        config.titleNew;
 
     }
 
@@ -59,7 +108,7 @@ document.addEventListener("click", (e) => {
   }
 
   /* ========================= */
-  /* ✏️ EDITAR */
+  /* ✏️ EDIT */
   /* ========================= */
 
   if (e.target.closest(".edit-btn")) {
@@ -69,21 +118,15 @@ document.addEventListener("click", (e) => {
     e.stopPropagation();
 
     const button =
-      e.target.closest(".edit-btn");
-
-    /* ========================= */
-    /* ABRIR */
-    /* ========================= */
+      e.target.closest(
+        ".edit-btn"
+      );
 
     openDrawer();
 
-    /* ========================= */
-    /* CARGAR DATOS */
-    /* ========================= */
-
     const editId =
       document.getElementById(
-        "edit_cliente_id"
+        `edit_${config.prefix}_id`
       );
 
     if (editId) {
@@ -93,69 +136,21 @@ document.addEventListener("click", (e) => {
 
     }
 
-    const nombre =
-      document.getElementById(
-        "cliente_nombre"
-      );
+    config.fields.forEach(field => {
 
-    if (nombre) {
+      const input =
+        document.getElementById(
+          `${config.prefix}_${field}`
+        );
 
-      nombre.value =
-        button.dataset.nombre;
+      if (input) {
 
-    }
+        input.value =
+          button.dataset[field] || "";
 
-    const apellido =
-      document.getElementById(
-        "cliente_apellido"
-      );
+      }
 
-    if (apellido) {
-
-      apellido.value =
-        button.dataset.apellido;
-
-    }
-
-    const email =
-      document.getElementById(
-        "cliente_email"
-      );
-
-    if (email) {
-
-      email.value =
-        button.dataset.email;
-
-    }
-
-    const celular =
-      document.getElementById(
-        "cliente_celular"
-      );
-
-    if (celular) {
-
-      celular.value =
-        button.dataset.celular;
-
-    }
-
-    const dni =
-      document.getElementById(
-        "cliente_dni"
-      );
-
-    if (dni) {
-
-      dni.value =
-        button.dataset.dni;
-
-    }
-
-    /* ========================= */
-    /* TÍTULO */
-    /* ========================= */
+    });
 
     const title =
       document.getElementById(
@@ -165,24 +160,28 @@ document.addEventListener("click", (e) => {
     if (title) {
 
       title.textContent =
-        "Modificar cliente";
+        config.titleEdit;
 
     }
 
   }
 
   /* ========================= */
-  /* ❌ CERRAR CON X */
+  /* ❌ CLOSE X */
   /* ========================= */
 
-  if (e.target.closest(".drawer-close")) {
+  if (
+    e.target.closest(
+      ".drawer-close"
+    )
+  ) {
 
     closeDrawer();
 
   }
 
   /* ========================= */
-  /* 🌑 CERRAR OVERLAY */
+  /* 🌑 CLOSE OVERLAY */
   /* ========================= */
 
   if (
@@ -204,18 +203,26 @@ document.addEventListener("click", (e) => {
 function openDrawer() {
 
   const drawer =
-    document.querySelector(".drawer");
+    document.querySelector(
+      ".drawer"
+    );
 
   const overlay =
     document.querySelector(
       ".drawer-overlay"
     );
 
-  if (!drawer || !overlay) return;
+  if (!drawer || !overlay) {
+    return;
+  }
 
-  drawer.classList.add("open");
+  drawer.classList.add(
+    "open"
+  );
 
-  overlay.classList.add("open");
+  overlay.classList.add(
+    "open"
+  );
 
   document.body.style.overflow =
     "hidden";
@@ -229,18 +236,26 @@ function openDrawer() {
 function closeDrawer() {
 
   const drawer =
-    document.querySelector(".drawer");
+    document.querySelector(
+      ".drawer"
+    );
 
   const overlay =
     document.querySelector(
       ".drawer-overlay"
     );
 
-  if (!drawer || !overlay) return;
+  if (!drawer || !overlay) {
+    return;
+  }
 
-  drawer.classList.remove("open");
+  drawer.classList.remove(
+    "open"
+  );
 
-  overlay.classList.remove("open");
+  overlay.classList.remove(
+    "open"
+  );
 
   document.body.style.overflow =
     "";
