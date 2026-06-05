@@ -94,6 +94,11 @@ try {
     |--------------------------------------------------------------------------
     */
 
+    var_dump(getenv('MAIL_FROM'));
+    var_dump(getenv('MAIL_USER'));
+    var_dump(getenv('MAIL_PASS'));
+    exit;
+
     $mail = new PHPMailer(true);
 
     $mail->isSMTP();
