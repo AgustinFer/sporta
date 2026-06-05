@@ -1,5 +1,9 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/config/conexion.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -137,7 +141,8 @@ try {
 
 } catch (Exception $e) {
 
-    error_log($e->getMessage());
+    echo "<pre>";
+    echo $e->getMessage();
+    echo "</pre>";
 
-    echo 'Ocurrió un error al procesar la solicitud.';
 }
