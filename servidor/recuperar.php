@@ -94,18 +94,16 @@ try {
     |--------------------------------------------------------------------------
     */
 
-    echo "<h3>ENV</h3>";
-    echo "<pre>";
-    print_r($_ENV);
-    echo "</pre>";
+    error_log('=== ENV ===');
+    error_log(print_r($_ENV, true));
 
-    echo "<h3>GETENV</h3>";
-    var_dump(getenv('MAIL_HOST'));
-    var_dump(getenv('MAIL_PORT'));
-    var_dump(getenv('MAIL_USER'));
-    var_dump(getenv('MAIL_PASS'));
-    var_dump(getenv('MAIL_FROM'));
+    error_log('MAIL_HOST=' . var_export(getenv('MAIL_HOST'), true));
+    error_log('MAIL_PORT=' . var_export(getenv('MAIL_PORT'), true));
+    error_log('MAIL_USER=' . var_export(getenv('MAIL_USER'), true));
+    error_log('MAIL_PASS=' . var_export(getenv('MAIL_PASS'), true));
+    error_log('MAIL_FROM=' . var_export(getenv('MAIL_FROM'), true));
 
+    echo 'DEBUG';
     exit;
 
     $mail = new PHPMailer(true);
