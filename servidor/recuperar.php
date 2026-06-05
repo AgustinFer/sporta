@@ -94,9 +94,18 @@ try {
     |--------------------------------------------------------------------------
     */
 
-    var_dump(getenv('MAIL_FROM'));
+    echo "<h3>ENV</h3>";
+    echo "<pre>";
+    print_r($_ENV);
+    echo "</pre>";
+
+    echo "<h3>GETENV</h3>";
+    var_dump(getenv('MAIL_HOST'));
+    var_dump(getenv('MAIL_PORT'));
     var_dump(getenv('MAIL_USER'));
     var_dump(getenv('MAIL_PASS'));
+    var_dump(getenv('MAIL_FROM'));
+
     exit;
 
     $mail = new PHPMailer(true);
