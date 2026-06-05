@@ -94,18 +94,6 @@ try {
     |--------------------------------------------------------------------------
     */
 
-    error_log('=== ENV ===');
-    error_log(print_r($_ENV, true));
-
-    error_log('MAIL_HOST=' . var_export(getenv('MAIL_HOST'), true));
-    error_log('MAIL_PORT=' . var_export(getenv('MAIL_PORT'), true));
-    error_log('MAIL_USER=' . var_export(getenv('MAIL_USER'), true));
-    error_log('MAIL_PASS=' . var_export(getenv('MAIL_PASS'), true));
-    error_log('MAIL_FROM=' . var_export(getenv('MAIL_FROM'), true));
-
-    echo 'DEBUG';
-    exit;
-
     $mail = new PHPMailer(true);
 
     $mail->isSMTP();
