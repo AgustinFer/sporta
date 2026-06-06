@@ -90,15 +90,23 @@ function setActiveMenu(route) {
 /* ========================= */
 /* 🚪 DRAWER */
 /* ========================= */
+
 async function loadDrawer() {
 
-    const drawer = document.body.dataset.drawer;
-
-    if (!drawer) return;
-
-    const container = document.getElementById("drawer-container");
+    const container =
+      document.getElementById("drawer-container");
 
     if (!container) return;
+
+    const drawer =
+      document.body.dataset.drawer;
+
+    if (!drawer) {
+
+        container.innerHTML = "";
+        return;
+
+    }
 
     try {
 
@@ -106,13 +114,24 @@ async function loadDrawer() {
             `${BASE_URL}/componentes/drawers/${drawer}.php`
         );
 
-        if (!response.ok) return;
+        if (!response.ok) {
 
-        container.innerHTML = await response.text();
+            container.innerHTML = "";
+            return;
+
+        }
+
+        container.innerHTML =
+          await response.text();
 
     } catch (err) {
 
-        console.error("Error cargando drawer:", err);
+        console.error(
+          "Error cargando drawer:",
+          err
+        );
+
+        container.innerHTML = "";
 
     }
 
@@ -163,6 +182,17 @@ async function loadPage(route) {
 
     document.body.dataset.page =
       doc.body.dataset.page || cleanRoute;
+
+    if (doc.body.dataset.drawer) {
+
+      document.body.dataset.drawer =
+        doc.body.dataset.drawer;
+
+    } else {
+
+      delete document.body.dataset.drawer;
+
+    }
 
     /* ========================= */
     /* 3. CSS DINÁMICO */
