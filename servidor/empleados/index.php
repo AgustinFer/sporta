@@ -245,22 +245,22 @@ $empleados = $stmt->fetchAll();
   <!-- CSS GLOBAL -->
   <link
     rel="stylesheet"
-    href="<?= BASE_URL ?>/assets/css/global.css"
+    href="<?= BASE_URL ?>/recursos/css/global.css"
   >
 
   <link
     rel="stylesheet"
-    href="<?= BASE_URL ?>/assets/css/layout.css"
+    href="<?= BASE_URL ?>/recursos/css/layout.css"
   >
 
   <link
     rel="stylesheet"
-    href="<?= BASE_URL ?>/assets/css/componentes.css"
+    href="<?= BASE_URL ?>/recursos/css/componentes.css"
   >
 
   <link
     rel="stylesheet"
-    href="<?= BASE_URL ?>/assets/css/drawer.css"
+    href="<?= BASE_URL ?>/recursos/css/drawer.css"
   >
 
   <!-- CSS MÓDULO -->
@@ -483,9 +483,9 @@ $empleados = $stmt->fetchAll();
   </script>
 
   <!-- JS -->
-  <script src="<?= BASE_URL ?>/assets/js/layout.js"></script>
+  <script src="<?= BASE_URL ?>/recursos/js/layout.js"></script>
 
-  <script src="<?= BASE_URL ?>/assets/js/drawer.js"></script>
+  <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
 
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 <div class="sidebar">
   <div class="sidebar-logo">
-    <img src="<?= BASE_URL ?>/assets/img/logo.png" class="sidebar-logo-img">
+    <img src="<?= BASE_URL ?>/recursos/img/logo.png" class="sidebar-logo-img">
     <span class="sidebar-brand">Sporta</span>
   </div>
 

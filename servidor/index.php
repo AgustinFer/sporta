@@ -19,9 +19,9 @@ if(isset($_POST['iniciar'])){
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- CSS -->
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/global.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/layout-login.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/componentes.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/global.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/layout-login.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/componentes.css">
 </head>
 
 <body>
@@ -30,15 +30,15 @@ if(isset($_POST['iniciar'])){
 
     <!-- 🔥 FONDO CON CARRUSEL DE MÚLTIPLES IMÁGENES -->
     <div class="background">
-      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/assets/img/fondo1.jpg')"></div>
-      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/assets/img/fondo2.jpg')"></div>
-      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/assets/img/fondo3.jpg')"></div>
-      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/assets/img/fondo1.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/recursos/img/fondo1.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/recursos/img/fondo2.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/recursos/img/fondo3.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/recursos/img/fondo1.jpg')"></div>
     </div>
 
     <!-- LOGO -->
     <div class="logo-wrapper">
-      <img src="<?= BASE_URL ?>/assets/img/logo.png" alt="Sporta Logo" class="logo">
+      <img src="<?= BASE_URL ?>/recursos/img/logo.png" alt="Sporta Logo" class="logo">
     </div>
 
     <!-- CARD LOGIN -->

@@ -148,10 +148,10 @@ $clientes = $stmt->fetchAll();
   <title>Sporta - Clientes</title>
 
   <!-- CSS GLOBAL -->
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/global.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/layout.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/componentes.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/drawer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/global.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/layout.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/componentes.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/drawer.css">
 
   <!-- CSS MÓDULO -->
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/clientes/clientes.css">
@@ -341,10 +341,10 @@ $clientes = $stmt->fetchAll();
   </script>
 
   <!-- JS LAYOUT (carga sidebar + header) -->
-  <script src="<?= BASE_URL ?>/assets/js/layout.js"></script>
+  <script src="<?= BASE_URL ?>/recursos/js/layout.js"></script>
 
   <!-- JS DRAWER -->
-  <script src="<?= BASE_URL ?>/assets/js/drawer.js"></script>
+  <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
   <!-- FIN CONFIG GLOBAL -->
 
 </body>
