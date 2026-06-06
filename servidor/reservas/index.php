@@ -23,7 +23,7 @@ if(!isset($_SESSION['usuario'])){
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/reservas/reservas.css">
 </head>
 
-<body class="screen" data-page="Señas y Reservas">
+<body class="screen" data-page="Señas y Reservas" data-drawer="reservas">
 
   <!-- FONDO -->
   <div class="background"></div>

@@ -157,7 +157,7 @@ $clientes = $stmt->fetchAll();
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/clientes/clientes.css">
 </head>
 
-<body class="screen" data-page="Clientes">
+<body class="screen" data-page="Clientes" data-drawer="clientes">
 
   <!-- FONDO -->
   <div class="background"></div>

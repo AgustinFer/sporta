@@ -275,6 +275,7 @@ $empleados = $stmt->fetchAll();
 <body
   class="screen"
   data-page="Empleados"
+  data-drawer="empleados"
 >
 
   <!-- FONDO -->

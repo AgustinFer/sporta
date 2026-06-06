@@ -23,7 +23,7 @@ if(!isset($_SESSION['usuario'])){
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/turnos/turnos.css">
 </head>
 
-<body class="screen" data-page="Turnos">
+<body class="screen" data-page="Turnos" data-drawer="turnos">
 
   <!-- FONDO -->
   <div class="background"></div>

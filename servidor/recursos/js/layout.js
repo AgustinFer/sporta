@@ -92,36 +92,29 @@ function setActiveMenu(route) {
 /* ========================= */
 async function loadDrawer() {
 
-  try {
+    const drawer = document.body.dataset.drawer;
 
-    const page = document.body.dataset.page?.toLowerCase();
-
-    if (!page) return;
+    if (!drawer) return;
 
     const container = document.getElementById("drawer-container");
 
     if (!container) return;
 
-    const response = await fetch(
-      `${BASE_URL}/componentes/drawers/${page}.php?v=${Date.now()}`
-    );
+    try {
 
-    if (!response.ok) {
+        const response = await fetch(
+            `${BASE_URL}/componentes/drawers/${drawer}.php`
+        );
 
-      container.innerHTML = "";
+        if (!response.ok) return;
 
-      return;
+        container.innerHTML = await response.text();
+
+    } catch (err) {
+
+        console.error("Error cargando drawer:", err);
+
     }
-
-    const html = await response.text();
-
-    container.innerHTML = html;
-
-  } catch (err) {
-
-    console.error("Error cargando drawer:", err);
-
-  }
 
 }
 

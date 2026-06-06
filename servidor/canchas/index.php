@@ -23,7 +23,7 @@ if(!isset($_SESSION['usuario'])){
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/canchas/canchas.css">
 </head>
 
-<body class="screen" data-page="Canchas">
+<body class="screen" data-page="Canchas" data-drawer="canchas">
 
   <!-- FONDO -->
   <div class="background"></div>
