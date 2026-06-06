@@ -1,4 +1,7 @@
 <?php
+
+require_once __DIR__ . '/conexion.php';
+
 abstract class Persona{
     
     protected $nombre,$apellido,$email,$celular,$dni;
