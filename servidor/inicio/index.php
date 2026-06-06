@@ -15,7 +15,7 @@ if(!isset($_SESSION['usuario'])){
   <!-- CSS GLOBAL -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/global.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/layout.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/components.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/componentes.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/drawer.css">
 
   <!-- CSS MÓDULO -->

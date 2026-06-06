@@ -255,7 +255,7 @@ $empleados = $stmt->fetchAll();
 
   <link
     rel="stylesheet"
-    href="<?= BASE_URL ?>/assets/css/components.css"
+    href="<?= BASE_URL ?>/assets/css/componentes.css"
   >
 
   <link

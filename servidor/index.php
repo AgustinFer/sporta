@@ -21,7 +21,7 @@ if(isset($_POST['iniciar'])){
   <!-- CSS -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/global.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/layout-login.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/components.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/componentes.css">
 </head>
 
 <body>

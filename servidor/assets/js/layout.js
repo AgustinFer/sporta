@@ -103,7 +103,7 @@ async function loadDrawer() {
     if (!container) return;
 
     const response = await fetch(
-      `${BASE_URL}/components/drawers/${page}.php?v=${Date.now()}`
+      `${BASE_URL}/componentes/drawers/${page}.php?v=${Date.now()}`
     );
 
     if (!response.ok) {
@@ -476,12 +476,12 @@ async function initLayout() {
 
   await loadComponent(
     "sidebar-container",
-    `${BASE_URL}/components/sidebar.php`
+    `${BASE_URL}/componentes/sidebar.php`
   );
 
   await loadComponent(
     "header-container",
-    `${BASE_URL}/components/header.php`
+    `${BASE_URL}/componentes/header.php`
   );
 
   updateDate();
