@@ -313,7 +313,7 @@ $empleados = $stmt->fetchAll();
     <!-- TABLA -->
     <div class="table-container">
 
-      <table class="empleados-table">
+      <table class="table">
 
         <thead>
 

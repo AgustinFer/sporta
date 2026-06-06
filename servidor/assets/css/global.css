@@ -67,6 +67,173 @@ button:active {
   font-size: 13px;
 }
 
+/* ABM */
+
+/* =========================
+   TABLA
+========================= */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  padding: 0 30px 30px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  background: rgba(255,255,255,0.04);
+
+  border-radius: 16px;
+  overflow: hidden;
+
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(26, 26, 46, 0.12);
+}
+
+/* =========================
+   CABECERA
+========================= */
+
+.table thead {
+  background: rgba(26, 26, 46, 0.12);
+}
+
+.table th {
+  padding: 16px;
+
+  text-align: left;
+
+  font-weight: 600;
+
+  color: rgba(26, 26, 46, 0.95);
+
+  border-bottom:
+    1px solid rgba(26, 26, 46, 0.12);
+
+  border-right:
+    1px solid rgba(26, 26, 46, 0.08);
+}
+
+/* =========================
+   CELDAS
+========================= */
+
+.table td {
+  padding: 14px 16px;
+
+  color: rgba(26, 26, 46, 0.95);
+
+  border-bottom:
+    1px solid rgba(26, 26, 46, 0.08);
+
+  border-right:
+    1px solid rgba(26, 26, 46, 0.06);
+}
+
+
+/* =========================
+   HOVER
+========================= */
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.20);
+}
+
+/* =========================
+   ESTADOS
+========================= */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.active {
+  background: rgba(0,255,120,0.15);
+  color: rgb(0,120,60);
+}
+
+.status.inactive {
+  background: rgba(255,80,80,0.15);
+  color: rgb(180,40,40);
+}
+
+/* =========================
+   ACCIONES
+========================= */
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =========================
+   BOTÓN EDITAR
+========================= */
+
+.edit-btn {
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: rgba(151, 151, 151,0.2);
+  color: rgb(100, 100, 100);
+
+  transition: 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: rgba(151, 151, 151,0.2);
+  transform: translateY(-1px);
+}
+
+/* =========================
+   BOTÓN ELIMINAR
+========================= */
+
+.delete-btn {
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: rgba(255,80,80,0.12);
+  color: rgb(180,40,40);
+
+  transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: rgba(255,80,80,0.20);
+  transform: translateY(-1px);
+}
+
 /* ANIMACIONES GENERALES */
 @keyframes fadeUp {
   from {
@@ -78,3 +245,4 @@ button:active {
     transform: translateY(0);
   }
 }
+
