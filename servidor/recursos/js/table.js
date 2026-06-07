@@ -1,56 +1,60 @@
-/* =========================
-   BÚSQUEDA
-========================= */
+function initTable() {
 
-const searchInput =
-  document.getElementById("tableSearch");
+  const searchInput =
+    document.getElementById("tableSearch");
 
-searchInput?.addEventListener(
-  "input",
-  function () {
+  if (searchInput && !searchInput.dataset.bound) {
 
-    const term =
-      this.value.toLowerCase();
+    searchInput.dataset.bound = "true";
 
-    document
-      .querySelectorAll(".table tbody tr")
-      .forEach(row => {
+    searchInput.addEventListener(
+      "input",
+      function () {
 
-        const text =
-          row.innerText.toLowerCase();
+        const term =
+          this.value.toLowerCase();
 
-        row.style.display =
-          text.includes(term)
-            ? ""
-            : "none";
+        document
+          .querySelectorAll(".table tbody tr")
+          .forEach(row => {
 
-      });
+            const text =
+              row.innerText.toLowerCase();
 
-  }
-);
+            row.style.display =
+              text.includes(term)
+                ? ""
+                : "none";
 
-/* =========================
-   ORDENAMIENTO
-========================= */
+          });
 
-document
-  .querySelectorAll(
-    ".table th[data-sort]"
-  )
-  .forEach(th => {
-
-    th.style.cursor = "pointer";
-
-    th.addEventListener(
-      "click",
-      () => sortTable(
-        parseInt(
-          th.dataset.sort
-        )
-      )
+      }
     );
 
-  });
+  }
+
+  document
+    .querySelectorAll(
+      ".table th[data-sort]"
+    )
+    .forEach(th => {
+
+      if (th.dataset.bound) return;
+
+      th.dataset.bound = "true";
+
+      th.style.cursor = "pointer";
+
+      th.addEventListener(
+        "click",
+        () => sortTable(
+          parseInt(th.dataset.sort)
+        )
+      );
+
+    });
+
+}
 
 function sortTable(column) {
 
@@ -58,6 +62,8 @@ function sortTable(column) {
     document.querySelector(
       ".table tbody"
     );
+
+  if (!tbody) return;
 
   const rows =
     Array.from(
@@ -72,13 +78,13 @@ function sortTable(column) {
 
     const aText =
       a.cells[column]
-      .innerText
-      .trim();
+        ?.innerText
+        .trim() || "";
 
     const bText =
       b.cells[column]
-      .innerText
-      .trim();
+        ?.innerText
+        .trim() || "";
 
     return asc
       ? aText.localeCompare(
@@ -105,3 +111,8 @@ function sortTable(column) {
     asc ? "asc" : "desc";
 
 }
+
+document.addEventListener(
+  "DOMContentLoaded",
+  initTable
+);

@@ -267,6 +267,12 @@ async function loadPage(route) {
     /* 8. PAGE INIT */
     /* ========================= */
 
+    if (typeof initTable === "function")
+      initTable();
+
+    if (typeof initDrawerPage === "function")
+      initDrawerPage();
+
     if (cleanRoute === "inicio") {
       initInicio();
     }
