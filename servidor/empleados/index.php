@@ -219,7 +219,6 @@ if (
 $stmt = $pdo->query("
     SELECT *
     FROM usuarios
-    WHERE usu_estado = 1
     ORDER BY usu_id
 ");
 

@@ -132,7 +132,6 @@ if (
 $stmt = $pdo->query("
     SELECT *
     FROM clientes
-    WHERE cliente_estado = 1
     ORDER BY cliente_id
 ");
 
