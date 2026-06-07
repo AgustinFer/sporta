@@ -179,7 +179,7 @@ class Usuario extends Persona{
         $stmt->execute();
 
         if($stmt->rowCount() != 1){
-            return "Usuario no encontrado";
+            return "Correo electrónico o Usuario no encontrado";
         }
 
         $datos = $stmt->fetch(PDO::FETCH_ASSOC);
