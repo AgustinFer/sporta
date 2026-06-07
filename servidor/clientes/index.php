@@ -21,21 +21,33 @@ $pdo = conexion();
 /* 🗑️ ELIMINAR CLIENTE */
 /* ========================= */
 
-if (isset($_POST["delete_cliente_id"])) {
+if (isset($_POST["toggle_cliente_id"])) {
 
-    $id = (int) $_POST["delete_cliente_id"];
+    $id = (int) $_POST["toggle_cliente_id"];
+
+    // Traemos estado actual
+    $stmt = $pdo->prepare("
+        SELECT cliente_estado
+        FROM clientes
+        WHERE cliente_id = ?
+    ");
+    $stmt->execute([$id]);
+
+    $actual = $stmt->fetchColumn();
+
+    // invertimos estado
+    $nuevoEstado = ((int)$actual === 1) ? 0 : 1;
 
     $stmt = $pdo->prepare("
         UPDATE clientes
-        SET cliente_estado = 0
+        SET cliente_estado = ?
         WHERE cliente_id = ?
     ");
 
-    $stmt->execute([$id]);
+    $stmt->execute([$nuevoEstado, $id]);
 
     header("Location: " . BASE_URL . "/clientes");
     exit;
-
 }
 
 /* ========================= */
