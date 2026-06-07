@@ -7,8 +7,11 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/config/init.php';
 
 if(isset($_POST['iniciar'])){
-    Usuario::iniciarSesion($_POST['email'],$_POST['password']);
-  }
+    Usuario::iniciarSesion(
+        $_POST['usuario'],
+        $_POST['password']
+    );
+}
 
 ?>
 <!DOCTYPE html>
@@ -50,12 +53,12 @@ if(isset($_POST['iniciar'])){
         <form method="POST">
 
           <div class="field">
-            <label>Correo Electrónico</label>
-            <input 
-              type="email" 
-              name="email"
-              placeholder="tu@email.com"
-              required
+            <label>Correo Electrónico o Usuario</label>
+            <input
+                type="text"
+                name="usuario"
+                placeholder="Correo o nombre de usuario"
+                required
             >
           </div>
 

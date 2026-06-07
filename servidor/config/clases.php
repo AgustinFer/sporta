@@ -123,7 +123,7 @@ class Usuario extends Persona{
 
     }
 
-    private static function login($email, $pass){
+    private static function login($usuario, $pass){
 
         $con = conexion();
 
@@ -161,15 +161,18 @@ class Usuario extends Persona{
         LEFT JOIN paises pa
             ON u.usu_pais_id = pa.pais_id
 
-        WHERE u.usu_email = :email
+        WHERE (
+            u.usu_email = :usuario
+            OR u.usu_usuario = :usuario
+        )
         AND u.usu_estado = 1
         ";
 
         $stmt = $con->prepare($sql);
 
         $stmt->bindParam(
-            ':email',
-            $email,
+            ':usuario',
+            $usuario,
             PDO::PARAM_STR
         );
 
