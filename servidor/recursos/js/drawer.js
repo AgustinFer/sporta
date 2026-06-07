@@ -8,11 +8,9 @@ const drawerConfig = {
 
     prefix: "cliente",
 
-    titleNew:
-      "Nuevo cliente",
+    titleNew: "Nuevo cliente",
 
-    titleEdit:
-      "Modificar cliente",
+    titleEdit: "Modificar cliente",
 
     fields: [
       "nombre",
@@ -28,11 +26,9 @@ const drawerConfig = {
 
     prefix: "empleado",
 
-    titleNew:
-      "Nuevo empleado",
+    titleNew: "Nuevo empleado",
 
-    titleEdit:
-      "Modificar empleado",
+    titleEdit: "Modificar empleado",
 
     fields: [
       "nombre",
@@ -41,7 +37,8 @@ const drawerConfig = {
       "celular",
       "dni",
       "usuario",
-      "direccion"
+      "direccion",
+      "rol"
     ]
 
   }
@@ -55,8 +52,7 @@ const drawerConfig = {
 document.addEventListener("click", (e) => {
 
   const page =
-    document.body.dataset.page
-      ?.toLowerCase();
+    document.body.dataset.page?.toLowerCase();
 
   const config =
     drawerConfig[page];
@@ -64,20 +60,16 @@ document.addEventListener("click", (e) => {
   if (!config) return;
 
   /* ========================= */
-  /* ➕ FAB */
-  /* ========================= */
+  /* ➕ FAB (NUEVO) */
+/* ========================= */
 
   if (e.target.closest(".fab")) {
 
     const form =
-      document.querySelector(
-        ".drawer form"
-      );
+      document.querySelector(".drawer form");
 
     if (form) {
-
       form.reset();
-
     }
 
     const editId =
@@ -86,56 +78,44 @@ document.addEventListener("click", (e) => {
       );
 
     if (editId) {
-
       editId.value = "";
-
     }
 
     const title =
-      document.getElementById(
-        "drawer-title"
-      );
+      document.getElementById("drawer-title");
 
     if (title) {
-
-      title.textContent =
-        config.titleNew;
-
+      title.textContent = config.titleNew;
     }
 
     openDrawer();
-
   }
 
   /* ========================= */
-  /* ✏️ EDIT */
-  /* ========================= */
+  /* ✏️ EDITAR */
+/* ========================= */
 
   if (e.target.closest(".edit-btn")) {
 
     e.preventDefault();
-
     e.stopPropagation();
 
     const button =
-      e.target.closest(
-        ".edit-btn"
-      );
+      e.target.closest(".edit-btn");
 
     openDrawer();
 
+    /* ID */
     const editId =
       document.getElementById(
         `edit_${config.prefix}_id`
       );
 
     if (editId) {
-
-      editId.value =
-        button.dataset.id;
-
+      editId.value = button.dataset.id;
     }
 
+    /* CAMPOS DINÁMICOS */
     config.fields.forEach(field => {
 
       const input =
@@ -145,53 +125,39 @@ document.addEventListener("click", (e) => {
 
       if (input) {
 
-        input.value =
-          button.dataset[field] || "";
+        const value =
+          button.dataset[field];
+
+        if (value !== undefined) {
+          input.value = value;
+        }
 
       }
 
     });
 
+    /* TÍTULO */
     const title =
-      document.getElementById(
-        "drawer-title"
-      );
+      document.getElementById("drawer-title");
 
     if (title) {
-
-      title.textContent =
-        config.titleEdit;
-
+      title.textContent = config.titleEdit;
     }
 
   }
 
   /* ========================= */
-  /* ❌ CLOSE X */
-  /* ========================= */
+  /* ❌ CERRAR */
+/* ========================= */
 
-  if (
-    e.target.closest(
-      ".drawer-close"
-    )
-  ) {
-
+  if (e.target.closest(".drawer-close")) {
     closeDrawer();
-
   }
 
-  /* ========================= */
-  /* 🌑 CLOSE OVERLAY */
-  /* ========================= */
-
   if (
-    e.target.classList.contains(
-      "drawer-overlay"
-    )
+    e.target.classList.contains("drawer-overlay")
   ) {
-
     closeDrawer();
-
   }
 
 });
@@ -203,29 +169,17 @@ document.addEventListener("click", (e) => {
 function openDrawer() {
 
   const drawer =
-    document.querySelector(
-      ".drawer"
-    );
+    document.querySelector(".drawer");
 
   const overlay =
-    document.querySelector(
-      ".drawer-overlay"
-    );
+    document.querySelector(".drawer-overlay");
 
-  if (!drawer || !overlay) {
-    return;
-  }
+  if (!drawer || !overlay) return;
 
-  drawer.classList.add(
-    "open"
-  );
+  drawer.classList.add("open");
+  overlay.classList.add("open");
 
-  overlay.classList.add(
-    "open"
-  );
-
-  document.body.style.overflow =
-    "hidden";
+  document.body.style.overflow = "hidden";
 
 }
 
@@ -236,28 +190,16 @@ function openDrawer() {
 function closeDrawer() {
 
   const drawer =
-    document.querySelector(
-      ".drawer"
-    );
+    document.querySelector(".drawer");
 
   const overlay =
-    document.querySelector(
-      ".drawer-overlay"
-    );
+    document.querySelector(".drawer-overlay");
 
-  if (!drawer || !overlay) {
-    return;
-  }
+  if (!drawer || !overlay) return;
 
-  drawer.classList.remove(
-    "open"
-  );
+  drawer.classList.remove("open");
+  overlay.classList.remove("open");
 
-  overlay.classList.remove(
-    "open"
-  );
-
-  document.body.style.overflow =
-    "";
+  document.body.style.overflow = "";
 
 }
