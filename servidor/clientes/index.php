@@ -264,11 +264,11 @@ $clientes = $stmt->fetchAll();
                 </td>
 
                 <td>
-
-                  <span class="status active">
-                    Activo
-                  </span>
-
+                  <?php if ((int)$cliente["cliente_estado"] === 1): ?>
+                    <span class="status active">Activo</span>
+                  <?php else: ?>
+                    <span class="status inactive">Inactivo</span>
+                  <?php endif; ?>
                 </td>
 
                 <!-- ACCIONES -->
