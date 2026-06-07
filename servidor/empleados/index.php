@@ -26,7 +26,8 @@ if (isset($_POST["delete_empleado_id"])) {
     $id = (int) $_POST["delete_empleado_id"];
 
     $stmt = $pdo->prepare("
-        DELETE FROM usuarios
+        UPDATE usuarios
+        SET usu_estado = 0
         WHERE usu_id = ?
     ");
 
