@@ -309,7 +309,7 @@ $clientes = $stmt->fetchAll();
 
                       <button
                         type="submit"
-                        class="<?= ((int)$cliente["cliente_estado"] === 1) ? 'delete-btn' : 'edit-btn' ?>"
+                        class="<?= ((int)$cliente["cliente_estado"] === 1) ? 'deactivate-btn' : 'activate-btn' ?>"
                         onclick="return confirm('¿Cambiar estado del cliente?')"
                       >
                         <?= ((int)$cliente["cliente_estado"] === 1) ? 'Inactivar' : 'Activar' ?>

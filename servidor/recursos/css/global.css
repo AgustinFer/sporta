@@ -208,10 +208,37 @@ button:active {
 }
 
 /* =========================
-   BOTÓN ELIMINAR
+   BOTÓN ACTIVAR
 ========================= */
 
-.delete-btn {
+.activate-btn {
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: rgba(0,255,120,0.12);
+  color: rgb(0,120,60);
+
+  transition: 0.2s ease;
+}
+
+.activate-btn:hover {
+  background: rgba(0,255,120,0.20);
+  transform: translateY(-1px);
+}
+
+/* =========================
+   BOTÓN DESACTIVAR
+========================= */
+
+.deactivate-btn {
   border: none;
 
   padding: 8px 12px;
@@ -229,7 +256,7 @@ button:active {
   transition: 0.2s ease;
 }
 
-.delete-btn:hover {
+.deactivate-btn:hover {
   background: rgba(255,80,80,0.20);
   transform: translateY(-1px);
 }
