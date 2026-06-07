@@ -301,23 +301,18 @@ $clientes = $stmt->fetchAll();
                     </button>
 
                     <form method="POST">
-
                       <input
                         type="hidden"
-                        name="delete_cliente_id"
+                        name="toggle_cliente_id"
                         value="<?= $cliente["cliente_id"] ?>"
                       >
 
                       <button
                         type="submit"
-                        class="delete-btn"
-                        onclick="
-                          return confirm(
-                            '¿Eliminar cliente?'
-                          )
-                        "
+                        class="<?= ((int)$cliente["cliente_estado"] === 1) ? 'delete-btn' : 'edit-btn' ?>"
+                        onclick="return confirm('¿Cambiar estado del cliente?')"
                       >
-                        Eliminar
+                        <?= ((int)$cliente["cliente_estado"] === 1) ? 'Inactivar' : 'Activar' ?>
                       </button>
 
                     </form>
