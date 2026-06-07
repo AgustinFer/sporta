@@ -5,42 +5,24 @@
 const drawerConfig = {
 
   clientes: {
-
     prefix: "cliente",
-
     titleNew: "Nuevo cliente",
-
     titleEdit: "Modificar cliente",
-
-    fields: [
-      "nombre",
-      "apellido",
-      "email",
-      "celular",
-      "dni"
-    ]
-
+    fields: ["nombre", "apellido", "email", "celular", "dni"]
   },
 
   empleados: {
-
     prefix: "empleado",
-
     titleNew: "Nuevo empleado",
-
     titleEdit: "Modificar empleado",
+    fields: ["nombre", "apellido", "email", "celular", "dni", "usuario", "direccion", "rol"]
+  },
 
-    fields: [
-      "nombre",
-      "apellido",
-      "email",
-      "celular",
-      "dni",
-      "usuario",
-      "direccion",
-      "rol"
-    ]
-
+  reservas: {
+    prefix: "reserva",
+    titleNew: "Nueva reserva",
+    titleEdit: "Modificar reserva",
+    fields: [] // lo que uses en ese módulo
   }
 
 };
@@ -51,49 +33,42 @@ const drawerConfig = {
 
 document.addEventListener("click", (e) => {
 
-  const page =
-    document.body.dataset.page?.toLowerCase();
+  const drawerKey =
+    document.body.dataset.drawer;
 
   const config =
-    drawerConfig[page];
+    drawerConfig[drawerKey];
 
   if (!config) return;
 
   /* ========================= */
   /* ➕ FAB (NUEVO) */
-/* ========================= */
+  /* ========================= */
 
   if (e.target.closest(".fab")) {
 
     const form =
       document.querySelector(".drawer form");
 
-    if (form) {
-      form.reset();
-    }
+    if (form) form.reset();
 
     const editId =
-      document.getElementById(
-        `edit_${config.prefix}_id`
-      );
+      document.getElementById(`edit_${config.prefix}_id`);
 
-    if (editId) {
-      editId.value = "";
-    }
+    if (editId) editId.value = "";
 
     const title =
       document.getElementById("drawer-title");
 
-    if (title) {
-      title.textContent = config.titleNew;
-    }
+    if (title) title.textContent = config.titleNew;
 
     openDrawer();
+
   }
 
   /* ========================= */
   /* ✏️ EDITAR */
-/* ========================= */
+  /* ========================= */
 
   if (e.target.closest(".edit-btn")) {
 
@@ -105,58 +80,38 @@ document.addEventListener("click", (e) => {
 
     openDrawer();
 
-    /* ID */
     const editId =
-      document.getElementById(
-        `edit_${config.prefix}_id`
-      );
+      document.getElementById(`edit_${config.prefix}_id`);
 
-    if (editId) {
-      editId.value = button.dataset.id;
-    }
+    if (editId) editId.value = button.dataset.id;
 
-    /* CAMPOS DINÁMICOS */
     config.fields.forEach(field => {
 
       const input =
-        document.getElementById(
-          `${config.prefix}_${field}`
-        );
+        document.getElementById(`${config.prefix}_${field}`);
 
       if (input) {
-
-        const value =
-          button.dataset[field];
-
-        if (value !== undefined) {
-          input.value = value;
-        }
-
+        input.value = button.dataset[field] || "";
       }
 
     });
 
-    /* TÍTULO */
     const title =
       document.getElementById("drawer-title");
 
-    if (title) {
-      title.textContent = config.titleEdit;
-    }
+    if (title) title.textContent = config.titleEdit;
 
   }
 
   /* ========================= */
   /* ❌ CERRAR */
-/* ========================= */
+  /* ========================= */
 
   if (e.target.closest(".drawer-close")) {
     closeDrawer();
   }
 
-  if (
-    e.target.classList.contains("drawer-overlay")
-  ) {
+  if (e.target.classList.contains("drawer-overlay")) {
     closeDrawer();
   }
 
@@ -168,11 +123,8 @@ document.addEventListener("click", (e) => {
 
 function openDrawer() {
 
-  const drawer =
-    document.querySelector(".drawer");
-
-  const overlay =
-    document.querySelector(".drawer-overlay");
+  const drawer = document.querySelector(".drawer");
+  const overlay = document.querySelector(".drawer-overlay");
 
   if (!drawer || !overlay) return;
 
@@ -180,7 +132,6 @@ function openDrawer() {
   overlay.classList.add("open");
 
   document.body.style.overflow = "hidden";
-
 }
 
 /* ========================= */
@@ -189,11 +140,8 @@ function openDrawer() {
 
 function closeDrawer() {
 
-  const drawer =
-    document.querySelector(".drawer");
-
-  const overlay =
-    document.querySelector(".drawer-overlay");
+  const drawer = document.querySelector(".drawer");
+  const overlay = document.querySelector(".drawer-overlay");
 
   if (!drawer || !overlay) return;
 
@@ -201,5 +149,4 @@ function closeDrawer() {
   overlay.classList.remove("open");
 
   document.body.style.overflow = "";
-
 }
