@@ -6,6 +6,18 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* ANIMACIONES GENERALES */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ELEMENTOS BASE */
 button {
   width: 100%;
@@ -261,15 +273,25 @@ button:active {
   transform: translateY(-1px);
 }
 
-/* ANIMACIONES GENERALES */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* =========================
+   BUSCADOR TABLA
+========================= */
+
+.table-toolbar {
+  padding: 0 30px;
+  margin-top: 20px;
 }
 
+.table-search {
+  width: 100%;
+  max-width: 400px;
+
+  padding: 12px;
+
+  border-radius: 10px;
+  border: 1px solid rgba(26,26,46,0.15);
+
+  background: white;
+
+  font-size: 14px;
+}

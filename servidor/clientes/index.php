@@ -208,23 +208,34 @@ $clientes = $stmt->fetchAll();
 
     </div>
 
+    <!-- TOOLBAR -->
+    <div class="table-toolbar">
+
+      <input
+        type="text"
+        id="tableSearch"
+        class="table-search"
+        placeholder="Buscar cliente..."
+      >
+
+    </div>
+
     <!-- LISTADO -->
     <!-- TABLA -->
     <div class="table-container">
 
       <table class="table">
-
         <thead>
 
           <tr>
 
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
-            <th>Celular</th>
-            <th>DNI</th>
-            <th>Estado</th>
+            <th data-sort="0">ID ↕</th>
+            <th data-sort="1">Nombre ↕</th>
+            <th data-sort="2">Apellido ↕</th>
+            <th data-sort="3">Email ↕</th>
+            <th data-sort="4">Celular ↕</th>
+            <th data-sort="5">DNI ↕</th>
+            <th data-sort="6">Estado ↕</th>
             <th>Acciones</th>
 
           </tr>
@@ -361,8 +372,12 @@ $clientes = $stmt->fetchAll();
   <!-- JS LAYOUT (carga sidebar + header) -->
   <script src="<?= BASE_URL ?>/recursos/js/layout.js"></script>
 
+  <!-- JS TABLA -->
+  <script src="<?= BASE_URL ?>/recursos/js/table.js"></script>
+
   <!-- JS DRAWER -->
   <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
+
   <!-- FIN CONFIG GLOBAL -->
 
 </body>
