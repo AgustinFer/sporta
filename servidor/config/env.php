@@ -3,20 +3,29 @@
  * Cargador simple de variables de entorno desde .env
  */
 function loadEnv($envPath = null) {
+
     if ($envPath === null) {
-        // Buscar .env en la raíz del proyecto (3 niveles arriba de config/)
-        $envPath = __DIR__ . '/../../.env';
-    }
 
-    if (!file_exists($envPath)) {
+        $possiblePaths = [
+            __DIR__ . '/.env',         // mismo directorio
+            __DIR__ . '/../.env',      // 1 nivel arriba
+            __DIR__ . '/../../.env'    // 2 niveles arriba
+        ];
 
-        // Busco un directorio más arriba
-        $envPath = __DIR__ . '/../.env';
-
-        if (!file_exists($envPath)) {
-            throw new Exception("Archivo .env no encontrado en: $envPath");
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path)) {
+                $envPath = $path;
+                break;
+            }
         }
 
+        if ($envPath === null) {
+            throw new Exception(
+                "Archivo .env no encontrado. Rutas buscadas: " .
+                implode(', ', $possiblePaths)
+            );
+        }
+    }
 }
 
     $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
