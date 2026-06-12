@@ -46,6 +46,9 @@ if (isset($_POST["toggle_cliente_id"])) {
 
     $stmt->execute([$nuevoEstado, $id]);
 
+    $_SESSION['flash_success'] = $nuevoEstado === 1
+        ? "Cliente activado con éxito"
+        : "Cliente inactivado con éxito";
     header("Location: " . BASE_URL . "/clientes/");
     exit;
 }
@@ -115,6 +118,7 @@ if (!empty($_POST["edit_cliente_id"])) {
                 $id
             ]);
 
+            $_SESSION['flash_success'] = "Cliente modificado con éxito";
             header("Location: " . BASE_URL . "/clientes/");
             exit;
 
@@ -178,6 +182,7 @@ if (
                 $dni ?: null
             ]);
 
+            $_SESSION['flash_success'] = "Cliente agregado con éxito";
             header("Location: " . BASE_URL . "/clientes/");
             exit;
 
@@ -421,6 +426,25 @@ $clientes = $stmt->fetchAll();
   <!-- INICIO CONFIG GLOBAL -->
   <!-- DRAWER (aunque no se use) -->
   <div id="drawer-container"></div>
+
+  <?php if (isset($_SESSION['flash_success'])): ?>
+  <div id="toast-container">
+    <div class="toast toast-success">
+      <?= $_SESSION['flash_success'] ?>
+      <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+    </div>
+  </div>
+  <script>
+    setTimeout(function(){
+      var t = document.querySelector('.toast');
+      if (t) {
+        t.classList.add('toast-hiding');
+        setTimeout(function(){ if (t.parentElement) t.remove(); }, 300);
+      }
+    }, 3500);
+  </script>
+  <?php unset($_SESSION['flash_success']); ?>
+  <?php endif; ?>
 
   <script>
     const BASE_URL = "<?= BASE_URL ?>";
