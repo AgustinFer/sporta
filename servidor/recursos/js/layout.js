@@ -270,6 +270,9 @@ async function loadPage(route) {
     if (typeof initTable === "function")
       initTable();
 
+    if (typeof initColumnPicker === "function")
+      initColumnPicker();
+
     if (typeof initDrawerPage === "function")
       initDrawerPage();
 

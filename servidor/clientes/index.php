@@ -278,14 +278,14 @@ $clientes = $stmt->fetchAll();
 
           <tr>
 
-            <th data-sort="0">ID ↕</th>
-            <th data-sort="1">Nombre ↕</th>
-            <th data-sort="2">Apellido ↕</th>
-            <th data-sort="3">Email ↕</th>
-            <th data-sort="4">Celular ↕</th>
-            <th data-sort="5">DNI ↕</th>
-            <th data-sort="6">Estado ↕</th>
-            <th>Acciones</th>
+            <th data-sort="0" data-column="id">ID ↕</th>
+            <th data-sort="1" data-column="nombre">Nombre ↕</th>
+            <th data-sort="2" data-column="apellido">Apellido ↕</th>
+            <th data-sort="3" data-column="email">Email ↕</th>
+            <th data-sort="4" data-column="celular">Celular ↕</th>
+            <th data-sort="5" data-column="dni">DNI ↕</th>
+            <th data-sort="6" data-column="estado">Estado ↕</th>
+            <th data-column="acciones">Acciones</th>
 
           </tr>
 
@@ -299,43 +299,43 @@ $clientes = $stmt->fetchAll();
 
               <tr>
 
-                <td>
+                <td data-column="id">
                   <?= htmlspecialchars(
                     $cliente["cliente_id"]
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="nombre">
                   <?= htmlspecialchars(
                     $cliente["cliente_nombre"]
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="apellido">
                   <?= htmlspecialchars(
                     $cliente["cliente_apellido"]
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="email">
                   <?= htmlspecialchars(
                     $cliente["cliente_email"] ?? "-"
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="celular">
                   <?= htmlspecialchars(
                     $cliente["cliente_celular"] ?? "-"
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="dni">
                   <?= htmlspecialchars(
                     $cliente["cliente_dni"] ?? "-"
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="estado">
                   <?php if ((int)$cliente["cliente_estado"] === 1): ?>
                     <span class="status active">Activo</span>
                   <?php else: ?>
@@ -344,7 +344,7 @@ $clientes = $stmt->fetchAll();
                 </td>
 
                 <!-- ACCIONES -->
-                <td>
+                <td data-column="acciones">
 
                   <div class="table-actions">
                     <button

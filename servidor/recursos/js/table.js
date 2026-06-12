@@ -112,7 +112,120 @@ function sortTable(column) {
 
 }
 
+/* ========================= */
+/*  COLUMN PICKER */
+/* ========================= */
+
+function initColumnPicker() {
+
+  const toolbar = document.querySelector(".table-toolbar");
+  if (!toolbar) return;
+  if (toolbar.dataset.columnPickerBound) return;
+  toolbar.dataset.columnPickerBound = "true";
+
+  const table = document.querySelector(".table");
+  if (!table) return;
+
+  const headers = table.querySelectorAll("thead th[data-column]");
+  if (!headers.length) return;
+
+  const page = document.body.dataset.page;
+  if (!page) return;
+
+  const storageKey = "sporta_columnVisibility_" + page.toLowerCase();
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "column-picker-wrapper";
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "column-picker-btn";
+  btn.textContent = "Columnas \u25BC";
+
+  const dropdown = document.createElement("div");
+  dropdown.className = "column-picker-dropdown";
+
+  headers.forEach(function(th) {
+    const col = th.dataset.column;
+    const label = th.textContent.replace("\u2195", "").trim();
+
+    const item = document.createElement("label");
+    item.className = "column-picker-item";
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.dataset.column = col;
+    cb.checked = true;
+
+    cb.addEventListener("change", function() {
+      toggleColumn(col, cb.checked);
+      saveState();
+    });
+
+    item.appendChild(cb);
+    item.appendChild(document.createTextNode(" " + label));
+    dropdown.appendChild(item);
+  });
+
+  wrapper.appendChild(btn);
+  wrapper.appendChild(dropdown);
+  toolbar.appendChild(wrapper);
+
+  loadState();
+
+  btn.addEventListener("click", function(e) {
+    e.stopPropagation();
+    dropdown.classList.toggle("open");
+  });
+
+  document.addEventListener("click", function() {
+    dropdown.classList.remove("open");
+  });
+
+  dropdown.addEventListener("click", function(e) {
+    e.stopPropagation();
+  });
+
+  function toggleColumn(col, visible) {
+    document.querySelectorAll('[data-column="' + col + '"]').forEach(function(el) {
+      el.classList.toggle("column-hidden", !visible);
+    });
+  }
+
+  function saveState() {
+    var state = {};
+    headers.forEach(function(th) {
+      var col = th.dataset.column;
+      var cb = dropdown.querySelector('[data-column="' + col + '"]');
+      state[col] = cb.checked;
+    });
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  function loadState() {
+    try {
+      var saved = localStorage.getItem(storageKey);
+      if (saved) {
+        var state = JSON.parse(saved);
+        Object.keys(state).forEach(function(col) {
+          var cb = dropdown.querySelector('[data-column="' + col + '"]');
+          if (cb) {
+            cb.checked = state[col];
+            toggleColumn(col, state[col]);
+          }
+        });
+      }
+    } catch (e) {}
+  }
+
+}
+
 document.addEventListener(
   "DOMContentLoaded",
-  initTable
+  function() {
+    initTable();
+    initColumnPicker();
+  }
 );

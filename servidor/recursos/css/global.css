@@ -278,6 +278,9 @@ button:active {
 ========================= */
 
 .table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 0 30px;
   margin-top: 20px;
 }
@@ -294,6 +297,76 @@ button:active {
   background: white;
 
   font-size: 14px;
+}
+
+/* =========================
+   COLUMN PICKER
+========================= */
+
+.column-picker-wrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.column-picker-btn {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(26,26,46,0.15);
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  color: #333;
+  margin-top: 0;
+  width: auto;
+  box-shadow: none;
+}
+
+.column-picker-btn:hover {
+  transform: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.column-picker-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 6px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid rgba(26,26,46,0.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  padding: 8px;
+  min-width: 170px;
+  display: none;
+  z-index: 100;
+}
+
+.column-picker-dropdown.open {
+  display: block;
+}
+
+.column-picker-item {
+  display: block;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  color: #333;
+  border-radius: 6px;
+}
+
+.column-picker-item:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.column-picker-item input {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.column-hidden {
+  display: none;
 }
 
 /* =========================
