@@ -25,6 +25,12 @@ if (isset($_POST["toggle_empleado_id"])) {
 
     $id = (int) $_POST["toggle_empleado_id"];
 
+    if ($id === $_SESSION['usuario']->getId()) {
+        $_SESSION['flash_error'] = "No puedes inactivar tu propio usuario";
+        header("Location: " . BASE_URL . "/empleados/");
+        exit;
+    }
+
     $stmt = $pdo->prepare("
         SELECT usu_estado
         FROM usuarios
