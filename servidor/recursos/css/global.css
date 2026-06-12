@@ -452,6 +452,10 @@ button:active {
   background: #22c55e;
 }
 
+.toast-error {
+  background: #ef4444;
+}
+
 .toast-hiding {
   animation: toastOut 0.3s ease forwards;
 }
