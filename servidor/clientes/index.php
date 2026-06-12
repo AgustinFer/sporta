@@ -267,6 +267,14 @@ $clientes = $stmt->fetchAll();
         placeholder="Buscar cliente..."
       >
 
+      <label class="filter-inactivos">
+        <input
+          type="checkbox"
+          id="showInactivos"
+        >
+        Mostrar inactivos
+      </label>
+
     </div>
 
     <!-- LISTADO -->

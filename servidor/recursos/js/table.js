@@ -3,35 +3,67 @@ function initTable() {
   const searchInput =
     document.getElementById("tableSearch");
 
+  const showInactivos =
+    document.getElementById("showInactivos");
+
+  function filterRows() {
+    const term = searchInput
+      ? searchInput.value.toLowerCase()
+      : "";
+
+    const showAll = showInactivos
+      ? showInactivos.checked
+      : true;
+
+    document
+      .querySelectorAll(".table tbody tr")
+      .forEach(row => {
+
+        if (row.querySelector("td[colspan]")) return;
+
+        const text =
+          row.innerText.toLowerCase();
+
+        const isInactive =
+          row.querySelector(".status.inactive");
+
+        const coincideBusqueda =
+          text.includes(term);
+
+        const coincideActivo =
+          showAll || !isInactive;
+
+        row.style.display =
+          coincideBusqueda && coincideActivo
+            ? ""
+            : "none";
+
+      });
+  }
+
   if (searchInput && !searchInput.dataset.bound) {
 
     searchInput.dataset.bound = "true";
 
     searchInput.addEventListener(
       "input",
-      function () {
-
-        const term =
-          this.value.toLowerCase();
-
-        document
-          .querySelectorAll(".table tbody tr")
-          .forEach(row => {
-
-            const text =
-              row.innerText.toLowerCase();
-
-            row.style.display =
-              text.includes(term)
-                ? ""
-                : "none";
-
-          });
-
-      }
+      filterRows
     );
 
   }
+
+  if (showInactivos && !showInactivos.dataset.bound) {
+
+    showInactivos.dataset.bound = "true";
+
+    showInactivos.addEventListener(
+      "change",
+      filterRows
+    );
+
+  }
+
+  filterRows();
 
   document
     .querySelectorAll(
