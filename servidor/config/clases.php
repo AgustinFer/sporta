@@ -75,6 +75,10 @@ class Usuario extends Persona{
 
     #region GETTERS
 
+    public function getId(){
+        return $this->id;
+    }
+
     public function getRol(){
         return $this->rol;
     }
