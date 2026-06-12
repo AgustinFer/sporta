@@ -276,6 +276,9 @@ async function loadPage(route) {
     if (typeof initDrawerPage === "function")
       initDrawerPage();
 
+    if (typeof initAjustes === "function")
+      initAjustes();
+
     if (cleanRoute === "inicio") {
       initInicio();
     }
