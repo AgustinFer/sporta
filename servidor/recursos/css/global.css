@@ -295,3 +295,18 @@ button:active {
 
   font-size: 14px;
 }
+
+/* =========================
+   FLASH ERROR
+========================= */
+
+.flash-error {
+  margin: 0 30px;
+  padding: 12px 16px;
+  background: rgba(231, 76, 60, 0.12);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 10px;
+  color: #c0392b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}

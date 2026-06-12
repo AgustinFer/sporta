@@ -41,9 +41,9 @@ document.addEventListener("click", (e) => {
 
   if (!config) return;
 
-  /* ========================= */
-  /* ➕ FAB (NUEVO) */
-  /* ========================= */
+/* ========================= */
+/* ➕ FAB (NUEVO) */
+/* ========================= */
 
   if (e.target.closest(".fab")) {
 
@@ -61,6 +61,10 @@ document.addEventListener("click", (e) => {
       document.getElementById("drawer-title");
 
     if (title) title.textContent = config.titleNew;
+
+    if (typeof limpiarErroresDrawer === "function") {
+      limpiarErroresDrawer();
+    }
 
     openDrawer();
 

@@ -50,6 +50,28 @@ if (isset($_POST["toggle_cliente_id"])) {
     exit;
 }
 
+function validarDatosCliente($nombre, $apellido, $email, $celular, $dni) {
+    $errores = [];
+
+    if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $nombre)) {
+        $errores[] = "El nombre contiene caracteres inválidos";
+    }
+    if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $apellido)) {
+        $errores[] = "El apellido contiene caracteres inválidos";
+    }
+    if ($dni !== "" && !preg_match('/^\d+$/', $dni)) {
+        $errores[] = "El DNI solo debe contener números";
+    }
+    if ($celular !== "" && !preg_match('/^[\d\s\+\-\(\)]+$/', $celular)) {
+        $errores[] = "El teléfono contiene caracteres inválidos";
+    }
+    if ($email !== "" && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errores[] = "El email no tiene un formato válido";
+    }
+
+    return $errores;
+}
+
 /* ========================= */
 /* ✏️ MODIFICAR CLIENTE */
 /* ========================= */
@@ -69,26 +91,36 @@ if (!empty($_POST["edit_cliente_id"])) {
         !empty($apellido)
     ) {
 
-        $stmt = $pdo->prepare("
-            UPDATE clientes
-            SET
-                cliente_nombre = ?,
-                cliente_apellido = ?,
-                cliente_email = ?,
-                cliente_celular = ?,
-                cliente_dni = ?
-            WHERE cliente_id = ?
-        ");
+        $errores = validarDatosCliente($nombre, $apellido, $email, $celular, $dni);
 
-        $stmt->execute([
-            $nombre,
-            $apellido,
-            $email ?: null,
-            $celular ?: null,
-            $dni ?: null,
-            $id
-        ]);
+        if (empty($errores)) {
 
+            $stmt = $pdo->prepare("
+                UPDATE clientes
+                SET
+                    cliente_nombre = ?,
+                    cliente_apellido = ?,
+                    cliente_email = ?,
+                    cliente_celular = ?,
+                    cliente_dni = ?
+                WHERE cliente_id = ?
+            ");
+
+            $stmt->execute([
+                $nombre,
+                $apellido,
+                $email ?: null,
+                $celular ?: null,
+                $dni ?: null,
+                $id
+            ]);
+
+            header("Location: " . BASE_URL . "/clientes");
+            exit;
+
+        }
+
+        $_SESSION['flash_error'] = implode("<br>", $errores);
         header("Location: " . BASE_URL . "/clientes");
         exit;
 
@@ -117,31 +149,41 @@ if (
         !empty($apellido)
     ) {
 
-        $stmt = $pdo->prepare("
-            INSERT INTO clientes (
-                cliente_nombre,
-                cliente_apellido,
-                cliente_email,
-                cliente_celular,
-                cliente_dni,
-                cliente_estado,
-                cliente_localidad_id,
-                cliente_provincia_id,
-                cliente_pais_id
-            )
-            VALUES (
-                ?, ?, ?, ?, ?, 1, 1, 1, 1
-            )
-        ");
+        $errores = validarDatosCliente($nombre, $apellido, $email, $celular, $dni);
 
-        $stmt->execute([
-            $nombre,
-            $apellido,
-            $email ?: null,
-            $celular ?: null,
-            $dni ?: null
-        ]);
+        if (empty($errores)) {
 
+            $stmt = $pdo->prepare("
+                INSERT INTO clientes (
+                    cliente_nombre,
+                    cliente_apellido,
+                    cliente_email,
+                    cliente_celular,
+                    cliente_dni,
+                    cliente_estado,
+                    cliente_localidad_id,
+                    cliente_provincia_id,
+                    cliente_pais_id
+                )
+                VALUES (
+                    ?, ?, ?, ?, ?, 1, 1, 1, 1
+                )
+            ");
+
+            $stmt->execute([
+                $nombre,
+                $apellido,
+                $email ?: null,
+                $celular ?: null,
+                $dni ?: null
+            ]);
+
+            header("Location: " . BASE_URL . "/clientes");
+            exit;
+
+        }
+
+        $_SESSION['flash_error'] = implode("<br>", $errores);
         header("Location: " . BASE_URL . "/clientes");
         exit;
 
@@ -207,6 +249,13 @@ $clientes = $stmt->fetchAll();
       </p>
 
     </div>
+
+    <?php if (isset($_SESSION['flash_error'])): ?>
+      <div class="flash-error">
+        <?= $_SESSION['flash_error'] ?>
+      </div>
+      <?php unset($_SESSION['flash_error']); ?>
+    <?php endif; ?>
 
     <!-- TOOLBAR -->
     <div class="table-toolbar">
@@ -377,6 +426,9 @@ $clientes = $stmt->fetchAll();
 
   <!-- JS DRAWER -->
   <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
+
+  <!-- JS VALIDACIÓN -->
+  <script src="<?= BASE_URL ?>/recursos/js/validacion.js"></script>
 
   <!-- FIN CONFIG GLOBAL -->
 

@@ -158,6 +158,30 @@
    MOBILE
 ========================= */
 
+/* =========================
+   ERRORES
+========================= */
+
+.field-error {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: none;
+}
+
+.field-error.visible {
+  display: block;
+}
+
+.drawer-form input.input-error {
+  border-color: #e74c3c;
+}
+
+.drawer-form input.input-error:focus {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
 @media (max-width: 768px) {
 
   .drawer {

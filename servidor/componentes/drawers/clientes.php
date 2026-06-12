@@ -37,14 +37,20 @@
 
       <label>
         Nombre
+        <span class="required">*</span>
       </label>
 
       <input
         type="text"
         name="cliente_nombre"
         id="cliente_nombre"
+        pattern="[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+"
+        title="Solo se permiten letras"
+        data-validate="soloLetras"
         required
       >
+
+      <span class="field-error" id="error_cliente_nombre"></span>
 
     </div>
 
@@ -53,14 +59,20 @@
 
       <label>
         Apellido
+        <span class="required">*</span>
       </label>
 
       <input
         type="text"
         name="cliente_apellido"
         id="cliente_apellido"
+        pattern="[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+"
+        title="Solo se permiten letras"
+        data-validate="soloLetras"
         required
       >
+
+      <span class="field-error" id="error_cliente_apellido"></span>
 
     </div>
 
@@ -75,7 +87,12 @@
         type="text"
         name="cliente_celular"
         id="cliente_celular"
+        pattern="[\d\s\+\-\(\)]+"
+        title="Solo se permiten números, +, -, ( ) y espacios"
+        data-validate="telefono"
       >
+
+      <span class="field-error" id="error_cliente_celular"></span>
 
     </div>
 
@@ -90,7 +107,10 @@
         type="email"
         name="cliente_email"
         id="cliente_email"
+        data-validate="email"
       >
+
+      <span class="field-error" id="error_cliente_email"></span>
 
     </div>
 
@@ -105,7 +125,12 @@
         type="text"
         name="cliente_dni"
         id="cliente_dni"
+        pattern="\d+"
+        title="Solo se permiten números"
+        data-validate="soloNumeros"
       >
+
+      <span class="field-error" id="error_cliente_dni"></span>
 
     </div>
 
