@@ -78,6 +78,56 @@ function validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni) {
 }
 
 /* ========================= */
+/* 🔍 VERIFICAR DUPLICADOS */
+/* ========================= */
+
+function verificarDuplicadosEmpleado($pdo, $usuario, $email, $dni, $excludeId = null) {
+    $errores = [];
+
+    if ($dni !== "") {
+        $sql = "SELECT COUNT(*) FROM usuarios WHERE usu_dni = ?";
+        $params = [$dni];
+        if ($excludeId !== null) {
+            $sql .= " AND usu_id != ?";
+            $params[] = $excludeId;
+        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        if ($stmt->fetchColumn() > 0) {
+            $errores[] = "El DNI ingresado ya pertenece a otro empleado";
+        }
+    }
+
+    if ($email !== "") {
+        $sql = "SELECT COUNT(*) FROM usuarios WHERE usu_email = ?";
+        $params = [$email];
+        if ($excludeId !== null) {
+            $sql .= " AND usu_id != ?";
+            $params[] = $excludeId;
+        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        if ($stmt->fetchColumn() > 0) {
+            $errores[] = "El email ingresado ya pertenece a otro empleado";
+        }
+    }
+
+    $sql = "SELECT COUNT(*) FROM usuarios WHERE usu_usuario = ?";
+    $params = [$usuario];
+    if ($excludeId !== null) {
+        $sql .= " AND usu_id != ?";
+        $params[] = $excludeId;
+    }
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    if ($stmt->fetchColumn() > 0) {
+        $errores[] = "El nombre de usuario ingresado ya pertenece a otro empleado";
+    }
+
+    return $errores;
+}
+
+/* ========================= */
 /* ✏️ MODIFICAR EMPLEADO */
 /* ========================= */
 
@@ -104,6 +154,14 @@ if (!empty($_POST["edit_empleado_id"])) {
         $errores = validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni);
 
         if (empty($errores)) {
+
+            $erroresDuplicados = verificarDuplicadosEmpleado($pdo, $usuario, $email, $dni, $id);
+
+            if (!empty($erroresDuplicados)) {
+                $_SESSION['flash_error'] = implode("<br>", $erroresDuplicados);
+                header("Location: " . BASE_URL . "/empleados/");
+                exit;
+            }
 
             $stmt = $pdo->prepare("
                 UPDATE usuarios
@@ -171,6 +229,14 @@ if (
         $errores = validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni);
 
         if (empty($errores)) {
+
+            $erroresDuplicados = verificarDuplicadosEmpleado($pdo, $usuario, $email, $dni);
+
+            if (!empty($erroresDuplicados)) {
+                $_SESSION['flash_error'] = implode("<br>", $erroresDuplicados);
+                header("Location: " . BASE_URL . "/empleados/");
+                exit;
+            }
 
             try {
 
