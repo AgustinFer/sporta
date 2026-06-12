@@ -18,24 +18,63 @@ require_once __DIR__ . '/../config/conexion.php';
 $pdo = conexion();
 
 /* ========================= */
-/* 🗑️ ELIMINAR EMPLEADO */
+/* 🔄 TOGGLE ESTADO EMPLEADO */
 /* ========================= */
 
-if (isset($_POST["delete_empleado_id"])) {
+if (isset($_POST["toggle_empleado_id"])) {
 
-    $id = (int) $_POST["delete_empleado_id"];
+    $id = (int) $_POST["toggle_empleado_id"];
+
+    $stmt = $pdo->prepare("
+        SELECT usu_estado
+        FROM usuarios
+        WHERE usu_id = ?
+    ");
+    $stmt->execute([$id]);
+
+    $actual = $stmt->fetchColumn();
+
+    $nuevoEstado = ((int)$actual === 1) ? 0 : 1;
 
     $stmt = $pdo->prepare("
         UPDATE usuarios
-        SET usu_estado = 0
+        SET usu_estado = ?
         WHERE usu_id = ?
     ");
 
-    $stmt->execute([$id]);
+    $stmt->execute([$nuevoEstado, $id]);
 
+    $_SESSION['flash_success'] = $nuevoEstado === 1
+        ? "Empleado activado con éxito"
+        : "Empleado inactivado con éxito";
     header("Location: " . BASE_URL . "/empleados/");
     exit;
+}
 
+/* ========================= */
+/* ✅ VALIDACIÓN */
+/* ========================= */
+
+function validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni) {
+    $errores = [];
+
+    if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $nombre)) {
+        $errores[] = "El nombre contiene caracteres inválidos";
+    }
+    if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $apellido)) {
+        $errores[] = "El apellido contiene caracteres inválidos";
+    }
+    if ($dni !== "" && !preg_match('/^\d+$/', $dni)) {
+        $errores[] = "El DNI solo debe contener números";
+    }
+    if ($celular !== "" && !preg_match('/^[\d\s\+\-\(\)]+$/', $celular)) {
+        $errores[] = "El teléfono contiene caracteres inválidos";
+    }
+    if ($email !== "" && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errores[] = "El email no tiene un formato válido";
+    }
+
+    return $errores;
 }
 
 /* ========================= */
@@ -44,32 +83,16 @@ if (isset($_POST["delete_empleado_id"])) {
 
 if (!empty($_POST["edit_empleado_id"])) {
 
-    $id =
-      (int) $_POST["edit_empleado_id"];
+    $id = (int) $_POST["edit_empleado_id"];
 
-    $nombre =
-      trim($_POST["empleado_nombre"] ?? "");
-
-    $apellido =
-      trim($_POST["empleado_apellido"] ?? "");
-
-    $email =
-      trim($_POST["empleado_email"] ?? "");
-
-    $celular =
-      trim($_POST["empleado_celular"] ?? "");
-
-    $dni =
-      trim($_POST["empleado_dni"] ?? "");
-
-    $usuario =
-      trim($_POST["empleado_usuario"] ?? "");
-
-    $direccion =
-      trim($_POST["empleado_direccion"] ?? "");
-
-    $rol =
-      (int) ($_POST["empleado_rol"] ?? 0);
+    $nombre = trim($_POST["empleado_nombre"] ?? "");
+    $apellido = trim($_POST["empleado_apellido"] ?? "");
+    $email = trim($_POST["empleado_email"] ?? "");
+    $celular = trim($_POST["empleado_celular"] ?? "");
+    $dni = trim($_POST["empleado_dni"] ?? "");
+    $usuario = trim($_POST["empleado_usuario"] ?? "");
+    $direccion = trim($_POST["empleado_direccion"] ?? "");
+    $rol = (int) ($_POST["empleado_rol"] ?? 0);
 
     if (
         !empty($nombre) &&
@@ -78,103 +101,22 @@ if (!empty($_POST["edit_empleado_id"])) {
         $rol > 0
     ) {
 
-        $stmt = $pdo->prepare("
-            UPDATE usuarios
-            SET
-                usu_nombre = ?,
-                usu_apellido = ?,
-                usu_email = ?,
-                usu_celular = ?,
-                usu_dni = ?,
-                usu_usuario = ?,
-                usu_direccion = ?,
-                usu_rol = ?
-            WHERE usu_id = ?
-        ");
+        $errores = validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni);
 
-        $stmt->execute([
-            $nombre,
-            $apellido,
-            $email ?: null,
-            $celular ?: null,
-            $dni ?: null,
-            $usuario,
-            $direccion ?: null,
-            $rol,
-            $id
-        ]);
-
-        header(
-          "Location: " .
-          BASE_URL .
-          "/empleados"
-        );
-
-        exit;
-
-    }
-
-}
-
-/* ========================= */
-/* 📥 ALTA EMPLEADO */
-/* ========================= */
-
-if (
-    $_SERVER["REQUEST_METHOD"] === "POST" &&
-    empty($_POST["edit_empleado_id"]) &&
-    !isset($_POST["delete_empleado_id"])
-) {
-
-    $nombre =
-      trim($_POST["empleado_nombre"] ?? "");
-
-    $apellido =
-      trim($_POST["empleado_apellido"] ?? "");
-
-    $email =
-      trim($_POST["empleado_email"] ?? "");
-
-    $celular =
-      trim($_POST["empleado_celular"] ?? "");
-
-    $dni =
-      trim($_POST["empleado_dni"] ?? "");
-
-    $usuario =
-      trim($_POST["empleado_usuario"] ?? "");
-
-    $direccion =
-      trim($_POST["empleado_direccion"] ?? "");
-
-    $rol =
-      (int) ($_POST["empleado_rol"] ?? 0);
-
-    if (
-        !empty($nombre) &&
-        !empty($apellido) &&
-        !empty($usuario) &&
-        $rol > 0
-    ) {
-
-        try {
+        if (empty($errores)) {
 
             $stmt = $pdo->prepare("
-                INSERT INTO usuarios (
-                    usu_nombre,
-                    usu_apellido,
-                    usu_email,
-                    usu_celular,
-                    usu_dni,
-                    usu_usuario,
-                    usu_direccion,
-                    usu_rol,
-                    usu_contrasena,
-                    usu_estado
-                )
-                VALUES (
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, 1
-                )
+                UPDATE usuarios
+                SET
+                    usu_nombre = ?,
+                    usu_apellido = ?,
+                    usu_email = ?,
+                    usu_celular = ?,
+                    usu_dni = ?,
+                    usu_usuario = ?,
+                    usu_direccion = ?,
+                    usu_rol = ?
+                WHERE usu_id = ?
             ");
 
             $stmt->execute([
@@ -186,28 +128,99 @@ if (
                 $usuario,
                 $direccion ?: null,
                 $rol,
-                password_hash(
-                  "1234",
-                  PASSWORD_DEFAULT
-                )
+                $id
             ]);
 
-            header(
-              "Location: " .
-              BASE_URL .
-              "/empleados"
-            );
-
+            $_SESSION['flash_success'] = "Empleado modificado con éxito";
+            header("Location: " . BASE_URL . "/empleados/");
             exit;
+        }
 
-        } catch (PDOException $e) {
+        $_SESSION['flash_error'] = implode("<br>", $errores);
+        header("Location: " . BASE_URL . "/empleados/");
+        exit;
+    }
+}
 
-            echo "<pre>";
-            echo "Error al crear empleado:\n";
-            echo $e->getMessage();
-            echo "</pre>";
+/* ========================= */
+/* 📥 ALTA EMPLEADO */
+/* ========================= */
+
+if (
+    $_SERVER["REQUEST_METHOD"] === "POST" &&
+    empty($_POST["edit_empleado_id"]) &&
+    !isset($_POST["toggle_empleado_id"])
+) {
+
+    $nombre = trim($_POST["empleado_nombre"] ?? "");
+    $apellido = trim($_POST["empleado_apellido"] ?? "");
+    $email = trim($_POST["empleado_email"] ?? "");
+    $celular = trim($_POST["empleado_celular"] ?? "");
+    $dni = trim($_POST["empleado_dni"] ?? "");
+    $usuario = trim($_POST["empleado_usuario"] ?? "");
+    $direccion = trim($_POST["empleado_direccion"] ?? "");
+    $rol = (int) ($_POST["empleado_rol"] ?? 0);
+
+    if (
+        !empty($nombre) &&
+        !empty($apellido) &&
+        !empty($usuario) &&
+        $rol > 0
+    ) {
+
+        $errores = validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni);
+
+        if (empty($errores)) {
+
+            try {
+
+                $stmt = $pdo->prepare("
+                    INSERT INTO usuarios (
+                        usu_nombre,
+                        usu_apellido,
+                        usu_email,
+                        usu_celular,
+                        usu_dni,
+                        usu_usuario,
+                        usu_direccion,
+                        usu_rol,
+                        usu_contrasena,
+                        usu_estado
+                    )
+                    VALUES (
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, 1
+                    )
+                ");
+
+                $stmt->execute([
+                    $nombre,
+                    $apellido,
+                    $email ?: null,
+                    $celular ?: null,
+                    $dni ?: null,
+                    $usuario,
+                    $direccion ?: null,
+                    $rol,
+                    password_hash("1234", PASSWORD_DEFAULT)
+                ]);
+
+                $_SESSION['flash_success'] = "Empleado agregado con éxito";
+                header("Location: " . BASE_URL . "/empleados/");
+                exit;
+
+            } catch (PDOException $e) {
+
+                $_SESSION['flash_error'] = "Error al crear empleado";
+                header("Location: " . BASE_URL . "/empleados/");
+                exit;
+
+            }
 
         }
+
+        $_SESSION['flash_error'] = implode("<br>", $errores);
+        header("Location: " . BASE_URL . "/empleados/");
+        exit;
 
     }
 
@@ -218,9 +231,10 @@ if (
 /* ========================= */
 
 $stmt = $pdo->query("
-    SELECT *
-    FROM usuarios
-    ORDER BY usu_id
+    SELECT u.*, r.rol_nombre
+    FROM usuarios u
+    JOIN roles r ON u.usu_rol = r.rol_id
+    ORDER BY u.usu_id
 ");
 
 $empleados = $stmt->fetchAll();
@@ -311,6 +325,33 @@ $empleados = $stmt->fetchAll();
 
     </div>
 
+    <?php if (isset($_SESSION['flash_error'])): ?>
+      <div class="flash-error">
+        <?= $_SESSION['flash_error'] ?>
+      </div>
+      <?php unset($_SESSION['flash_error']); ?>
+    <?php endif; ?>
+
+    <!-- TOOLBAR -->
+    <div class="table-toolbar">
+
+      <input
+        type="text"
+        id="tableSearch"
+        class="table-search"
+        placeholder="Buscar empleado..."
+      >
+
+      <label class="filter-inactivos">
+        <input
+          type="checkbox"
+          id="showInactivos"
+        >
+        Mostrar inactivos
+      </label>
+
+    </div>
+
     <!-- TABLA -->
     <div class="table-container">
 
@@ -320,16 +361,17 @@ $empleados = $stmt->fetchAll();
 
           <tr>
 
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
-            <th>Celular</th>
-            <th>DNI</th>
-            <th>Usuario</th>
-            <th>Dirección</th>
-            <th>Rol</th>
-            <th>Acciones</th>
+            <th data-sort="0" data-column="id">ID</th>
+            <th data-sort="1" data-column="nombre">Nombre ↕</th>
+            <th data-sort="2" data-column="apellido">Apellido ↕</th>
+            <th data-sort="3" data-column="email">Email ↕</th>
+            <th data-sort="4" data-column="celular">Celular ↕</th>
+            <th data-sort="5" data-column="dni">DNI ↕</th>
+            <th data-sort="6" data-column="usuario">Usuario ↕</th>
+            <th data-sort="7" data-column="direccion">Dirección ↕</th>
+            <th data-sort="8" data-column="rol">Rol ↕</th>
+            <th data-sort="9" data-column="estado">Estado ↕</th>
+            <th data-column="acciones">Acciones</th>
 
           </tr>
 
@@ -343,62 +385,70 @@ $empleados = $stmt->fetchAll();
 
               <tr>
 
-                <td>
+                <td data-column="id">
                   <?= htmlspecialchars(
                     $empleado["usu_id"]
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="nombre">
                   <?= htmlspecialchars(
                     $empleado["usu_nombre"]
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="apellido">
                   <?= htmlspecialchars(
                     $empleado["usu_apellido"]
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="email">
                   <?= htmlspecialchars(
                     $empleado["usu_email"] ?? "-"
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="celular">
                   <?= htmlspecialchars(
                     $empleado["usu_celular"] ?? "-"
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="dni">
                   <?= htmlspecialchars(
                     $empleado["usu_dni"] ?? "-"
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="usuario">
                   <?= htmlspecialchars(
                     $empleado["usu_usuario"]
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="direccion">
                   <?= htmlspecialchars(
                     $empleado["usu_direccion"] ?? "-"
                   ) ?>
                 </td>
 
-                <td>
+                <td data-column="rol">
                   <?= htmlspecialchars(
-                    $empleado["usu_rol"]
+                    $empleado["rol_nombre"]
                   ) ?>
                 </td>
 
+                <td data-column="estado">
+                  <?php if ((int)$empleado["usu_estado"] === 1): ?>
+                    <span class="status active">Activo</span>
+                  <?php else: ?>
+                    <span class="status inactive">Inactivo</span>
+                  <?php endif; ?>
+                </td>
+
                 <!-- ACCIONES -->
-                <td>
+                <td data-column="acciones">
 
                   <div class="table-actions">
 
@@ -419,23 +469,18 @@ $empleados = $stmt->fetchAll();
                     </button>
 
                     <form method="POST">
-
                       <input
                         type="hidden"
-                        name="delete_empleado_id"
+                        name="toggle_empleado_id"
                         value="<?= $empleado["usu_id"] ?>"
                       >
 
                       <button
                         type="submit"
-                        class="delete-btn"
-                        onclick="
-                          return confirm(
-                            '¿Eliminar empleado?'
-                          )
-                        "
+                        class="<?= ((int)$empleado["usu_estado"] === 1) ? 'deactivate-btn' : 'activate-btn' ?>"
+                        onclick="return confirm('¿Cambiar estado del empleado?')"
                       >
-                        Eliminar
+                        <?= ((int)$empleado["usu_estado"] === 1) ? 'Inactivar' : 'Activar' ?>
                       </button>
 
                     </form>
@@ -452,7 +497,7 @@ $empleados = $stmt->fetchAll();
 
             <tr>
 
-              <td colspan="10">
+              <td colspan="11">
 
                 No hay empleados registrados
 
@@ -478,6 +523,25 @@ $empleados = $stmt->fetchAll();
   <!-- DRAWER -->
   <div id="drawer-container"></div>
 
+  <?php if (isset($_SESSION['flash_success'])): ?>
+  <div id="toast-container">
+    <div class="toast toast-success">
+      <?= $_SESSION['flash_success'] ?>
+      <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+    </div>
+  </div>
+  <script>
+    setTimeout(function(){
+      var t = document.querySelector('.toast');
+      if (t) {
+        t.classList.add('toast-hiding');
+        setTimeout(function(){ if (t.parentElement) t.remove(); }, 300);
+      }
+    }, 3500);
+  </script>
+  <?php unset($_SESSION['flash_success']); ?>
+  <?php endif; ?>
+
   <script>
     const BASE_URL =
       "<?= BASE_URL ?>";
@@ -489,6 +553,8 @@ $empleados = $stmt->fetchAll();
   <script src="<?= BASE_URL ?>/recursos/js/table.js"></script>
 
   <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
+
+  <script src="<?= BASE_URL ?>/recursos/js/validacion.js"></script>
 
 </body>
 </html>

@@ -44,8 +44,13 @@
         type="text"
         name="empleado_nombre"
         id="empleado_nombre"
+        pattern="[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+"
+        title="Solo se permiten letras"
+        data-validate="soloLetras"
         required
       >
+
+      <span class="field-error" id="error_empleado_nombre"></span>
 
     </div>
 
@@ -61,8 +66,13 @@
         type="text"
         name="empleado_apellido"
         id="empleado_apellido"
+        pattern="[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+"
+        title="Solo se permiten letras"
+        data-validate="soloLetras"
         required
       >
+
+      <span class="field-error" id="error_empleado_apellido"></span>
 
     </div>
 
@@ -125,7 +135,12 @@
         type="text"
         name="empleado_celular"
         id="empleado_celular"
+        pattern="[\d\s\+\-\(\)]+"
+        title="Solo se permiten números, +, -, ( ) y espacios"
+        data-validate="telefono"
       >
+
+      <span class="field-error" id="error_empleado_celular"></span>
 
     </div>
 
@@ -140,7 +155,10 @@
         type="email"
         name="empleado_email"
         id="empleado_email"
+        data-validate="email"
       >
+
+      <span class="field-error" id="error_empleado_email"></span>
 
     </div>
 
@@ -155,7 +173,12 @@
         type="text"
         name="empleado_dni"
         id="empleado_dni"
+        pattern="\d+"
+        title="Solo se permiten números"
+        data-validate="soloNumeros"
       >
+
+      <span class="field-error" id="error_empleado_dni"></span>
 
     </div>
 
