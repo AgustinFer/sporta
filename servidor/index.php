@@ -76,9 +76,11 @@ if(isset($_POST['iniciar'])){
             Iniciar Sesión
           </button>
 
+          <button id="btnCambiarPass">
+            ¿Olvidaste la contraseña?
+          </button>
+          
         </form>
-
-        <button id="btnCambiarPass" class="forgot">¿Olvidaste la contraseña?</button>
 
       </div>
     </div>
