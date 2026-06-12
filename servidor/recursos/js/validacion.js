@@ -94,3 +94,45 @@
   };
 
 })();
+
+/* ========================= */
+/* 🚪 RESTAURAR DRAWER (form_data) */
+/* ========================= */
+
+function initDrawerPage() {
+
+  if (typeof formData === "undefined" || !formData) return;
+
+  var page = document.body.dataset.page;
+  if (!page) return;
+
+  var key = page.toLowerCase();
+  var config = drawerConfig[key];
+  if (!config) return;
+
+  openDrawer();
+
+  var title = document.getElementById("drawer-title");
+  if (title) {
+    title.textContent = formData.edit_id ? config.titleEdit : config.titleNew;
+  }
+
+  var editId = document.getElementById("edit_" + config.prefix + "_id");
+  if (editId) {
+    editId.value = formData.edit_id || "";
+  }
+
+  config.fields.forEach(function(field) {
+    var input = document.getElementById(config.prefix + "_" + field);
+    if (input && formData[field] !== undefined) {
+      input.value = formData[field];
+    }
+  });
+
+  if (typeof limpiarErroresDrawer === "function") {
+    limpiarErroresDrawer();
+  }
+
+  formData = null;
+
+}

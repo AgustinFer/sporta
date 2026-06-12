@@ -144,6 +144,18 @@ if (!empty($_POST["edit_empleado_id"])) {
     $direccion = trim($_POST["empleado_direccion"] ?? "");
     $rol = (int) ($_POST["empleado_rol"] ?? 0);
 
+    $formData = [
+        'edit_id' => $id,
+        'nombre' => $nombre,
+        'apellido' => $apellido,
+        'email' => $email,
+        'celular' => $celular,
+        'dni' => $dni,
+        'usuario' => $usuario,
+        'direccion' => $direccion,
+        'rol' => $rol,
+    ];
+
     if (
         !empty($nombre) &&
         !empty($apellido) &&
@@ -158,6 +170,7 @@ if (!empty($_POST["edit_empleado_id"])) {
             $erroresDuplicados = verificarDuplicadosEmpleado($pdo, $usuario, $email, $dni, $id);
 
             if (!empty($erroresDuplicados)) {
+                $_SESSION['form_data'] = $formData;
                 $_SESSION['flash_error'] = implode("<br>", $erroresDuplicados);
                 header("Location: " . BASE_URL . "/empleados/");
                 exit;
@@ -194,6 +207,7 @@ if (!empty($_POST["edit_empleado_id"])) {
             exit;
         }
 
+        $_SESSION['form_data'] = $formData;
         $_SESSION['flash_error'] = implode("<br>", $errores);
         header("Location: " . BASE_URL . "/empleados/");
         exit;
@@ -219,6 +233,18 @@ if (
     $direccion = trim($_POST["empleado_direccion"] ?? "");
     $rol = (int) ($_POST["empleado_rol"] ?? 0);
 
+    $formData = [
+        'edit_id' => '',
+        'nombre' => $nombre,
+        'apellido' => $apellido,
+        'email' => $email,
+        'celular' => $celular,
+        'dni' => $dni,
+        'usuario' => $usuario,
+        'direccion' => $direccion,
+        'rol' => $rol,
+    ];
+
     if (
         !empty($nombre) &&
         !empty($apellido) &&
@@ -233,6 +259,7 @@ if (
             $erroresDuplicados = verificarDuplicadosEmpleado($pdo, $usuario, $email, $dni);
 
             if (!empty($erroresDuplicados)) {
+                $_SESSION['form_data'] = $formData;
                 $_SESSION['flash_error'] = implode("<br>", $erroresDuplicados);
                 header("Location: " . BASE_URL . "/empleados/");
                 exit;
@@ -276,6 +303,7 @@ if (
 
             } catch (PDOException $e) {
 
+                $_SESSION['form_data'] = $formData;
                 $_SESSION['flash_error'] = "Error al crear empleado";
                 header("Location: " . BASE_URL . "/empleados/");
                 exit;
@@ -284,6 +312,7 @@ if (
 
         }
 
+        $_SESSION['form_data'] = $formData;
         $_SESSION['flash_error'] = implode("<br>", $errores);
         header("Location: " . BASE_URL . "/empleados/");
         exit;
@@ -608,6 +637,11 @@ $empleados = $stmt->fetchAll();
   <?php unset($_SESSION['flash_success']); ?>
   <?php unset($_SESSION['flash_error']); ?>
   <?php endif; ?>
+
+  <script>
+    var formData = <?= json_encode($_SESSION['form_data'] ?? null) ?>;
+    <?php unset($_SESSION['form_data']); ?>
+  </script>
 
   <script>
     const BASE_URL =
