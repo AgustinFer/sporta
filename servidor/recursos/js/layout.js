@@ -479,7 +479,7 @@ function initRouter() {
     history.pushState(
       {},
       "",
-      `${BASE_URL}/${route}`
+      `${BASE_URL}/${route}/`
     );
 
     loadPage(route);

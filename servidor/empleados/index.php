@@ -33,7 +33,7 @@ if (isset($_POST["delete_empleado_id"])) {
 
     $stmt->execute([$id]);
 
-    header("Location: " . BASE_URL . "/empleados");
+    header("Location: " . BASE_URL . "/empleados/");
     exit;
 
 }

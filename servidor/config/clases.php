@@ -112,7 +112,7 @@ class Usuario extends Persona{
 
         if($mensaje === true){
 
-            header("Location: " . BASE_URL . "/inicio");
+            header("Location: " . BASE_URL . "/inicio/");
             exit;
 
         }else{

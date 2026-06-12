@@ -46,7 +46,7 @@ if (isset($_POST["toggle_cliente_id"])) {
 
     $stmt->execute([$nuevoEstado, $id]);
 
-    header("Location: " . BASE_URL . "/clientes");
+    header("Location: " . BASE_URL . "/clientes/");
     exit;
 }
 
@@ -115,13 +115,13 @@ if (!empty($_POST["edit_cliente_id"])) {
                 $id
             ]);
 
-            header("Location: " . BASE_URL . "/clientes");
+            header("Location: " . BASE_URL . "/clientes/");
             exit;
 
         }
 
         $_SESSION['flash_error'] = implode("<br>", $errores);
-        header("Location: " . BASE_URL . "/clientes");
+        header("Location: " . BASE_URL . "/clientes/");
         exit;
 
     }
@@ -178,13 +178,13 @@ if (
                 $dni ?: null
             ]);
 
-            header("Location: " . BASE_URL . "/clientes");
+            header("Location: " . BASE_URL . "/clientes/");
             exit;
 
         }
 
         $_SESSION['flash_error'] = implode("<br>", $errores);
-        header("Location: " . BASE_URL . "/clientes");
+        header("Location: " . BASE_URL . "/clientes/");
         exit;
 
     }
