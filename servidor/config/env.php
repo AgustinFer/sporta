@@ -26,7 +26,6 @@ function loadEnv($envPath = null) {
             );
         }
     }
-}
 
     $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
