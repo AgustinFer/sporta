@@ -142,6 +142,13 @@ function sortTable(column) {
   tbody.dataset.sortOrder =
     asc ? "asc" : "desc";
 
+  document.querySelectorAll('.table th[data-sort]').forEach(function(th) {
+    th.classList.remove('sort-asc', 'sort-desc');
+    if (parseInt(th.dataset.sort) === column) {
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+    }
+  });
+
 }
 
 /* ========================= */
@@ -179,7 +186,7 @@ function initColumnPicker() {
 
   headers.forEach(function(th) {
     const col = th.dataset.column;
-    const label = th.textContent.replace("\u2195", "").trim();
+    const label = th.textContent.trim();
 
     const item = document.createElement("label");
     item.className = "column-picker-item";

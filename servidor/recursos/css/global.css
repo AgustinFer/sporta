@@ -130,6 +130,23 @@ button:active {
     1px solid rgba(26, 26, 46, 0.08);
 }
 
+.table th[data-sort]::after {
+  content: " ↕";
+  font-size: 0.7em;
+  opacity: 0.3;
+  margin-left: 4px;
+}
+
+.table th.sort-asc::after {
+  content: " ▲";
+  opacity: 1;
+}
+
+.table th.sort-desc::after {
+  content: " ▼";
+  opacity: 1;
+}
+
 /* =========================
    CELDAS
 ========================= */

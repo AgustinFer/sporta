@@ -291,13 +291,13 @@ $clientes = $stmt->fetchAll();
 
           <tr>
 
-            <th data-sort="0" data-column="id">ID ↕</th>
-            <th data-sort="1" data-column="nombre">Nombre ↕</th>
-            <th data-sort="2" data-column="apellido">Apellido ↕</th>
-            <th data-sort="3" data-column="email">Email ↕</th>
-            <th data-sort="4" data-column="celular">Celular ↕</th>
-            <th data-sort="5" data-column="dni">DNI ↕</th>
-            <th data-sort="6" data-column="estado">Estado ↕</th>
+            <th data-sort="0" data-column="id">ID</th>
+            <th data-sort="1" data-column="nombre">Nombre</th>
+            <th data-sort="2" data-column="apellido">Apellido</th>
+            <th data-sort="3" data-column="email">Email</th>
+            <th data-sort="4" data-column="celular">Celular</th>
+            <th data-sort="5" data-column="dni">DNI</th>
+            <th data-sort="6" data-column="estado">Estado</th>
             <th data-column="acciones">Acciones</th>
 
           </tr>
