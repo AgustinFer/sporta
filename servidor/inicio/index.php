@@ -131,6 +131,9 @@ if(!isset($_SESSION['usuario'])){
   <!-- JS LAYOUT (carga sidebar + header) -->
   <script src="<?= BASE_URL ?>/recursos/js/layout.js"></script>
 
+  <!-- JS TABLA -->
+  <script src="<?= BASE_URL ?>/recursos/js/table.js"></script>
+
   <!-- JS DRAWER -->
   <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
   <!-- FIN CONFIG GLOBAL -->
