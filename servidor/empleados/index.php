@@ -391,13 +391,6 @@ $empleados = $stmt->fetchAll();
 
     </div>
 
-    <?php if (isset($_SESSION['flash_error'])): ?>
-      <div class="flash-error">
-        <?= $_SESSION['flash_error'] ?>
-      </div>
-      <?php unset($_SESSION['flash_error']); ?>
-    <?php endif; ?>
-
     <!-- TOOLBAR -->
     <div class="table-toolbar">
 
@@ -589,23 +582,31 @@ $empleados = $stmt->fetchAll();
   <!-- DRAWER -->
   <div id="drawer-container"></div>
 
-  <?php if (isset($_SESSION['flash_success'])): ?>
+  <?php if (isset($_SESSION['flash_success']) || isset($_SESSION['flash_error'])): ?>
   <div id="toast-container">
+    <?php if (isset($_SESSION['flash_success'])): ?>
     <div class="toast toast-success">
       <?= $_SESSION['flash_success'] ?>
       <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
     </div>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['flash_error'])): ?>
+    <div class="toast toast-error">
+      <?= $_SESSION['flash_error'] ?>
+      <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+    </div>
+    <?php endif; ?>
   </div>
   <script>
     setTimeout(function(){
-      var t = document.querySelector('.toast');
-      if (t) {
+      document.querySelectorAll('.toast').forEach(function(t) {
         t.classList.add('toast-hiding');
         setTimeout(function(){ if (t.parentElement) t.remove(); }, 300);
-      }
+      });
     }, 3500);
   </script>
   <?php unset($_SESSION['flash_success']); ?>
+  <?php unset($_SESSION['flash_error']); ?>
   <?php endif; ?>
 
   <script>
