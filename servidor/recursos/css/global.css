@@ -41,6 +41,14 @@ button:active {
   transform: translateY(0);
 }
 
+/* LINKS */
+.forgot {
+  display: block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
 /* INPUTS GENERALES */
 .field {
   margin-bottom: 18px;
