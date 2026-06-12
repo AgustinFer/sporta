@@ -21,27 +21,20 @@ $pdo = conexion();
 /* 🔄 TOGGLE ESTADO EMPLEADO */
 /* ========================= */
 
-if (isset($_POST["toggle_empleado_id"])) {
+function toggleEmpleadoEstado($pdo, $id, $usuarioActualId) {
+    if ($id === $usuarioActualId) {
+        $_SESSION['flash_error'] = "No puedes inactivar tu propio usuario";
+        header("Location: " . BASE_URL . "/empleados/");
+        exit;
+    }
 
-    $id = (int) $_POST["toggle_empleado_id"];
-
-    $stmt = $pdo->prepare("
-        SELECT usu_estado
-        FROM usuarios
-        WHERE usu_id = ?
-    ");
+    $stmt = $pdo->prepare("SELECT usu_estado FROM usuarios WHERE usu_id = ?");
     $stmt->execute([$id]);
-
     $actual = $stmt->fetchColumn();
 
     $nuevoEstado = ((int)$actual === 1) ? 0 : 1;
 
-    $stmt = $pdo->prepare("
-        UPDATE usuarios
-        SET usu_estado = ?
-        WHERE usu_id = ?
-    ");
-
+    $stmt = $pdo->prepare("UPDATE usuarios SET usu_estado = ? WHERE usu_id = ?");
     $stmt->execute([$nuevoEstado, $id]);
 
     $_SESSION['flash_success'] = $nuevoEstado === 1
@@ -49,6 +42,10 @@ if (isset($_POST["toggle_empleado_id"])) {
         : "Empleado inactivado con éxito";
     header("Location: " . BASE_URL . "/empleados/");
     exit;
+}
+
+if (isset($_POST["toggle_empleado_id"])) {
+    toggleEmpleadoEstado($pdo, (int) $_POST["toggle_empleado_id"], $_SESSION['usuario']->getId());
 }
 
 /* ========================= */
