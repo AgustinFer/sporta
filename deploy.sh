@@ -24,6 +24,11 @@ cd "$REPO_DIR"
 # Obtener estado actual
 CURRENT=$(git rev-parse HEAD)
 
+# Si hay cambios locales sin commit (el usuario está trabajando), salir
+if [ -n "$(git status --porcelain)" ]; then
+  exit 0
+fi
+
 LAST_DEPLOYED=""
 if [ -f "$LAST_DEPLOY_FILE" ]; then
   LAST_DEPLOYED=$(cat "$LAST_DEPLOY_FILE")
