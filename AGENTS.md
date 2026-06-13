@@ -17,6 +17,8 @@ Vanilla PHP SPA (faculty project). No build step, no tests, no framework.
 - **Script loading**: each PHP page declares its own `<script>` tags. Only scripts from the **initial** page load execute. `loadPage()` never re-executes fetched scripts. To make a JS function available after SPA navigation, its `<script>` must be in the initial page, OR the function must be called explicitly from `loadPage()`.
 - **`table.js`** must be loaded on every page (not just clientes) because it defines `initTable()` and `initColumnPicker()` which `loadPage()` calls after SPA navigation. Both functions guard against missing DOM elements.
 - **`validacion.js`** runs as IIFE on page load. The drawer form (`.drawer-form`) doesn't exist yet (loaded later by `loadDrawer()`), so the IIFE returns early and the submit handler is **never** attached. To re-bind drawer validation after SPA nav, use a named function called from `loadPage()` / `loadDrawer()`.
+- **`initDrawerPage()`**: `loadPage()` calls this after `loadDrawer()` completes. Define it globally to run page-specific logic (e.g. opening the drawer and pre-filling fields after a validation error). Currently used in `empleados/`.
+- **`#toast-container` must be outside `.main-content`**: Same reason as the drawer — `loadPage()` replaces `.main-content` via `innerHTML`, so toasts placed inside get destroyed on SPA navigation. Always place them after `</main>`.
 
 ## File Layout
 
@@ -37,7 +39,7 @@ servidor/
 │   ├── turnos/               # Partial (static view)
 │   ├── canchas/              # Partial (admin only)
 │   ├── reservas/             # Placeholder
-│   └── ajustes/              # Placeholder
+│   └── ajustes/              # Ajustes de cuenta (usuario y contraseña)
 ├── componentes/
 │   ├── header.php            # Loaded via AJAX by loadComponent()
 │   ├── sidebar.php           # Menu (admin items hidden via isAdmin())
@@ -47,14 +49,15 @@ servidor/
     ├── js/
     │   ├── layout.js         # SPA router, loadPage, loadDrawer, clima/reloj
     │   ├── drawer.js         # Drawer open/close, edit pre-fill (event delegation)
-    │   ├── table.js          # Search filter, sort, column picker, inactive filter
-    │   └── validacion.js     # Client-side form validation
+    │   ├── table.js          # Search filter, sort (▲/▼ indicators via sort-asc/sort-desc CSS), column picker, inactive filter
+    │   └── validacion.js     # Client-side form validation + initDrawerPage()
     └── img/
 ```
 
 ## Key Conventions
 
-- **ABM pattern**: POST to same page → PHP processes → `header("Location: ...")` redirect (PRG). Success message in `$_SESSION['flash_success']`, error in `$_SESSION['flash_error']`.
+- **ABM pattern**: POST to same page → PHP processes → `header("Location: ...")` redirect (PRG). Success message in `$_SESSION['flash_success']`, error in `$_SESSION['flash_error']`. The toast container must handle both; errors use `.toast-error` (red), success uses `.toast-success` (green).
+- **Form data preservation on error**: When validation fails on create/edit, save `$_SESSION['form_data']` before redirect. The page outputs `<script>var formData = ...</script>` (outside `.main-content`). `initDrawerPage()` reads it, opens the drawer, pre-fills fields, and clears errors. Currently implemented in `empleados/`.
 - **`declare(strict_types=1)`** in `config/init.php` — prevents automatic type coercion.
 - **Output escaping**: `htmlspecialchars()` on all dynamic output. Prepared statements via PDO for all queries.
 - **BASE_URL**: defined in `config/init.php`. Empty string for root deployment, `/sporta` for local subfolder.
