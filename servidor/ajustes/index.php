@@ -182,11 +182,6 @@ if (isset($_POST['cambio_contrasena'])) {
       <h2>Ajustes</h2>
       <p>Configuración de tu cuenta</p>
 
-      <?php if (isset($_SESSION['flash_error'])): ?>
-        <div class="flash-error"><?= $_SESSION['flash_error'] ?></div>
-        <?php unset($_SESSION['flash_error']); ?>
-      <?php endif; ?>
-
       <!-- USUARIO -->
       <div class="settings-card">
         <h3>Nombre de usuario</h3>
@@ -258,26 +253,35 @@ if (isset($_POST['cambio_contrasena'])) {
 
     </div>
 
-    <?php if (isset($_SESSION['flash_success'])): ?>
-    <div id="toast-container">
-      <div class="toast toast-success">
-        <?= $_SESSION['flash_success'] ?>
-        <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
-      </div>
-    </div>
-    <script>
-      setTimeout(function(){
-        var t = document.querySelector('.toast');
-        if (t) {
-          t.classList.add('toast-hiding');
-          setTimeout(function(){ if (t.parentElement) t.remove(); }, 300);
-        }
-      }, 3500);
-    </script>
-    <?php unset($_SESSION['flash_success']); ?>
-    <?php endif; ?>
-
   </main>
+
+  <!-- TOAST -->
+  <?php if (isset($_SESSION['flash_success']) || isset($_SESSION['flash_error'])): ?>
+  <div id="toast-container">
+    <?php if (isset($_SESSION['flash_success'])): ?>
+    <div class="toast toast-success">
+      <?= $_SESSION['flash_success'] ?>
+      <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+    </div>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['flash_error'])): ?>
+    <div class="toast toast-error">
+      <?= $_SESSION['flash_error'] ?>
+      <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+    </div>
+    <?php endif; ?>
+  </div>
+  <script>
+    setTimeout(function(){
+      document.querySelectorAll('.toast').forEach(function(t) {
+        t.classList.add('toast-hiding');
+        setTimeout(function(){ if (t.parentElement) t.remove(); }, 300);
+      });
+    }, 3500);
+  </script>
+  <?php unset($_SESSION['flash_success']); ?>
+  <?php unset($_SESSION['flash_error']); ?>
+  <?php endif; ?>
 
   <!-- INICIO CONFIG GLOBAL -->
   <div id="drawer-container"></div>
