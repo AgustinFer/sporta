@@ -87,6 +87,10 @@ class Usuario extends Persona{
         return $this->usuario;
     }
 
+    public function setUsuario($usuario){
+        $this->usuario = $usuario;
+    }
+
     public function getDireccion(){
         return $this->direccion;
     }

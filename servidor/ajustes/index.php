@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['check_usuario'])) {
 /* CAMBIO DE USUARIO */
 /* ========================= */
 
-if (!empty($_POST['cambio_usuario'])) {
+if (isset($_POST['cambio_usuario'])) {
     $nuevoUsuario = trim($_POST['nuevo_usuario'] ?? '');
 
     if ($nuevoUsuario === '') {
@@ -75,6 +75,8 @@ if (!empty($_POST['cambio_usuario'])) {
         ':id' => $userId
     ]);
 
+    $_SESSION['usuario']->setUsuario($nuevoUsuario);
+
     $_SESSION['flash_success'] = "Nombre de usuario actualizado";
     header("Location: " . BASE_URL . "/ajustes/");
     exit;
@@ -84,7 +86,7 @@ if (!empty($_POST['cambio_usuario'])) {
 /* CAMBIO DE CONTRASEÑA */
 /* ========================= */
 
-if (!empty($_POST['cambio_contrasena'])) {
+if (isset($_POST['cambio_contrasena'])) {
     $passActual = $_POST['pass_actual'] ?? '';
     $passNueva  = $_POST['pass_nueva'] ?? '';
     $passConfirmar = $_POST['pass_confirmar'] ?? '';
@@ -188,7 +190,7 @@ if (!empty($_POST['cambio_contrasena'])) {
       <!-- USUARIO -->
       <div class="settings-card">
         <h3>Nombre de usuario</h3>
-        <form method="POST" id="formUsuario" novalidate>
+        <form method="POST" id="formUsuario" action="<?= BASE_URL ?>/ajustes/" novalidate>
           <div class="field">
             <label for="nuevo_usuario">Nuevo nombre de usuario</label>
             <input
@@ -211,7 +213,7 @@ if (!empty($_POST['cambio_contrasena'])) {
       <!-- CONTRASEÑA -->
       <div class="settings-card">
         <h3>Contraseña</h3>
-        <form method="POST" id="formPassword" novalidate>
+        <form method="POST" id="formPassword" action="<?= BASE_URL ?>/ajustes/" novalidate>
           <div class="field">
             <label for="pass_actual">Contraseña actual</label>
             <input
@@ -287,163 +289,7 @@ if (!empty($_POST['cambio_contrasena'])) {
   <script src="<?= BASE_URL ?>/recursos/js/layout.js"></script>
   <script src="<?= BASE_URL ?>/recursos/js/table.js"></script>
   <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
-
-  <script>
-  (function() {
-
-    /* ========================= */
-    /* VALIDACIÓN CONTRASEÑA */
-    /* ========================= */
-
-    var passInput = document.getElementById("pass_nueva");
-    var passConfirm = document.getElementById("pass_confirmar");
-    var errorPass = document.getElementById("error_password");
-
-    var reqLength = document.getElementById("req-length");
-    var reqUpper  = document.getElementById("req-upper");
-    var reqSpecial = document.getElementById("req-special");
-
-    var reqList = [reqLength, reqUpper, reqSpecial];
-
-    function validarPassword(valor) {
-      var cumple = {
-        length: valor.length >= 6,
-        upper: /[A-Z]/.test(valor),
-        special: /[^a-zA-Z0-9]/.test(valor)
-      };
-
-      reqLength.classList.toggle("req-ok", cumple.length);
-      reqUpper.classList.toggle("req-ok", cumple.upper);
-      reqSpecial.classList.toggle("req-ok", cumple.special);
-
-      return cumple.length && cumple.upper && cumple.special;
-    }
-
-    function validarConfirmacion() {
-      if (!passConfirm.value) {
-        errorPass.textContent = "";
-        errorPass.classList.remove("visible");
-        return true;
-      }
-      if (passConfirm.value !== passInput.value) {
-        errorPass.textContent = "Las contraseñas no coinciden";
-        errorPass.classList.add("visible");
-        return false;
-      }
-      errorPass.textContent = "";
-      errorPass.classList.remove("visible");
-      return true;
-    }
-
-    if (passInput) {
-      passInput.addEventListener("input", function() {
-        validarPassword(passInput.value);
-        if (passConfirm.value) validarConfirmacion();
-      });
-    }
-
-    if (passConfirm) {
-      passConfirm.addEventListener("input", validarConfirmacion);
-    }
-
-    /* ========================= */
-    /* VALIDACIÓN USUARIO (AJAX) */
-    /* ========================= */
-
-    var usuarioInput = document.getElementById("nuevo_usuario");
-    var errorUsuario = document.getElementById("error_usuario");
-    var okUsuario   = document.getElementById("ok_usuario");
-    var usuarioOriginal = usuarioInput ? usuarioInput.value : "";
-    var checkTimeout = null;
-
-    if (usuarioInput) {
-
-      usuarioInput.addEventListener("input", function() {
-        var val = usuarioInput.value.trim();
-
-        if (val === usuarioOriginal) {
-          errorUsuario.textContent = "";
-          errorUsuario.classList.remove("visible");
-          okUsuario.textContent = "";
-          return;
-        }
-
-        if (val.length < 3) {
-          errorUsuario.textContent = "Mínimo 3 caracteres";
-          errorUsuario.classList.add("visible");
-          okUsuario.textContent = "";
-          return;
-        }
-
-        if (checkTimeout) clearTimeout(checkTimeout);
-
-        checkTimeout = setTimeout(function() {
-          fetch(BASE_URL + "/ajustes/?check_usuario=" + encodeURIComponent(val))
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-              if (data.disponible) {
-                errorUsuario.textContent = "";
-                errorUsuario.classList.remove("visible");
-                okUsuario.textContent = "✓ Disponible";
-              } else {
-                errorUsuario.textContent = "El nombre de usuario ya está en uso";
-                errorUsuario.classList.add("visible");
-                okUsuario.textContent = "";
-              }
-            })
-            .catch(function() {
-              errorUsuario.textContent = "Error al verificar";
-              errorUsuario.classList.add("visible");
-            });
-        }, 400);
-      });
-    }
-
-    /* ========================= */
-    /* SUBMIT PASSWORD */
-    /* ========================= */
-
-    var formPass = document.getElementById("formPassword");
-    if (formPass) {
-      formPass.addEventListener("submit", function(e) {
-        var validaPass = validarPassword(passInput.value);
-        var validaConf = validarConfirmacion();
-
-        if (!validaPass || !validaConf) {
-          e.preventDefault();
-          if (!validaPass) passInput.focus();
-        }
-      });
-    }
-
-    /* ========================= */
-    /* SUBMIT USUARIO */
-    /* ========================= */
-
-    var formUser = document.getElementById("formUsuario");
-    if (formUser) {
-      formUser.addEventListener("submit", function(e) {
-        var val = usuarioInput.value.trim();
-        if (val === usuarioOriginal) {
-          e.preventDefault();
-          return;
-        }
-        if (val.length < 3) {
-          e.preventDefault();
-          errorUsuario.textContent = "Mínimo 3 caracteres";
-          errorUsuario.classList.add("visible");
-          usuarioInput.focus();
-          return;
-        }
-        if (errorUsuario.classList.contains("visible")) {
-          e.preventDefault();
-          usuarioInput.focus();
-        }
-      });
-    }
-
-  })();
-  </script>
+  <script>initAjustes();</script>
 
 </body>
 </html>
