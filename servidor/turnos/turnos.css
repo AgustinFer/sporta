@@ -1,92 +1,222 @@
 /* ======================== */
-/* CONTENIDO TURNOS (SOLO CONTENIDO) */
+/* TURNOS - GRILLA HORARIA   */
 /* ======================== */
 
-/* ❌ ELIMINAR ESTO COMPLETAMENTE */
-/* .screen--turnos */
-/* .background--turnos */
-
-/* ======================== */
-/* CONTENIDO TURNOS */
-/* ======================== */
-
-.courts-container {
+.turnos-toolbar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
+  align-items: center;
+  padding: 0 30px;
+  margin-bottom: 20px;
 }
 
-/* CARD */
-.court-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 20px;
-  width: 100%;
-  max-width: 380px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+.turnos-filtros {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.turnos-filtros label {
+  font-size: 14px;
+  color: rgba(26, 26, 46, 0.8);
+  font-weight: 600;
+}
+
+.turnos-filtros input[type="date"] {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(26, 26, 46, 0.15);
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.turnos-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(90deg, #facc15, #fbbf24);
+  font-weight: bold;
+  cursor: pointer;
   transition: all 0.3s ease;
+  margin-top: 0;
+  width: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.turnos-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ======================== */
+/* TABLA - CONTENEDOR      */
+/* ======================== */
+
+.contenedor-tabla {
+  height: calc(100vh - 200px);
+  overflow: auto;
+  margin: 0 0 30px;
+  border-radius: 16px;
   animation: fadeUp 0.6s ease-out forwards;
   opacity: 0;
 }
 
-.court-card:hover {
-  transform: translateY(-5px);
+#tablaTurnos {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* HEADER */
-.court-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #facc15;
+#tablaTurnos th,
+#tablaTurnos td {
+  border: 1px solid rgba(26, 26, 46, 0.1);
+  min-width: 150px;
+  height: 54px;
+  text-align: center;
+  padding: 6px;
+  font-size: 14px;
 }
 
-/* ESTADOS */
-.court-status {
+/* CABECERA FIJA */
+#tablaTurnos thead th {
+  position: sticky;
+  top: 0;
+  background: rgba(26, 26, 46, 0.95);
+  color: #facc15;
+  z-index: 100;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* COLUMNA HORARIOS FIJA */
+.columna-hora,
+.hora {
+  position: sticky;
+  left: 0;
+  background: rgba(26, 26, 46, 0.95);
+  color: #facc15;
+  z-index: 90;
+  min-width: 100px !important;
+  font-weight: 600;
+}
+
+thead .columna-hora {
+  z-index: 120;
+}
+
+/* ======================== */
+/* CELDAS DE ESTADO        */
+/* ======================== */
+
+.libre {
+  background: rgba(34, 197, 94, 0.08);
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+  color: #16a34a;
+  transition: all 0.2s ease;
+}
+
+.libre:hover {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+.estado-pendiente {
+  background: rgba(245, 158, 11, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.estado-pendiente:hover {
+  background: rgba(245, 158, 11, 0.25);
+}
+
+.estado-confirmada {
+  background: rgba(34, 197, 94, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 4px solid #16a34a;
+}
+
+.estado-confirmada:hover {
+  background: rgba(34, 197, 94, 0.25);
+}
+
+.estado-confirmada .estado-texto {
+  color: #15803d;
+  font-weight: bold;
+}
+
+.estado-cancelada {
+  background: rgba(239, 68, 68, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.estado-cancelada:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.estado-mantenimiento {
+  background: rgba(107, 114, 128, 0.1);
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: default;
+}
+
+/* CONTENIDO CELDA RESERVA */
+.nombre-cliente {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 3px;
+  color: rgba(26, 26, 46, 0.95);
+}
+
+.estado-texto {
   font-size: 12px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-weight: bold;
-}
-
-.available { background: #22c55e; color: white; }
-.semi-available { background: #facc15; }
-.busy { background: #ef4444; color: white; }
-
-/* HORARIOS */
-.schedule-list {
-  margin-bottom: 20px;
-  max-height: 350px;
-  overflow-y: auto;
-}
-
-.schedule-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.schedule-item:hover {
-  background: #fef9e3;
-}
-
-/* BOTÓN */
-.book-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  background: linear-gradient(90deg, #facc15, #fbbf24);
-  font-weight: bold;
+  color: #6b7280;
 }
 
 /* ======================== */
-/* ANIMACIONES */
+/* DETALLE ITEMS (DRAWER)  */
 /* ======================== */
 
-@keyframes fadeDown {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
+.detalle-item {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
+
+.detalle-item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detalle-item span {
+  font-size: 15px;
+  color: rgba(26, 26, 46, 0.95);
+}
+
+/* ======================== */
+/* OCULTAR FAB EN TURNOS   */
+/* ======================== */
+
+.fab {
+  display: none;
+}
+
+/* ======================== */
+/* DRAWER PANEL SWITCH     */
+/* ======================== */
+
+

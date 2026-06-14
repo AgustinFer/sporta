@@ -13,115 +13,59 @@ if(!isset($_SESSION['usuario'])){
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sporta - Turnos</title>
 
-  <!-- CSS GLOBAL -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/global.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/layout.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/componentes.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/drawer.css">
 
-  <!-- CSS MÓDULO -->
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/turnos/turnos.css">
 </head>
 
 <body class="screen" data-page="Turnos" data-drawer="turnos">
 
-  <!-- FONDO -->
   <div class="background"></div>
 
-  <!-- SIDEBAR DINÁMICO -->
   <div id="sidebar-container"></div>
 
-  <!-- BOTÓN MOBILE -->
-  <button class="menu-toggle" id="menuToggle">☰</button>
+  <button class="menu-toggle" id="menuToggle">&#9776;</button>
 
-  <!-- CONTENIDO -->
   <main class="main-content">
 
-    <!-- HEADER DINÁMICO -->
     <div id="header-container"></div>
 
-    <!-- CONTENIDO DE TURNOS -->
-    <div class="courts-container">
-
-      <!-- CANCHA 1 -->
-      <div class="court-card">
-        <div class="court-header">
-          <h2>Cancha 1</h2>
-          <span class="court-status available">Disponible</span>
-        </div>
-
-        <div class="schedule-list">
-          <div class="schedule-item">
-            <span class="time">16:30 - 17:00</span>
-            <span class="partner">Christian Rippa</span>
-          </div>
-          <div class="schedule-item">
-            <span class="time">18:00 - 19:30</span>
-            <span class="partner">Facundo Ulela</span>
-          </div>
-        </div>
-
-        <button class="book-btn">Reservar Turno</button>
+    <div class="turnos-toolbar">
+      <div class="turnos-filtros">
+        <label for="fechaSeleccionada">Fecha:</label>
+        <input type="date" id="fechaSeleccionada">
+        <button id="btnRecargar" class="turnos-btn">Actualizar</button>
       </div>
-
-      <!-- CANCHA 2 -->
-      <div class="court-card">
-        <div class="court-header">
-          <h2>Cancha 2</h2>
-          <span class="court-status semi-available">Parcial</span>
-        </div>
-
-        <div class="schedule-list">
-          <div class="schedule-item">
-            <span class="time">19:00 - 19:30</span>
-            <span class="partner">Carolina Levy</span>
-          </div>
-        </div>
-
-        <button class="book-btn">Reservar Turno</button>
-      </div>
-
-      <!-- CANCHA 3 -->
-      <div class="court-card">
-        <div class="court-header">
-          <h2>Cancha 3</h2>
-          <span class="court-status busy">Completo</span>
-        </div>
-
-        <div class="schedule-list">
-          <div class="schedule-item">
-            <span class="time">21:00 - 22:30</span>
-            <span class="partner">Adrian Parrilla</span>
-          </div>
-        </div>
-
-        <button class="book-btn" disabled>Sin Disponibilidad</button>
-      </div>
-
     </div>
 
-    <!-- FAB -->
+    <div class="contenedor-tabla">
+      <table id="tablaTurnos">
+        <thead>
+          <tr id="filaCanchas">
+            <th class="columna-hora">Horario</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpoTabla"></tbody>
+      </table>
+    </div>
+
     <button class="fab">+</button>
 
   </main>
 
-  <!-- INICIO CONFIG GLOBAL -->
-  <!-- DRAWER (aunque no se use) -->
   <div id="drawer-container"></div>
 
   <script>
     const BASE_URL = "<?= BASE_URL ?>";
   </script>
 
-  <!-- JS LAYOUT (carga sidebar + header) -->
   <script src="<?= BASE_URL ?>/recursos/js/layout.js"></script>
-
-  <!-- JS TABLA -->
   <script src="<?= BASE_URL ?>/recursos/js/table.js"></script>
-
-  <!-- JS DRAWER -->
   <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
-  <!-- FIN CONFIG GLOBAL -->
+  <script src="<?= BASE_URL ?>/recursos/js/turnos.js"></script>
 
 </body>
 </html>

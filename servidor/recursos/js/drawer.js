@@ -33,6 +33,20 @@ const drawerConfig = {
 
 document.addEventListener("click", (e) => {
 
+  /* ========================= */
+  /* ❌ CERRAR (siempre) */
+  /* ========================= */
+
+  if (e.target.closest(".drawer-close")) {
+    closeDrawer();
+    return;
+  }
+
+  if (e.target.classList.contains("drawer-overlay")) {
+    closeDrawer();
+    return;
+  }
+
   const drawerKey =
     document.body.dataset.drawer;
 
@@ -105,18 +119,6 @@ document.addEventListener("click", (e) => {
 
     if (title) title.textContent = config.titleEdit;
 
-  }
-
-  /* ========================= */
-  /* ❌ CERRAR */
-  /* ========================= */
-
-  if (e.target.closest(".drawer-close")) {
-    closeDrawer();
-  }
-
-  if (e.target.classList.contains("drawer-overlay")) {
-    closeDrawer();
   }
 
 });
