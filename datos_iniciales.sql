@@ -108,3 +108,5 @@ INSERT INTO pagos (
   pago_fecha_pago, pago_monto
 ) VALUES
 (1, 1, 1, '2026-04-10', 10000);
+
+insert into estado_cancha (estado_cancha_id,descripcion,observaciones) values (default, "Inhabilitado",null);
