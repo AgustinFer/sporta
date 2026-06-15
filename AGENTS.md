@@ -57,6 +57,7 @@ servidor/
     │   ├── turnos.js         # Grilla horaria: initTurnosPage(), carga/crea/cambia estado reservas
     │   └── canchas.js        # ABM canchas: initCanchasPage(), burbujas, CRUD via API
     └── img/
+        └── favicon.ico
 ```
 
 ## Key Conventions
