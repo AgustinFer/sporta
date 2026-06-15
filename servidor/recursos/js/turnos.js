@@ -58,7 +58,7 @@ function turnosCargarDatos() {
     })
     .then(function (r) { return r.json(); })
     .then(function (datos) {
-        if (!datos.ok) { alert(datos.mensaje); return; }
+        if (!datos.ok) { mostrarToast(datos.mensaje, 'error'); return; }
         turnosCanchas = datos.canchas;
         turnosClientes = datos.clientes;
         turnosReservas = datos.reservas;
@@ -67,7 +67,7 @@ function turnosCargarDatos() {
     })
     .catch(function (error) {
         console.error(error);
-        alert('Error cargando datos');
+        mostrarToast('Error cargando datos', 'error');
     });
 }
 
@@ -201,14 +201,14 @@ function turnosGuardarReserva(e) {
     })
     .then(function (r) { return r.json(); })
     .then(function (resultado) {
-        if (!resultado.ok) { alert(resultado.mensaje); return; }
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
         closeDrawer();
         turnosCargarDatos();
         mostrarToast('Reserva creada', 'success');
     })
     .catch(function (error) {
         console.error(error);
-        alert('Error al guardar');
+        mostrarToast('Error al guardar', 'error');
     });
 }
 
@@ -247,13 +247,13 @@ function turnosCambiarEstado(estado) {
     })
     .then(function (r) { return r.json(); })
     .then(function (resultado) {
-        if (!resultado.ok) { alert(resultado.mensaje); return; }
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
         closeDrawer();
         turnosCargarDatos();
     })
     .catch(function (error) {
         console.error(error);
-        alert('Error actualizando estado');
+        mostrarToast('Error actualizando estado', 'error');
     });
 }
 

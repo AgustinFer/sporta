@@ -158,14 +158,14 @@ async function guardarCancha(e) {
         });
 
         var resultado = await respuesta.json();
-        if (!resultado.ok) { alert(resultado.mensaje); return; }
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
 
         closeDrawer();
         await cargarCanchas();
         mostrarToast(canchaId ? 'Cancha actualizada' : 'Cancha creada', 'success');
     } catch (error) {
         console.error(error);
-        alert('Error guardando cancha');
+        mostrarToast('Error guardando cancha', 'error');
     }
 }
 
@@ -180,13 +180,13 @@ async function eliminarCancha(canchaId) {
         });
 
         var resultado = await respuesta.json();
-        if (!resultado.ok) { alert(resultado.mensaje); return; }
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
 
         await cargarCanchas();
         mostrarToast('Cancha inhabilitada', 'success');
     } catch (error) {
         console.error(error);
-        alert('Error inhabilitando cancha');
+        mostrarToast('Error inhabilitando cancha', 'error');
     }
 }
 
