@@ -696,6 +696,29 @@ async function initLayout() {
 }
 
 /* ========================= */
+/* TOAST GLOBAL */
+/* ========================= */
+
+function mostrarToast(mensaje, tipo) {
+    var contenedor = document.getElementById('toast-container');
+    if (!contenedor) {
+        contenedor = document.createElement('div');
+        contenedor.id = 'toast-container';
+        document.body.appendChild(contenedor);
+    }
+
+    var toast = document.createElement('div');
+    toast.className = 'toast toast-' + (tipo || 'success');
+    toast.innerHTML = '<span>' + mensaje + '</span><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>';
+    contenedor.appendChild(toast);
+
+    setTimeout(function () {
+        toast.classList.add('toast-hiding');
+        setTimeout(function () { toast.remove(); }, 300);
+    }, 3000);
+}
+
+/* ========================= */
 /* 🚀 START */
 /* ========================= */
 document.addEventListener(
