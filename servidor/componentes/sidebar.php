@@ -61,7 +61,7 @@
         Ajustes
       </a>
     </div>
-    <a href="<?= BASE_URL ?>/logout.php" class="menu-link logout">
+    <a href="<?= BASE_URL ?>/auth/logout.php" class="menu-link logout">
       <span class="menu-icon">🔚</span>
       Cerrar sesión
     </a>
