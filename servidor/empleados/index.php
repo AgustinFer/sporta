@@ -661,6 +661,10 @@ $empleados = $stmt->fetchAll();
 
   <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
 
+  <script src="<?= BASE_URL ?>/recursos/js/turnos.js"></script>
+
+  <script src="<?= BASE_URL ?>/recursos/js/canchas.js"></script>
+
   <script src="<?= BASE_URL ?>/recursos/js/validacion.js"></script>
 
 </body>

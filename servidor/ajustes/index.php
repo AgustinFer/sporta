@@ -293,6 +293,8 @@ if (isset($_POST['cambio_contrasena'])) {
   <script src="<?= BASE_URL ?>/recursos/js/layout.js"></script>
   <script src="<?= BASE_URL ?>/recursos/js/table.js"></script>
   <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
+  <script src="<?= BASE_URL ?>/recursos/js/turnos.js"></script>
+  <script src="<?= BASE_URL ?>/recursos/js/canchas.js"></script>
   <script>initAjustes();</script>
 
 </body>
