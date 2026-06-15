@@ -179,26 +179,23 @@ $estados = $stmtEstados->fetchAll(PDO::FETCH_ASSOC);
       <?php unset($_SESSION['flash_error']); ?>
     <?php endif; ?>
 
-    <div class="toolbar">
-      <h2>Señas y Reservas</h2>
-      <div class="toolbar-actions">
-        <label>
-          <input type="text" id="searchInput" placeholder="Buscar cliente…">
-        </label>
-      </div>
+    <h2 style="margin-bottom: 8px;">Señas y Reservas</h2>
+
+    <div class="table-toolbar">
+      <input type="text" id="tableSearch" class="table-search" placeholder="Buscar cliente…">
     </div>
 
-    <div class="list-container">
-      <table id="dataTable" class="data-table">
+    <div class="table-container">
+      <table class="table">
         <thead>
           <tr>
-            <th data-col="cliente">Cliente</th>
-            <th data-col="cancha">Cancha</th>
-            <th data-col="fecha">Fecha</th>
-            <th data-col="horario">Horario</th>
-            <th data-col="estado">Estado</th>
-            <th data-col="pago">Pago</th>
-            <th data-col="acciones">Acciones</th>
+            <th data-sort="0" data-column="cliente">Cliente</th>
+            <th data-sort="1" data-column="cancha">Cancha</th>
+            <th data-sort="2" data-column="fecha">Fecha</th>
+            <th data-sort="3" data-column="horario">Horario</th>
+            <th data-sort="4" data-column="estado">Estado</th>
+            <th data-sort="5" data-column="pago">Pago</th>
+            <th data-column="acciones">Acciones</th>
           </tr>
         </thead>
         <tbody>
