@@ -290,21 +290,7 @@ async function loadPage(route) {
     }
 
     /* ========================= */
-    /* 9. SCRIPTS DINÁMICOS */
-    /* ========================= */
-
-    doc.querySelectorAll("script[src]").forEach(function(s) {
-        var src = s.getAttribute("src");
-        if (src && !document.querySelector('script[src="' + src.replace(/"/g, '\\"') + '"]')) {
-            var script = document.createElement("script");
-            script.src = src;
-            script.async = false;
-            document.head.appendChild(script);
-        }
-    });
-
-    /* ========================= */
-    /* 10. RESET VISUAL */
+    /* 9. RESET VISUAL */
     /* ========================= */
 
     window.scrollTo(0, 0);
