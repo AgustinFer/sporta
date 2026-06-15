@@ -106,15 +106,14 @@
 
 .drawer-info-item label {
   display: block;
-  font-size: 0.75rem;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  color: #222;
+  font-weight: 600;
   margin-bottom: 2px;
 }
 
 .drawer-info-item span {
   font-size: 0.95rem;
-  color: #e5e7eb;
-  font-weight: 500;
+  color: #111;
+  font-weight: 400;
 }
