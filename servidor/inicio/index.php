@@ -142,7 +142,5 @@ if(!isset($_SESSION['usuario'])){
   <script src="<?= BASE_URL ?>/recursos/js/canchas.js"></script>
   <!-- FIN CONFIG GLOBAL -->
 
-  <script src="<?= BASE_URL ?>/recursos/js/turnos.js"></script>
-  <script src="<?= BASE_URL ?>/recursos/js/canchas.js"></script>
 </body>
 </html>
