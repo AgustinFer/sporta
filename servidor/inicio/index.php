@@ -136,6 +136,10 @@ if(!isset($_SESSION['usuario'])){
 
   <!-- JS DRAWER -->
   <script src="<?= BASE_URL ?>/recursos/js/drawer.js"></script>
+
+  <!-- JS TURNOS Y CANCHAS (globales para SPA) -->
+  <script src="<?= BASE_URL ?>/recursos/js/turnos.js"></script>
+  <script src="<?= BASE_URL ?>/recursos/js/canchas.js"></script>
   <!-- FIN CONFIG GLOBAL -->
 
   <script src="<?= BASE_URL ?>/recursos/js/turnos.js"></script>
