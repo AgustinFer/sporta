@@ -188,7 +188,7 @@ $estados = $stmtEstados->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <div class="table-toolbar">
-      <input type="text" id="tableSearch" class="table-search" placeholder="Buscar cliente…">
+      <input type="text" id="tableSearch" class="table-search" placeholder="Buscar seña/reserva...">
     </div>
 
     <div class="table-container">
