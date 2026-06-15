@@ -7,6 +7,17 @@
   align-items: center;
   padding: 0 30px;
   margin-bottom: 20px;
+  position: relative;
+}
+
+.turnos-fecha {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(26, 26, 46, 0.7);
+  white-space: nowrap;
 }
 
 .turnos-filtros {

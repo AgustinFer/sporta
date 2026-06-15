@@ -21,6 +21,14 @@ function initTurnosPage() {
 
     fechaInput.value = new Date().toISOString().split('T')[0];
 
+    var spanFecha = document.getElementById('fechaDisplay');
+    if (spanFecha) {
+        var opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var fecha = new Date().toLocaleDateString('es-AR', opciones);
+        fecha = fecha.charAt(0).toUpperCase() + fecha.slice(1).replace(/,/g, '');
+        spanFecha.textContent = fecha;
+    }
+
     if (btnRecargar && !btnRecargar.dataset.bound) {
         btnRecargar.dataset.bound = 'true';
         btnRecargar.addEventListener('click', turnosCargarDatos);

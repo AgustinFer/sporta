@@ -35,6 +35,7 @@ if(!isset($_SESSION['usuario'])){
 
     <div class="turnos-toolbar">
       <h2>Administración de Turnos</h2>
+      <span id="fechaDisplay" class="turnos-fecha"></span>
       <div class="turnos-filtros">
         <label for="fechaSeleccionada">Fecha:</label>
         <input type="date" id="fechaSeleccionada">
