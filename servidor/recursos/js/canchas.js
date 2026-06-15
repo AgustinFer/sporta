@@ -4,6 +4,12 @@ CANCHAS - Burbujas y CRUD
 
 var canchasLista = [];
 
+function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str || ''));
+    return div.innerHTML;
+}
+
 function initCanchasPage() {
     var btnNueva = document.querySelector('.fab');
     var chkMostrar = document.getElementById('chkMostrarInhabilitadas');
@@ -81,8 +87,8 @@ function generarBurbujas() {
             '</div></div>' +
             '<div class="burbuja-info">' +
             '<div class="info-label">Descripción</div>' +
-            '<div class="info-valor">' + (cancha.descripcion || 'Sin descripción') + '</div></div>' +
-            '<div class="burbuja-estado"><span class="' + claseEstado + '">' + textoEstado + '</span></div>' +
+            '<div class="info-valor">' + (cancha.descripcion ? escapeHtml(cancha.descripcion) : 'Sin descripción') + '</div></div>' +
+            '<div class="burbuja-estado"><span class="' + claseEstado + '">' + escapeHtml(textoEstado) + '</span></div>' +
             '<div class="burbuja-precio">' +
             '<div class="precio-label">Precio por hora</div>' +
             '<div class="precio-valor">$' + parseFloat(cancha.cancha_precio).toFixed(2) + '</div></div>';

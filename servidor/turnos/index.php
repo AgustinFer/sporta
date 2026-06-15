@@ -52,8 +52,6 @@ if(!isset($_SESSION['usuario'])){
       </table>
     </div>
 
-    <button class="fab">+</button>
-
   </main>
 
   <div id="drawer-container"></div>
