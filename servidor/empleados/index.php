@@ -61,7 +61,7 @@ if (isset($_POST["toggle_empleado_id"])) {
 /* ✅ VALIDACIÓN */
 /* ========================= */
 
-function validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni) {
+function validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni, $usuario = '', $direccion = '') {
     $errores = [];
 
     if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $nombre)) {
@@ -78,6 +78,28 @@ function validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni) {
     }
     if ($email !== "" && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errores[] = "El email no tiene un formato válido";
+    }
+
+    if (strlen($nombre) > 100) {
+        $errores[] = "El nombre no puede superar los 100 caracteres";
+    }
+    if (strlen($apellido) > 100) {
+        $errores[] = "El apellido no puede superar los 100 caracteres";
+    }
+    if (strlen($email) > 100) {
+        $errores[] = "El email no puede superar los 100 caracteres";
+    }
+    if (strlen($celular) > 20) {
+        $errores[] = "El teléfono no puede superar los 20 caracteres";
+    }
+    if (strlen($dni) > 20) {
+        $errores[] = "El DNI no puede superar los 20 caracteres";
+    }
+    if (strlen($usuario) > 50) {
+        $errores[] = "El usuario no puede superar los 50 caracteres";
+    }
+    if (strlen($direccion) > 255) {
+        $errores[] = "La dirección no puede superar los 255 caracteres";
     }
 
     return $errores;
@@ -169,7 +191,7 @@ if (!empty($_POST["edit_empleado_id"])) {
         $rol > 0
     ) {
 
-        $errores = validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni);
+        $errores = validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni, $usuario, $direccion);
 
         if (empty($errores)) {
 
@@ -258,7 +280,7 @@ if (
         $rol > 0
     ) {
 
-        $errores = validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni);
+        $errores = validarDatosEmpleado($nombre, $apellido, $email, $celular, $dni, $usuario, $direccion);
 
         if (empty($errores)) {
 

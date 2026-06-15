@@ -72,6 +72,22 @@ function validarDatosCliente($nombre, $apellido, $email, $celular, $dni) {
         $errores[] = "El email no tiene un formato válido";
     }
 
+    if (strlen($nombre) > 100) {
+        $errores[] = "El nombre no puede superar los 100 caracteres";
+    }
+    if (strlen($apellido) > 100) {
+        $errores[] = "El apellido no puede superar los 100 caracteres";
+    }
+    if (strlen($email) > 100) {
+        $errores[] = "El email no puede superar los 100 caracteres";
+    }
+    if (strlen($celular) > 20) {
+        $errores[] = "El teléfono no puede superar los 20 caracteres";
+    }
+    if (strlen($dni) > 20) {
+        $errores[] = "El DNI no puede superar los 20 caracteres";
+    }
+
     return $errores;
 }
 

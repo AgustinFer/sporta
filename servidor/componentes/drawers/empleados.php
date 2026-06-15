@@ -44,6 +44,7 @@
         type="text"
         name="empleado_nombre"
         id="empleado_nombre"
+        maxlength="100"
         pattern="[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+"
         title="Solo se permiten letras"
         data-validate="soloLetras"
@@ -66,6 +67,7 @@
         type="text"
         name="empleado_apellido"
         id="empleado_apellido"
+        maxlength="100"
         pattern="[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+"
         title="Solo se permiten letras"
         data-validate="soloLetras"
@@ -88,6 +90,7 @@
         type="text"
         name="empleado_usuario"
         id="empleado_usuario"
+        maxlength="50"
         required
       >
 
@@ -135,6 +138,7 @@
         type="text"
         name="empleado_celular"
         id="empleado_celular"
+        maxlength="20"
         pattern="[\d\s\+\-\(\)]+"
         title="Solo se permiten números, +, -, ( ) y espacios"
         data-validate="telefono"
@@ -155,6 +159,7 @@
         type="email"
         name="empleado_email"
         id="empleado_email"
+        maxlength="100"
         data-validate="email"
       >
 
@@ -173,6 +178,7 @@
         type="text"
         name="empleado_dni"
         id="empleado_dni"
+        maxlength="20"
         pattern="\d+"
         title="Solo se permiten números"
         data-validate="soloNumeros"
@@ -193,6 +199,7 @@
         type="text"
         name="empleado_direccion"
         id="empleado_direccion"
+        maxlength="255"
       >
 
     </div>
