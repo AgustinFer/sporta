@@ -479,6 +479,7 @@ $clientes = $stmt->fetchAll();
   <!-- JS MÓDULOS -->
   <script src="<?= BASE_URL ?>/recursos/js/turnos.js"></script>
   <script src="<?= BASE_URL ?>/recursos/js/canchas.js"></script>
+  <script src="<?= BASE_URL ?>/recursos/js/reservas.js"></script>
 
   <!-- JS VALIDACIÓN -->
   <script src="<?= BASE_URL ?>/recursos/js/validacion.js"></script>

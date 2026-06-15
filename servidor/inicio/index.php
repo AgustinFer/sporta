@@ -141,6 +141,7 @@ if(!isset($_SESSION['usuario'])){
   <!-- JS TURNOS Y CANCHAS (globales para SPA) -->
   <script src="<?= BASE_URL ?>/recursos/js/turnos.js"></script>
   <script src="<?= BASE_URL ?>/recursos/js/canchas.js"></script>
+  <script src="<?= BASE_URL ?>/recursos/js/reservas.js"></script>
   <!-- FIN CONFIG GLOBAL -->
 
 </body>

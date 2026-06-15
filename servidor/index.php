@@ -203,3 +203,5 @@ if(isset($_POST['iniciar'])){
   };
 
 </script>
+
+  <script src="<?= BASE_URL ?>/recursos/js/reservas.js"></script>

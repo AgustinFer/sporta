@@ -285,6 +285,9 @@ async function loadPage(route) {
     if (typeof initCanchasPage === "function" && cleanRoute === "canchas")
       initCanchasPage();
 
+    if (typeof initReservasPage === "function" && cleanRoute === "reservas")
+      initReservasPage();
+
     if (cleanRoute === "inicio") {
       initInicio();
     }
