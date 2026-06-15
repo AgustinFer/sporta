@@ -69,6 +69,7 @@ servidor/
 - **`declare(strict_types=1)`** in `config/init.php` — prevents automatic type coercion.
 - **Output escaping**: `htmlspecialchars()` on all dynamic output. Prepared statements via PDO for all queries.
 - **BASE_URL**: defined in `config/init.php`. Empty string for root deployment, `/sporta` for local subfolder.
+- **Emojis**: siempre literales (🔧, 👤, ⚙️, etc.), nunca escapes Unicode como `\uXXXX`. El código usa ~60 emojis literales y solo 3 escapes — uno era un bug.
 - **Deploy**: `deploy.sh` — cron copies `servidor/` to `/var/www/html/` via `rsync --delete`, excludes `.git`. Backups kept in `/var/www/backups/`.
 
 ## DB

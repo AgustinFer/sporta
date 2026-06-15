@@ -94,8 +94,8 @@ function turnosGenerarCabecera() {
 
     turnosCanchas.forEach(function (cancha) {
         var indicador = '';
-        if (Number(cancha.cancha_estado) === 2) indicador = ' \U0001F527';
-        if (Number(cancha.cancha_estado) === 3) indicador = ' \u26D4';
+        if (Number(cancha.cancha_estado) === 2) indicador = ' 🔧';
+        if (Number(cancha.cancha_estado) === 3) indicador = ' ⛔';
         fila.innerHTML += '<th>Cancha ' + cancha.cancha_numero + indicador + '</th>';
     });
 }
