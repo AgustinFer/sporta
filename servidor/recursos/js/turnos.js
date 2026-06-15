@@ -21,13 +21,7 @@ function initTurnosPage() {
 
     fechaInput.value = new Date().toISOString().split('T')[0];
 
-    var spanFecha = document.getElementById('fechaDisplay');
-    if (spanFecha) {
-        var opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        var fecha = new Date().toLocaleDateString('es-AR', opciones);
-        fecha = fecha.charAt(0).toUpperCase() + fecha.slice(1).replace(/,/g, '');
-        spanFecha.textContent = fecha;
-    }
+    turnosActualizarFechaDisplay();
 
     if (btnRecargar && !btnRecargar.dataset.bound) {
         btnRecargar.dataset.bound = 'true';
@@ -57,6 +51,18 @@ function initTurnosPage() {
     turnosCargarDatos();
 }
 
+function turnosActualizarFechaDisplay() {
+    var input = document.getElementById('fechaSeleccionada');
+    var span = document.getElementById('fechaDisplay');
+    if (!input || !span) return;
+    if (!input.value) { span.textContent = ''; return; }
+    var partes = input.value.split('-');
+    var fecha = new Date(partes[0], partes[1] - 1, partes[2]);
+    var opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    var texto = fecha.toLocaleDateString('es-AR', opciones);
+    span.textContent = texto.charAt(0).toUpperCase() + texto.slice(1).replace(/,/g, '');
+}
+
 function turnosCargarDatos() {
     var fecha = document.getElementById('fechaSeleccionada').value;
     fetch(BASE_URL + '/api/turnos_canchas.php', {
@@ -72,6 +78,7 @@ function turnosCargarDatos() {
         turnosReservas = datos.reservas;
         turnosCargarClientes();
         turnosGenerarTabla();
+        turnosActualizarFechaDisplay();
     })
     .catch(function (error) {
         console.error(error);
