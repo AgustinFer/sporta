@@ -4,18 +4,19 @@
     soloLetras: /^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/,
     soloNumeros: /^\d+$/,
     telefono: /^[\d\s\+\-\(\)]+$/,
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    numeroCancha: /^[1-9]\d*$/,
+    precio: /^\d+(\.\d{1,2})?$/
   };
 
   const mensajes = {
     soloLetras: "Solo se permiten letras",
     soloNumeros: "Solo se permiten números",
     telefono: "Ingrese un teléfono válido (números, +, -, ())",
-    email: "Ingrese un email válido"
+    email: "Ingrese un email válido",
+    numeroCancha: "Debe ser un número positivo",
+    precio: "Ingrese un precio válido (ej: 1500 o 1500.50)"
   };
-
-  const form = document.querySelector(".drawer-form");
-  if (!form) return;
 
   function validarCampo(input) {
     const regla = input.dataset.validate;
@@ -57,33 +58,42 @@
     }
   }
 
-  form.addEventListener("submit", function(e) {
-    const inputs = form.querySelectorAll("[data-validate]");
-    let valido = true;
+  function bindDrawerValidation(form) {
+    if (!form || form.dataset.validationBound) return;
+    form.dataset.validationBound = 'true';
 
-    inputs.forEach(function(input) {
-      if (!validarCampo(input)) {
-        valido = false;
+    form.addEventListener("submit", function(e) {
+      const inputs = form.querySelectorAll("[data-validate]");
+      let valido = true;
+
+      inputs.forEach(function(input) {
+        if (!validarCampo(input)) {
+          valido = false;
+        }
+      });
+
+      if (!valido) {
+        e.preventDefault();
+        document.querySelector(".drawer-form [data-validate].input-error")?.focus();
       }
     });
 
-    if (!valido) {
-      e.preventDefault();
-      document.querySelector(".drawer-form [data-validate].input-error")?.focus();
-    }
-  });
-
-  form.addEventListener("input", function(e) {
-    const input = e.target;
-    if (input.dataset.validate) {
-      const errorSpan = document.getElementById("error_" + input.id);
-      if (input.classList.contains("input-error") || errorSpan?.classList.contains("visible")) {
-        validarCampo(input);
+    form.addEventListener("input", function(e) {
+      const input = e.target;
+      if (input.dataset.validate) {
+        const errorSpan = document.getElementById("error_" + input.id);
+        if (input.classList.contains("input-error") || errorSpan?.classList.contains("visible")) {
+          validarCampo(input);
+        }
       }
-    }
-  });
+    });
+  }
+
+  window.bindDrawerValidation = bindDrawerValidation;
 
   window.limpiarErroresDrawer = function() {
+    var form = document.querySelector(".drawer-form");
+    if (!form) return;
     form.querySelectorAll(".input-error").forEach(function(el) {
       el.classList.remove("input-error");
     });
@@ -92,6 +102,11 @@
       el.classList.remove("visible");
     });
   };
+
+  var form = document.querySelector(".drawer-form");
+  if (form) {
+    bindDrawerValidation(form);
+  }
 
 })();
 

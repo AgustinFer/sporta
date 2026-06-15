@@ -30,6 +30,9 @@ function initCanchasPage() {
     if (formCancha && !formCancha.dataset.bound) {
         formCancha.dataset.bound = 'true';
         formCancha.addEventListener('submit', guardarCancha);
+        if (typeof bindDrawerValidation === 'function') {
+            bindDrawerValidation(formCancha);
+        }
     }
 
     cargarCanchas();
