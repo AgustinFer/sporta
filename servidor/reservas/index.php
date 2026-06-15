@@ -179,7 +179,13 @@ $estados = $stmtEstados->fetchAll(PDO::FETCH_ASSOC);
       <?php unset($_SESSION['flash_error']); ?>
     <?php endif; ?>
 
-    <h2 style="margin-bottom: 8px;">Señas y Reservas</h2>
+    <div class="list-container">
+
+      <h2>Señas y Reservas</h2>
+
+      <p>Gestión de señas y reservas</p>
+
+    </div>
 
     <div class="table-toolbar">
       <input type="text" id="tableSearch" class="table-search" placeholder="Buscar cliente…">
@@ -201,16 +207,16 @@ $estados = $stmtEstados->fetchAll(PDO::FETCH_ASSOC);
         <tbody>
           <?php foreach ($reservas as $r): ?>
             <tr>
-              <td><?= htmlspecialchars(($r['cliente_nombre'] ?? '') . ' ' . ($r['cliente_apellido'] ?? '')) ?></td>
-              <td>Cancha <?= (int) $r['cancha_numero'] ?></td>
-              <td><?= htmlspecialchars($r['tur_fecha']) ?></td>
-              <td><?= htmlspecialchars(substr($r['tur_hora_inicio'], 0, 5)) ?></td>
-              <td>
+              <td data-column="cliente"><?= htmlspecialchars(($r['cliente_nombre'] ?? '') . ' ' . ($r['cliente_apellido'] ?? '')) ?></td>
+              <td data-column="cancha">Cancha <?= (int) $r['cancha_numero'] ?></td>
+              <td data-column="fecha"><?= htmlspecialchars($r['tur_fecha']) ?></td>
+              <td data-column="horario"><?= htmlspecialchars(substr($r['tur_hora_inicio'], 0, 5)) ?></td>
+              <td data-column="estado">
                 <span class="estado-badge estado-<?= (int) $r['reser_estado'] ?>">
                   <?= htmlspecialchars($r['estado_reserva_descripcion'] ?? '') ?>
                 </span>
               </td>
-              <td>
+              <td data-column="pago">
                 <?php if ($r['factura_estado'] === 'Pagada'): ?>
                   <span class="pago-badge pago-pagada">Pagada</span>
                 <?php elseif ($r['factura_estado'] === 'Pendiente'): ?>
@@ -219,7 +225,7 @@ $estados = $stmtEstados->fetchAll(PDO::FETCH_ASSOC);
                   <span class="pago-badge pago-sin">Sin pago</span>
                 <?php endif; ?>
               </td>
-              <td class="acciones-cell">
+              <td data-column="acciones" class="acciones-cell">
                 <button
                   type="button"
                   class="edit-btn"

@@ -42,7 +42,7 @@
         Estado
         <span class="required">*</span>
       </label>
-      <select name="reser_estado" id="reserva_estado" required>
+      <select name="reser_estado" id="reserva_estado" class="drawer-select" required>
         <option value="">Seleccionar estado</option>
         <option value="1">Pendiente</option>
         <option value="2">Confirmada</option>
