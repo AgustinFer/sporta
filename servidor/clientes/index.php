@@ -241,6 +241,7 @@ $clientes = $stmt->fetchAll();
 
   <!-- CSS MÓDULO -->
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/clientes/clientes.css">
+  <link rel="icon" href="<?= BASE_URL ?>/recursos/img/favicon.ico">
 </head>
 
 <body class="screen" data-page="Clientes" data-drawer="clientes">

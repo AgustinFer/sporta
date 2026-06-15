@@ -19,6 +19,7 @@ if(!isset($_SESSION['usuario'])){
   <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/drawer.css">
 
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/canchas/canchas.css">
+  <link rel="icon" href="<?= BASE_URL ?>/recursos/img/favicon.ico">
 </head>
 
 <body class="screen" data-page="Canchas" data-drawer="canchas">

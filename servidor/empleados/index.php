@@ -406,7 +406,7 @@ $empleados = $stmt->fetchAll();
     rel="stylesheet"
     href="<?= BASE_URL ?>/empleados/empleados.css"
   >
-
+  <link rel="icon" href="<?= BASE_URL ?>/recursos/img/favicon.ico">
 </head>
 
 <body

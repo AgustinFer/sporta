@@ -20,6 +20,7 @@ if(!isset($_SESSION['usuario'])){
 
   <!-- CSS MÓDULO -->
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/inicio/inicio.css">
+  <link rel="icon" href="<?= BASE_URL ?>/recursos/img/favicon.ico">
 </head>
 
 <body class="screen" data-page="Inicio">

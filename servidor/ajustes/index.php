@@ -158,6 +158,7 @@ if (isset($_POST['cambio_contrasena'])) {
 
   <!-- CSS MÓDULO -->
   <link id="page-style" rel="stylesheet" href="<?= BASE_URL ?>/ajustes/ajustes.css">
+  <link rel="icon" href="<?= BASE_URL ?>/recursos/img/favicon.ico">
 </head>
 
 <body class="screen" data-page="Ajustes">

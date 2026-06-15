@@ -25,6 +25,7 @@ if(isset($_POST['iniciar'])){
   <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/global.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/layout-login.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/componentes.css">
+  <link rel="icon" href="<?= BASE_URL ?>/recursos/img/favicon.ico">
 </head>
 
 <body>
