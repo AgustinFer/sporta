@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sporta - Iniciar Sesión</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="recursos/css/global.css">
+  <link rel="stylesheet" href="recursos/css/layout-login.css">
+  <link rel="stylesheet" href="recursos/css/componentes.css">
+</head>
+
+<body>
+
+  <div class="screen">
+
+    <div class="background">
+      <div class="background-slide" style="background-image: url('recursos/img/fondo1.jpg')"></div>
+      <div class="background-slide" style="background-image: url('recursos/img/fondo2.jpg')"></div>
+      <div class="background-slide" style="background-image: url('recursos/img/fondo3.jpg')"></div>
+      <div class="background-slide" style="background-image: url('recursos/img/fondo1.jpg')"></div>
+    </div>
+
+    <div class="login-card">
+
+      <div class="logo-wrapper">
+        <img src="recursos/img/logo.png" alt="Sporta Logo" class="logo">
+      </div>
+
+      <div class="card-content">
+
+        <h2>Iniciar Sesión</h2>
+
+        <form id="loginForm">
+
+          <div class="field">
+            <label>Correo Electrónico o Usuario</label>
+            <input type="text" id="usuario" placeholder="Correo o nombre de usuario" required>
+          </div>
+
+          <div class="field">
+            <label>Contraseña</label>
+            <input type="password" id="password" placeholder="Ingresa tu contraseña" required>
+          </div>
+
+          <div id="loginError" class="field-error" style="text-align:center;margin-bottom:12px"></div>
+
+          <div id="debugInfo" style="font-size:12px;color:#666;text-align:center;margin-top:8px"></div>
+
+          <button type="submit" id="loginBtn">Iniciar Sesión</button>
+
+        </form>
+
+        <button id="btnCambiarPass" type="button">¿Olvidaste la contraseña?</button>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div id="modalPass" class="modal">
+    <div class="modal-content">
+      <span id="cerrarModal">&times;</span>
+      <h2>Recuperar contraseña</h2>
+      <input type="email" id="emailRecuperar" placeholder="Ingresa tu email">
+      <button id="enviarBtn">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    var BASE_URL = window.location.pathname;
+    if (BASE_URL.match(/\/[^/]+\.[^/]+$/)) {
+      BASE_URL = BASE_URL.substring(0, BASE_URL.lastIndexOf('/'));
+    }
+    BASE_URL = BASE_URL.replace(/\/+$/, '');
+
+    var debugEl = document.getElementById("debugInfo");
+
+    var apiUrl = BASE_URL + "/api/login.php";
+    debugEl.textContent = "URL: " + apiUrl;
+
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      var btn = document.getElementById("loginBtn");
+      var error = document.getElementById("loginError");
+      btn.disabled = true;
+      btn.textContent = "Ingresando...";
+      error.textContent = "";
+      error.classList.remove("visible");
+
+      var formData = new URLSearchParams();
+      formData.append("usuario", document.getElementById("usuario").value);
+      formData.append("password", document.getElementById("password").value);
+
+      try {
+        var res = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData.toString()
+        });
+        if (!res.ok) {
+          var text = await res.text();
+          throw new Error("HTTP " + res.status + ": " + text.substring(0, 300));
+        }
+        var data = await res.json();
+        if (data.ok) {
+          window.location.href = data.redirect;
+        } else {
+          error.textContent = data.mensaje;
+          error.classList.add("visible");
+          btn.disabled = false;
+          btn.textContent = "Iniciar Sesión";
+        }
+      } catch (err) {
+        console.error("Login error:", err);
+        error.textContent = err.message || "Error al conectar con el servidor";
+        error.classList.add("visible");
+        btn.disabled = false;
+        btn.textContent = "Iniciar Sesión";
+      }
+    });
+
+    const btnAbrir = document.getElementById("btnCambiarPass");
+    const modal = document.getElementById("modalPass");
+    const cerrar = document.getElementById("cerrarModal");
+
+    btnAbrir.onclick = () => { modal.style.display = "block"; };
+    cerrar.onclick = () => { modal.style.display = "none"; };
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+
+    document.getElementById("enviarBtn").onclick = () => {
+      const email = document.getElementById("emailRecuperar").value;
+      fetch("api/recuperar.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "email=" + encodeURIComponent(email)
+      })
+      .then(r => r.text())
+      .then(data => alert(data))
+      .catch(err => console.log(err));
+    };
+  </script>
+
+</body>
+</html>

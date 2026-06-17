@@ -86,10 +86,21 @@
   border: none;
   background: transparent;
 
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 
   color: #444;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.drawer-close:hover {
+  background: rgba(0,0,0,0.06);
 }
 
 /* =========================
@@ -126,6 +137,30 @@
 .drawer-form input:focus {
   outline: none;
   border-color: #4a90e2;
+}
+
+.drawer-form select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.8);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.drawer-form select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(200,200,200,0.3);
+}
+
+.self-rol-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #e67e22;
+  margin-top: 4px;
+  font-style: italic;
 }
 
 /* =========================

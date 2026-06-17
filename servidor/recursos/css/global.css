@@ -255,6 +255,19 @@ button:active {
   transform: translateY(-1px);
 }
 
+.activate-btn:disabled,
+.deactivate-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.activate-btn:disabled:hover,
+.deactivate-btn:disabled:hover {
+  background: inherit;
+  transform: none;
+}
+
 /* =========================
    BOTÓN DESACTIVAR
 ========================= */

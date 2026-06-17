@@ -6,6 +6,10 @@
   height: 100vh;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 h2 {
@@ -61,25 +65,40 @@ button {
   pointer-events: none;
 }
 
-/* LOGO WRAPPER */
+/* LOGO WRAPPER — a la derecha */
 .logo-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 60%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   z-index: 3;
-  animation: logoSlide 1s ease-out;
+  display: flex;
+  justify-content: center;
+  order: 2;
+  animation: none;
+  margin-left: -60px;
 }
 
-/* CARD LOGIN */
+/* centrar el fondo glass detrás del logo */
+.logo-wrapper::before {
+  left: 50%;
+  border-radius: 0 60px 60px 0;
+}
+
+/* CARD LOGIN — a la izquierda */
 .login-card {
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  transform: translateY(-50%);
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   width: min(400px, 90vw);
   padding: 50px 40px;
   z-index: 4;
+  order: 1;
+}
+
+.login-card::before {
+  border-radius: 20px 0 0 20px;
 }
 
 /* CONTENIDO */
@@ -95,17 +114,6 @@ button {
   }
 }
 
-@keyframes logoSlide {
-  from {
-    left: 15%;
-    opacity: 0;
-  }
-  to {
-    left: 60%;
-    opacity: 1;
-  }
-}
-
 /* MODAL RECUPERAR CONTRASEÑA */
 .modal {
   display: none;
@@ -117,6 +125,10 @@ button {
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
+}
+
+.modal.is-open {
+  display: flex;
 }
 
 .modal-content {

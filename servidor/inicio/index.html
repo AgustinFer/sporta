@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sporta - Inicio</title>
+
+  <link rel="stylesheet" href="../recursos/css/global.css">
+  <link rel="stylesheet" href="../recursos/css/layout.css">
+  <link rel="stylesheet" href="../recursos/css/componentes.css">
+  <link rel="stylesheet" href="../recursos/css/drawer.css">
+
+  <link id="page-style" rel="stylesheet" href="inicio.css">
+</head>
+
+<body class="screen" data-page="Inicio">
+
+  <div class="background"></div>
+
+  <div id="sidebar-container"></div>
+
+  <button class="menu-toggle" id="menuToggle">☰</button>
+
+  <div class="app-content">
+
+  <div id="header-container"></div>
+
+  <main class="main-content">
+
+    <section class="hero">
+
+      <div class="hero-left">
+        <p class="welcome">Bienvenido</p>
+        <h1 id="clock">--:--</h1>
+        <p class="date" id="date">XXXXXX, X de XXXX</p>
+      </div>
+
+      <div class="weather-card">
+        <div class="weather-icon" id="weatherIcon">☀️</div>
+        <div>
+          <h3>Berazategui</h3>
+          <p class="temp" id="weatherTemp">--°C</p>
+          <span id="weatherDesc">Cargando clima...</span>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="home-grid">
+
+      <div class="info-card large">
+        <h3>Próximos turnos</h3>
+        <div id="proximos-turnos"></div>
+      </div>
+
+      <div class="info-card">
+        <h3>Turnos hoy</h3>
+        <p class="big-number" id="turnos-hoy">--</p>
+      </div>
+
+      <div class="info-card">
+        <h3>Ingresos</h3>
+        <p class="big-number" id="ingresos">--</p>
+      </div>
+
+      <div class="info-card">
+        <h3>Canchas activas</h3>
+        <p class="big-number" id="canchas-activas">--</p>
+      </div>
+
+      <div class="info-card">
+        <h3>Clientes</h3>
+        <p class="big-number" id="clientes">--</p>
+      </div>
+
+    </section>
+
+  </main>
+
+  </div>
+
+  <div id="drawer-container"></div>
+  <div id="toast-container"></div>
+
+  <script src="../recursos/js/layout.js"></script>
+  <script src="../recursos/js/table.js"></script>
+  <script src="../recursos/js/drawer.js"></script>
+  <script src="../recursos/js/turnos.js"></script>
+  <script src="../recursos/js/canchas.js"></script>
+</body>
+</html>

@@ -22,7 +22,7 @@
   top: 50%;
   left: 30%;
   transform: translate(-50%, -50%);
-  width: 100vw;
+  width: min(460px, 80vw);
   height: 50vh;
   min-width: 320px;
   min-height: 400px;
