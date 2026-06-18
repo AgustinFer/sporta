@@ -1,16 +1,3 @@
-/* =============================================
-   TEMA OSCURO — init inmediato (evita flash)
-   ============================================= */
-function initTheme() {
-  var theme = localStorage.getItem('sporta-theme');
-  if (theme === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-  }
-}
-initTheme();
-
 var BASE_URL = (function() {
   var scripts = document.getElementsByTagName('script');
   for (var i = 0; i < scripts.length; i++) {
@@ -338,23 +325,6 @@ function initRouter() {
 }
 
 function initAjustes() {
-  /* ========================= */
-  /* TEMA OSCURO */
-  /* ========================= */
-  var themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) {
-    themeToggle.checked = document.documentElement.getAttribute('data-theme') === 'dark';
-    themeToggle.addEventListener('change', function() {
-      if (themeToggle.checked) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('sporta-theme', 'dark');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('sporta-theme', 'light');
-      }
-    });
-  }
-
   var usuarioInput = document.getElementById('nuevo_usuario');
   var errorUsuario = document.getElementById('error_usuario');
   var okUsuario = document.getElementById('ok_usuario');

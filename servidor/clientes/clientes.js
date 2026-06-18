@@ -2,11 +2,11 @@ var clientesData = [];
 
 async function cargarClientes() {
   try {
-    const res = await fetch("../api/clientes.php?accion=listar");
+    const res = await fetch(BASE_URL + "/api/clientes.php?accion=listar");
     const data = await res.json();
     if (data.ok) {
       clientesData = data.clientes;
-      renderTabla();
+      renderTablaClientes();
     } else {
       console.error("API error:", data.mensaje);
       mostrarToast(data.mensaje || "Error al cargar datos", "error");
@@ -17,7 +17,7 @@ async function cargarClientes() {
   }
 }
 
-function renderTabla() {
+function renderTablaClientes() {
   var tbody = document.getElementById("clientesTableBody");
   if (!tbody) return;
 
@@ -66,7 +66,7 @@ function escAttr(s) {
 async function toggleCliente(id) {
   if (!confirm("¿Cambiar estado del cliente?")) return;
   try {
-    const res = await fetch("../api/clientes.php", {
+    const res = await fetch(BASE_URL + "/api/clientes.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ accion: "toggle_estado", cliente_id: id })
@@ -118,7 +118,7 @@ if (!document.body.dataset.clientesFormBound) {
       data.cliente_id = parseInt(document.getElementById("edit_cliente_id").value);
     }
 
-    fetch("../api/clientes.php", {
+    fetch(BASE_URL + "/api/clientes.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)

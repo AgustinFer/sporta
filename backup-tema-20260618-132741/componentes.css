@@ -102,7 +102,7 @@
 .list-container,
 .settings-container {
   padding: 30px;
-  color: var(--text-primary);
+  color: rgba(26, 26, 46, 0.95);
 }
 
 .list-container h2 {
@@ -115,7 +115,7 @@
 }
 
 .welcome {
-  color: var(--text-primary);
+  color: rgba(26, 26, 46, 0.95);
 }
 
 /* FAB */

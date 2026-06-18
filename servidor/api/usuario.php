@@ -18,6 +18,8 @@ echo json_encode([
         'nombre' => $user->getNombre(),
         'apellido' => $user->getApellido(),
         'email' => $user->getEmail(),
+        'celular' => $user->getCelular(),
+        'direccion' => $user->getDireccion(),
         'usuario' => $user->getUsuario(),
         'rol' => $user->getRol(),
         'isAdmin' => $user->isAdmin()

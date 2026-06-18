@@ -76,18 +76,44 @@ $BASE = BASE_URL;
   <script>
     var BASE_URL = <?= json_encode($BASE) ?>;
 
+    var inputUsuario = document.getElementById("usuario");
+    var inputPassword = document.getElementById("password");
+
+    var campos = { usuario: inputUsuario, password: inputPassword };
+
+    function limpiarErrores() {
+      Object.values(campos).forEach(function(el) { el.classList.remove("input-error"); });
+    }
+
+    function marcarError(nombre) {
+      if (nombre && campos[nombre]) campos[nombre].classList.add("input-error");
+    }
+
+    Object.values(campos).forEach(function(el) {
+      el.addEventListener("input", limpiarErrores);
+    });
+
     document.getElementById("loginForm").addEventListener("submit", async function(e) {
       e.preventDefault();
       var btn = document.getElementById("loginBtn");
       var error = document.getElementById("loginError");
+      limpiarErrores();
+
+      var valUsuario = inputUsuario.value.trim();
+      var valPassword = inputPassword.value.trim();
+
+      if (!valUsuario) marcarError("usuario");
+      if (!valPassword) marcarError("password");
+      if (!valUsuario || !valPassword) return;
+
       btn.disabled = true;
       btn.textContent = "Ingresando...";
       error.textContent = "";
       error.classList.remove("visible");
 
       var formData = new URLSearchParams();
-      formData.append("usuario", document.getElementById("usuario").value);
-      formData.append("password", document.getElementById("password").value);
+      formData.append("usuario", valUsuario);
+      formData.append("password", valPassword);
 
       try {
         var res = await fetch(BASE_URL + "/api/login.php", {
@@ -101,6 +127,7 @@ $BASE = BASE_URL;
         } else {
           error.textContent = data.mensaje;
           error.classList.add("visible");
+          marcarError(data.campo);
           btn.disabled = false;
           btn.textContent = "Iniciar Sesión";
         }

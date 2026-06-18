@@ -39,6 +39,9 @@ try {
         case 'eliminar_cancha':
             eliminarCancha($pdo, $input);
             break;
+        case 'habilitar_cancha':
+            habilitarCancha($pdo, $input);
+            break;
         default:
             throw new Exception('Acción inválida');
     }
@@ -282,4 +285,14 @@ function eliminarCancha(PDO $pdo, array $input): void
     $stmt->execute([$canchaId]);
 
     echo json_encode(['ok' => true, 'mensaje' => 'Cancha inhabilitada correctamente']);
+}
+
+function habilitarCancha(PDO $pdo, array $input): void
+{
+    $canchaId = (int)$input['cancha_id'];
+    $sql = "UPDATE canchas SET cancha_estado = 1 WHERE cancha_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$canchaId]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Cancha habilitada correctamente']);
 }

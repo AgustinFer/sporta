@@ -14,7 +14,8 @@ $email = trim($_POST['usuario'] ?? '');
 $pass = $_POST['password'] ?? '';
 
 if (empty($email) || empty($pass)) {
-    echo json_encode(['ok' => false, 'mensaje' => 'Completá todos los campos']);
+    $campo = empty($email) && empty($pass) ? null : (empty($email) ? 'usuario' : 'password');
+    echo json_encode(['ok' => false, 'mensaje' => 'Completá todos los campos', 'campo' => $campo]);
     exit;
 }
 
@@ -44,14 +45,14 @@ $stmt->bindParam(':usuario', $email, PDO::PARAM_STR);
 $stmt->execute();
 
 if ($stmt->rowCount() !== 1) {
-    echo json_encode(['ok' => false, 'mensaje' => 'Usuario no encontrado']);
+    echo json_encode(['ok' => false, 'mensaje' => 'Usuario no encontrado', 'campo' => 'usuario']);
     exit;
 }
 
 $datos = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!password_verify($pass, $datos['usu_contrasena'])) {
-    echo json_encode(['ok' => false, 'mensaje' => 'Contraseña incorrecta']);
+    echo json_encode(['ok' => false, 'mensaje' => 'Contraseña incorrecta', 'campo' => 'password']);
     exit;
 }
 

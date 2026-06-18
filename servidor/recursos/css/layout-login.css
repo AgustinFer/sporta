@@ -13,7 +13,7 @@
 }
 
 h2 {
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
 }
 
 /* ELEMENTOS BASE */
@@ -133,28 +133,28 @@ button {
 
 .modal-content {
   width: min(440px, 100%);
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--bg-elevated);
   border-radius: 26px;
   padding: 32px 28px;
-  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.24);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
   position: relative;
 }
 
 .modal-content h2 {
   margin: 0 0 18px;
   font-size: 1.35rem;
-  color: rgba(26, 26, 46, 0.97);
+  color: var(--text-primary);
 }
 
 .modal-content input {
   width: 100%;
   padding: 14px 16px;
   border-radius: 14px;
-  border: 1px solid rgba(26, 26, 46, 0.15);
-  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
   margin-bottom: 18px;
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
   font-size: 0.98rem;
 }
 
@@ -175,10 +175,16 @@ button {
   right: 18px;
   font-size: 1.6rem;
   cursor: pointer;
-  color: rgba(26, 26, 46, 0.65);
+  color: var(--text-secondary);
   transition: color 0.2s ease;
 }
 
 #cerrarModal:hover {
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
+}
+
+/* ERROR EN INPUTS */
+.field .input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
 }

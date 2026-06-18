@@ -5,7 +5,7 @@ Vanilla PHP SPA (faculty project). No build step, no tests, no framework.
 ## Architecture
 
 - **Backend/Frontend separation**: view files are `.html` (static), all backend logic lives in `api/*.php` JSON endpoints.
-- **SPA routing**: `recursos/js/layout.js` — `loadPage(route)` does `fetch('/route/index.html')`, parses HTML, replaces `.main-content` via `innerHTML`. Scripts inside fetched HTML are injected dynamically.
+- **SPA routing**: `recursos/js/layout.js` — `loadPage(route)` does `fetch('/route/index.html?v=Date.now())`, parses HTML, replaces `.main-content` via `innerHTML`. Scripts inside fetched HTML are injected dynamically.
 - **Entrypoint**: `servidor/index.html` (login form). Login submits via `fetch` to `api/login.php`. After auth, redirects to `inicio/` where the SPA initializes.
 - **API endpoints**: `servidor/api/` — all return JSON. Session-based auth checked on each request.
 - **Drawers** (ABM panels): loaded async by `loadDrawer()` from `componentes/drawers/{modulo}.html`. Injected into `#drawer-container` (outside `.main-content`).
@@ -17,11 +17,20 @@ Vanilla PHP SPA (faculty project). No build step, no tests, no framework.
 ## SPA Quirks
 
 - **Trailing slash required** in `history.pushState` URLs (e.g. `/clientes/`). Apache `mod_dir` 301 redirects `/clientes` → `/clientes/` eating POST data. Always use trailing slashes in `pushState`.
-- **Script loading**: each HTML page declares its own `<script>` tags. `loadPage()` injects new scripts dynamically (deduplicates by `src` attribute). To make a JS function available after SPA navigation, its `<script>` must be in the initial page, OR the function must be called explicitly from `loadPage()`.
+- **Script loading**: each HTML page declares its own `<script>` tags in `index.html`. `loadPage()` step 7 injects scripts dynamically with an intentionally broken dedup (`document.querySelector('script[src="..."]')` checks the raw attribute value, not the resolved URL). This means scripts are ALWAYS re-injected on every SPA navigation, which resets closures and global state. **DO NOT fix this dedup** — proper dedup (normalizing URLs, checking `document.scripts`) breaks all SPA data modules because stale closures lose their binding to re-assigned globals.
+- **`inicio/index.html` preloads some JS files statically** (`turnos.js`, `canchas.js`, `reservas.js`). These are loaded on initial SPA init AND again by step 7 on each navigation to their module. Because step 7 always re-injects them, the `var` declarations reset, giving fresh closures bound to the new globals. This is fragile but intentional.
 - **`table.js`** must be loaded on every page (not just clientes) because it defines `initTable()` and `initColumnPicker()` which `loadPage()` calls after SPA navigation. Both functions guard against missing DOM elements.
 - **`validacion.js`** runs as IIFE on page load. The drawer form (`.drawer-form`) doesn't exist yet (loaded later by `loadDrawer()`), so the IIFE returns early and the submit handler is **never** attached. To re-bind drawer validation after SPA nav, use a named function called from `loadPage()` / `loadDrawer()`.
 - **`initDrawerPage()`**: `loadPage()` calls this after `loadDrawer()` completes. Define it globally to run page-specific logic. No longer used with the new API-driven approach (clientes/empleados handle forms inline).
+- **Data-table modules** (clientes, empleados, reservas): each defines a global `cargar{Modulo}()` function and a uniquely-named `renderTabla{Modulo}()` function. `loadPage()` step 9 calls the appropriate `cargar{Modulo}()` after scripts are injected and `initTable()`/`initColumnPicker()` have run. The `renderTabla{Modulo}()` function calls `initTable()` internally to re-bind search/sort after repopulating the tbody. **IMPORTANT**: `renderTabla` must NOT be used as a bare global name — it collides across modules since the script dedup prevents re-loading (e.g., `empleados.js` overwrites `window.renderTabla`, breaking clientes on return navigation). Each module must use a unique name.
+- **`cargarReservas()`** must be called from `loadPage()` step 9 (not just from the modul's own script), because `reservas.js` is preloaded from `inicio/index.html` and the SPA navigation re-injects it, but the function only auto-runs if explicitly called.
+- **`await` async page init functions** in `loadPage()` step 9 (`cargarClientes`, `cargarEmpleados`, `cargarReservas`). Without `await`, a subsequent SPA navigation can race ahead before the previous page's data fetch completes, corrupting global state. All three must be awaited.
+- **No `DOMContentLoaded` listener** in data-module scripts (`clientes.js`, `empleados.js`, etc.). The module functions are called from `loadPage()` step 9 only; an extra `DOMContentLoaded` listener creates a race condition (two concurrent calls writing to the same global data variable).
+- **⚠️ `loadPage` fetch cache buster**: `loadPage()` MUST use `?v=Date.now()` on the HTML fetch (`index.html?v=...`). Without a cache buster, the browser serves a cached version of `index.html` to the fetch call (even on Ctrl+F5), which means any recent HTML edits are silently reverted when `loadPage` replaces `.main-content` via `innerHTML`. This caused the "checkbox appears momentarily then disappears" bug in `reservas/`. The previous `v=` cache buster ban was wrong — the concern about race conditions applies to AbortController, not to simple cache busting on a static HTML fetch.
+- **Never add AbortController or debug bars (`#router-debug`)** to `loadPage()` — HTML fetch abort logic introduces race conditions, and persistent debug elements pollute the DOM across SPA navigations.
 - **`#toast-container` must be outside `.main-content`**: Same reason as the drawer — `loadPage()` replaces `.main-content` via `innerHTML`, so toasts placed inside get destroyed on SPA navigation. Always place them after `</main>`.
+- **Toolbar filter elements need CSS**: Checkboxes in `.table-toolbar` (e.g., `.filter-pendientes`, `.filter-fecha`) must have explicit `display: flex; align-items: center; white-space: nowrap` CSS. Without `white-space: nowrap`, the flex container may shrink the label to near-zero width, making it appear invisible. See `reservas/reservas.css` for reference.
+- **`initFiltroHoy()` in reservas**: Called from `renderTablaReservas()` (like `initFiltroPendientes()`). The `#showSoloHoy` checkbox filter is combined with `#showSoloPendientes` in a single `aplicarFiltros()` function that respects both filters simultaneously. Each filter function (`initFiltroPendientes`, `initFiltroHoy`) guards with `chk.dataset.bound` to avoid duplicate event binding.
 
 ## File Layout
 
@@ -40,7 +49,7 @@ servidor/
 │   ├── empleados/            # Full ABM (admin only, API-driven)
 │   ├── turnos/               # Grilla horaria (JS + API)
 │   ├── canchas/              # Burbujas CRUD (JS + API)
-│   ├── reservas/             # Placeholder
+│   ├── reservas/             # Pagos y reservas con tabla JS + API
 │   └── ajustes/              # Ajustes de cuenta (API-driven)
 ├── api/                      # Backend JSON endpoints
 │   ├── login.php             # POST: autenticación
@@ -69,9 +78,29 @@ servidor/
 
 - **ABM pattern**: POST to same page → PHP processes → `header("Location: ...")` redirect (PRG). Success message in `$_SESSION['flash_success']`, error in `$_SESSION['flash_error']`. The toast container must handle both; errors use `.toast-error` (red), success uses `.toast-success` (green).
 - **Form data preservation on error**: When validation fails on create/edit, save `$_SESSION['form_data']` before redirect. The page outputs `<script>var formData = ...</script>` (outside `.main-content`). `initDrawerPage()` reads it, opens the drawer, pre-fills fields, and clears errors. Currently implemented in `empleados/`.
+- **Settings accordion pattern** (ajustes/): Each setting group uses `.settings-card.accordion` with `.accordion-header` (clickable, shows ▾) and `.accordion-body` (collapsible, `display: none` by default). Structure:
+  ```html
+  <div class="settings-card accordion">
+    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+      <h3>Título</h3>
+      <span class="accordion-arrow">▾</span>
+    </div>
+    <div class="accordion-body">
+      <form id="form{Name}" novalidate>
+        <div class="field">
+          <label for="input_id">Etiqueta</label>
+          <input type="text" id="input_id" ...>
+        </div>
+        <button type="submit" class="btn-settings">Guardar</button>
+      </form>
+    </div>
+  </div>
+  ```
+  Required CSS: `.accordion-body { display: none; } .accordion.open .accordion-body { display: block; }` plus arrow rotation (see `ajustes/ajustes.css`). JS logic (validation, submit) goes in `initAjustes()` in `recursos/js/layout.js` — elements are found by `getElementById` and work inside hidden containers.
 - **`declare(strict_types=1)`** in `config/init.php` — prevents automatic type coercion.
 - **Output escaping**: `htmlspecialchars()` on all dynamic output. Prepared statements via PDO for all queries.
 - **BASE_URL**: computed automatically in `layout.js` from the script's `src` attribute. No hardcoding needed across environments.
+- **API fetch URLs**: ALL `fetch` calls to backend endpoints MUST use `BASE_URL + "/api/..."` (absolute) — never relative paths like `"../api/..."`. Relative paths break after F5 refresh because the page URL context changes (direct page load vs SPA navigation). This was fixed in clientes, empleados, and reservas modules.
 - **Deploy**: `deploy.sh` — cron copies `servidor/` to `/var/www/html/` via `rsync --delete`, excludes `.git`. Backups kept in `/var/www/backups/`.
 
 ## DB

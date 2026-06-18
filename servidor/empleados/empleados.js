@@ -3,11 +3,11 @@ var drawerFormHandlerBound = false;
 
 async function cargarEmpleados() {
   try {
-    var res = await fetch("../api/empleados.php?accion=listar");
+    var res = await fetch(BASE_URL + "/api/empleados.php?accion=listar");
     var data = await res.json();
     if (data.ok) {
       empleadosData = data.empleados;
-      renderTabla();
+      renderTablaEmpleados();
     } else {
       console.error("API error:", data.mensaje);
       mostrarToast(data.mensaje || "Error al cargar datos", "error");
@@ -18,7 +18,7 @@ async function cargarEmpleados() {
   }
 }
 
-function renderTabla() {
+function renderTablaEmpleados() {
   var tbody = document.getElementById("empleadosTableBody");
   if (!tbody) return;
 
@@ -71,7 +71,7 @@ function escAttr(s) {
 async function toggleEmpleado(id) {
   if (!confirm("¿Cambiar estado del empleado?")) return;
   try {
-    var res = await fetch("../api/empleados.php", {
+    var res = await fetch(BASE_URL + "/api/empleados.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ accion: "toggle_estado", empleado_id: id })
@@ -125,7 +125,7 @@ if (!document.body.dataset.empleadosFormBound) {
       data.empleado_id = parseInt(document.getElementById("edit_empleado_id").value);
     }
 
-    fetch("../api/empleados.php", {
+    fetch(BASE_URL + "/api/empleados.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
@@ -144,6 +144,4 @@ if (!document.body.dataset.empleadosFormBound) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-  cargarEmpleados();
-});
+

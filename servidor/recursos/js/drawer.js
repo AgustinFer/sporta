@@ -22,7 +22,7 @@ const drawerConfig = {
     prefix: "reserva",
     titleNew: "Nueva reserva",
     titleEdit: "Modificar reserva",
-    fields: [] // lo que uses en ese módulo
+    fields: ["estado", "observaciones"]
   }
 
 };

@@ -4,7 +4,7 @@
 
 .settings-container {
   padding: 30px;
-  color: var(--text-primary);
+  color: rgba(26, 26, 46, 0.95);
 }
 
 .settings-container h2 {
@@ -22,19 +22,19 @@
 /* ========================= */
 
 .settings-card {
-  background: var(--bg-surface);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(14px);
   border-radius: 16px;
   padding: 28px;
   margin-bottom: 24px;
   max-width: 520px;
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 .settings-card h3 {
   font-size: 1.2rem;
   margin: 0;
-  color: var(--text-primary);
+  color: #1a1a2e;
 }
 
 /* ========================= */
@@ -57,12 +57,12 @@
 }
 
 .accordion-header:hover {
-  background: var(--bg-table-hover);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .accordion-arrow {
   font-size: 14px;
-  color: var(--text-muted);
+  color: #888;
   transition: transform 0.25s ease;
   line-height: 1;
 }
@@ -92,24 +92,23 @@
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #333;
   margin-bottom: 6px;
 }
 
-.settings-card input, .settings-card select {
+.settings-card input {
   width: 100%;
   padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid var(--border-medium);
-  background: var(--bg-input);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.85);
   font-size: 1rem;
-  color: var(--text-primary);
   transition: border-color 0.2s;
 }
 
-.settings-card input:focus, .settings-card select:focus {
+.settings-card input:focus {
   outline: none;
-  border-color: var(--accent-yellow);
+  border-color: #facc15;
   box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.2);
 }
 
@@ -145,7 +144,7 @@
 
 .password-requirements li {
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: #888;
   padding: 2px 0;
   transition: color 0.2s;
 }
@@ -181,54 +180,4 @@
 
 .btn-settings:hover {
   opacity: 0.85;
-}
-
-/* ========================= */
-/* 🔄 TOGGLE SWITCH */
-/* ========================= */
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 26px;
-  flex-shrink: 0;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #ccc;
-  transition: 0.3s;
-  border-radius: 26px;
-}
-
-.slider::before {
-  content: "";
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background: white;
-  transition: 0.3s;
-  border-radius: 50%;
-}
-
-.switch input:checked + .slider {
-  background: #facc15;
-}
-
-.switch input:checked + .slider::before {
-  transform: translateX(22px);
 }

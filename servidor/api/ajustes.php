@@ -96,6 +96,62 @@ try {
             echo json_encode(['ok' => true, 'mensaje' => 'Contraseña actualizada correctamente']);
             break;
 
+        case 'cambio_nombre':
+            $nombre = trim($input['nombre'] ?? '');
+            $apellido = trim($input['apellido'] ?? '');
+            if ($nombre === '' || $apellido === '') {
+                echo json_encode(['ok' => false, 'mensaje' => 'Nombre y apellido no pueden estar vacíos']);
+                exit;
+            }
+            $stmt = $pdo->prepare("UPDATE usuarios SET usu_nombre = :nombre, usu_apellido = :apellido WHERE usu_id = :id");
+            $stmt->execute([':nombre' => $nombre, ':apellido' => $apellido, ':id' => $userId]);
+            $_SESSION['usuario']->setNombre($nombre);
+            $_SESSION['usuario']->setApellido($apellido);
+            echo json_encode(['ok' => true, 'mensaje' => 'Nombre y apellido actualizados']);
+            break;
+
+        case 'cambio_direccion':
+            $direccion = trim($input['direccion'] ?? '');
+            if ($direccion === '') {
+                echo json_encode(['ok' => false, 'mensaje' => 'La dirección no puede estar vacía']);
+                exit;
+            }
+            $stmt = $pdo->prepare("UPDATE usuarios SET usu_direccion = :direccion WHERE usu_id = :id");
+            $stmt->execute([':direccion' => $direccion, ':id' => $userId]);
+            $_SESSION['usuario']->setDireccion($direccion);
+            echo json_encode(['ok' => true, 'mensaje' => 'Dirección actualizada']);
+            break;
+
+        case 'cambio_email':
+            $email = trim($input['email'] ?? '');
+            if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                echo json_encode(['ok' => false, 'mensaje' => 'Ingrese un email válido']);
+                exit;
+            }
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE usu_email = :email AND usu_id != :id");
+            $stmt->execute([':email' => $email, ':id' => $userId]);
+            if ($stmt->fetchColumn() > 0) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El email ya está en uso']);
+                exit;
+            }
+            $stmt = $pdo->prepare("UPDATE usuarios SET usu_email = :email WHERE usu_id = :id");
+            $stmt->execute([':email' => $email, ':id' => $userId]);
+            $_SESSION['usuario']->setEmail($email);
+            echo json_encode(['ok' => true, 'mensaje' => 'Email actualizado']);
+            break;
+
+        case 'cambio_celular':
+            $celular = trim($input['celular'] ?? '');
+            if ($celular === '') {
+                echo json_encode(['ok' => false, 'mensaje' => 'El celular no puede estar vacío']);
+                exit;
+            }
+            $stmt = $pdo->prepare("UPDATE usuarios SET usu_celular = :celular WHERE usu_id = :id");
+            $stmt->execute([':celular' => $celular, ':id' => $userId]);
+            $_SESSION['usuario']->setCelular($celular);
+            echo json_encode(['ok' => true, 'mensaje' => 'Celular actualizado']);
+            break;
+
         default:
             echo json_encode(['ok' => false, 'mensaje' => 'Acción inválida']);
             break;
