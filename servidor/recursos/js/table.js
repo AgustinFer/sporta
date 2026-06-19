@@ -156,7 +156,6 @@ function sortTable(column) {
 /* ========================= */
 
 function initColumnPicker() {
-
   const toolbar = document.querySelector(".table-toolbar");
   if (!toolbar) return;
   if (toolbar.dataset.columnPickerBound) return;
