@@ -99,6 +99,10 @@ class Usuario extends Persona{
         return $this->localidad;
     }
 
+    public function setDireccion($direccion){
+        $this->direccion = $direccion;
+    }
+
     #endregion
     
     public function isAdmin(){
