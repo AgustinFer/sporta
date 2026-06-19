@@ -581,6 +581,7 @@ $empleados = $stmt->fetchAll();
                       data-usuario="<?= htmlspecialchars($empleado["usu_usuario"]) ?>"
                       data-direccion="<?= htmlspecialchars($empleado["usu_direccion"] ?? "") ?>"
                       data-rol="<?= htmlspecialchars($empleado["usu_rol"]) ?>"
+                      data-self="<?= (int)$empleado["usu_id"] === (int)$_SESSION['usuario']->getId() ? 'true' : '' ?>"
                     >
                       Modificar
                     </button>
