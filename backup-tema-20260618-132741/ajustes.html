@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sporta - Ajustes</title>
+
+  <link rel="stylesheet" href="../recursos/css/global.css">
+  <link rel="stylesheet" href="../recursos/css/layout.css">
+  <link rel="stylesheet" href="../recursos/css/componentes.css">
+  <link rel="stylesheet" href="../recursos/css/drawer.css">
+
+  <link id="page-style" rel="stylesheet" href="ajustes.css">
+</head>
+
+<body class="screen" data-page="Ajustes">
+
+  <div class="background"></div>
+
+  <div id="sidebar-container"></div>
+
+  <button class="menu-toggle" id="menuToggle">☰</button>
+
+  <div class="app-content">
+
+  <div id="header-container"></div>
+
+  <main class="main-content">
+
+    <div class="settings-container">
+
+      <h2>Ajustes</h2>
+      <p>Configuración de tu cuenta</p>
+
+      <div class="settings-card accordion">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <h3>Nombre de usuario</h3>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body" id="usuario-body">
+          <form id="formUsuario" novalidate>
+            <div class="field">
+              <label for="nuevo_usuario">Nuevo nombre de usuario</label>
+              <input type="text" name="nuevo_usuario" id="nuevo_usuario" required autocomplete="username">
+              <span class="field-error" id="error_usuario"></span>
+              <span class="field-ok" id="ok_usuario"></span>
+            </div>
+            <button type="submit" class="btn-settings">Guardar usuario</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="settings-card accordion">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <h3>Nombre y apellido</h3>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body" id="nombre-body">
+          <form id="formNombre" novalidate>
+            <div class="field">
+              <label for="edit_nombre">Nombre</label>
+              <input type="text" name="nombre" id="edit_nombre" required>
+              <span class="field-error" id="error_nombre"></span>
+            </div>
+            <div class="field">
+              <label for="edit_apellido">Apellido</label>
+              <input type="text" name="apellido" id="edit_apellido" required>
+              <span class="field-error" id="error_apellido"></span>
+            </div>
+            <button type="submit" class="btn-settings">Guardar nombre y apellido</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="settings-card accordion">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <h3>Dirección</h3>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body" id="direccion-body">
+          <form id="formDireccion" novalidate>
+            <div class="field">
+              <label for="edit_direccion">Dirección</label>
+              <input type="text" name="direccion" id="edit_direccion" required>
+              <span class="field-error" id="error_direccion"></span>
+            </div>
+            <button type="submit" class="btn-settings">Guardar dirección</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="settings-card accordion">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <h3>Email</h3>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body" id="email-body">
+          <form id="formEmail" novalidate>
+            <div class="field">
+              <label for="edit_email">Correo electrónico</label>
+              <input type="email" name="email" id="edit_email" required autocomplete="email">
+              <span class="field-error" id="error_email"></span>
+            </div>
+            <button type="submit" class="btn-settings">Guardar email</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="settings-card accordion">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <h3>Celular</h3>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body" id="celular-body">
+          <form id="formCelular" novalidate>
+            <div class="field">
+              <label for="edit_celular">Celular</label>
+              <input type="text" name="celular" id="edit_celular" required>
+              <span class="field-error" id="error_celular"></span>
+            </div>
+            <button type="submit" class="btn-settings">Guardar celular</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="settings-card accordion">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <h3>Contraseña</h3>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body" id="password-body">
+          <form id="formPassword" novalidate>
+            <div class="field">
+              <label for="pass_actual">Contraseña actual</label>
+              <input type="password" name="pass_actual" id="pass_actual" required autocomplete="current-password">
+            </div>
+            <div class="field">
+              <label for="pass_nueva">Nueva contraseña</label>
+              <input type="password" name="pass_nueva" id="pass_nueva" required autocomplete="new-password">
+              <ul class="password-requirements">
+                <li id="req-length">Mínimo 6 caracteres</li>
+                <li id="req-upper">Una mayúscula</li>
+                <li id="req-number">Un número</li>
+                <li id="req-special">Un caracter especial</li>
+              </ul>
+            </div>
+            <div class="field">
+              <label for="pass_confirmar">Confirmar contraseña</label>
+              <input type="password" name="pass_confirmar" id="pass_confirmar" required autocomplete="new-password">
+              <span class="field-error" id="error_password"></span>
+            </div>
+            <button type="submit" class="btn-settings">Cambiar contraseña</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  </div>
+
+  <div id="drawer-container"></div>
+  <div id="toast-container"></div>
+
+  <script src="../recursos/js/layout.js"></script>
+  <script src="../recursos/js/table.js"></script>
+  <script src="../recursos/js/drawer.js"></script>
+
+</body>
+</html>
