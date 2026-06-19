@@ -30,13 +30,19 @@ try {
             obtenerCanchas($pdo, $input);
             break;
         case 'crear_cancha':
-            crearCancha($pdo, $input);
-            break;
         case 'actualizar_cancha':
-            actualizarCancha($pdo, $input);
-            break;
         case 'eliminar_cancha':
-            eliminarCancha($pdo, $input);
+            if (!$_SESSION['usuario']->isAdmin()) {
+                echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
+                exit;
+            }
+            if ($input['accion'] === 'crear_cancha') {
+                crearCancha($pdo, $input);
+            } elseif ($input['accion'] === 'actualizar_cancha') {
+                actualizarCancha($pdo, $input);
+            } else {
+                eliminarCancha($pdo, $input);
+            }
             break;
         default:
             throw new Exception('Acción inválida');
