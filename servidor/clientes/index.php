@@ -9,10 +9,6 @@ if (!isset($_SESSION['usuario'])) {
 
 }
 
-$esAdmin =
-  isset($_SESSION['usuario']) &&
-  $_SESSION['usuario']->isAdmin();
-
 require_once __DIR__ . '/../config/conexion.php';
 
 $pdo = conexion();
