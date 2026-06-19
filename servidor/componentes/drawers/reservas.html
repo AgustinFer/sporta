@@ -1,0 +1,103 @@
+<div class="drawer-overlay"></div>
+
+<aside class="drawer">
+
+  <div class="drawer-header">
+    <h3 id="drawer-title">Nueva Reserva</h3>
+    <button type="button" class="drawer-close">✕</button>
+  </div>
+
+  <div class="drawer-content">
+
+    <!-- PANEL: EDITAR RESERVA -->
+    <div id="panelEditar" class="drawer-panel">
+      <form class="drawer-form" id="formEditarReserva">
+        <input type="hidden" name="edit_reserva_id" id="edit_reserva_id">
+
+        <div class="detalle-item">
+          <strong>Cliente:</strong>
+          <span id="edit_cliente"></span>
+        </div>
+        <div class="detalle-item">
+          <strong>Cancha:</strong>
+          <span id="edit_cancha"></span>
+        </div>
+        <div class="detalle-item">
+          <strong>Horario:</strong>
+          <span id="edit_horario"></span>
+        </div>
+
+        <div>
+          <label>Estado <span class="required">*</span></label>
+          <select name="reser_estado" id="reser_estado" required>
+            <option value="">Seleccionar estado</option>
+            <option value="1">Pendiente</option>
+            <option value="2">Confirmada</option>
+            <option value="3">Cancelada</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Observaciones</label>
+          <textarea name="reser_observaciones" id="reser_observaciones" rows="4" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:rgba(255,255,255,0.8);font-size:1rem;font-family:inherit;box-sizing:border-box"></textarea>
+        </div>
+
+        <button type="submit" class="drawer-submit">Guardar cambios</button>
+      </form>
+    </div>
+
+    <!-- PANEL: REGISTRAR PAGO -->
+    <div id="panelPago" class="drawer-panel" style="display:none">
+      <input type="hidden" id="pago_reserva_id">
+
+      <div class="detalle-item">
+        <strong>Cliente:</strong>
+        <span id="pago_cliente"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Cancha:</strong>
+        <span id="pago_cancha"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Total factura:</strong>
+        <span id="pago_total">$0</span>
+      </div>
+      <div class="detalle-item">
+        <strong>Pagado hasta ahora:</strong>
+        <span id="pago_pagado">$0</span>
+      </div>
+      <div class="detalle-item">
+        <strong>Saldo pendiente:</strong>
+        <span id="pago_saldo">$0</span>
+      </div>
+
+      <form class="drawer-form" id="formRegistrarPago" style="margin-top:20px">
+        <div>
+          <label>Monto <span class="required">*</span></label>
+          <input type="number" name="pago_monto" id="pago_monto" step="0.01" min="0.01" required>
+        </div>
+
+        <div>
+          <label>Método de pago <span class="required">*</span></label>
+          <select name="metodo_pago_id" id="metodo_pago_id" required>
+            <option value="">Seleccionar método</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Fecha de pago</label>
+          <input type="date" name="pago_fecha" id="pago_fecha">
+        </div>
+
+        <button type="submit" class="drawer-submit">Registrar pago</button>
+      </form>
+
+      <div style="margin-top:24px">
+        <h4 style="margin:0 0 12px;font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px">Historial de pagos</h4>
+        <div id="pagoHistorialLista" style="max-height:200px;overflow-y:auto"></div>
+      </div>
+    </div>
+
+  </div>
+
+</aside>

@@ -1,0 +1,84 @@
+<!-- OVERLAY -->
+<div class="drawer-overlay"></div>
+
+<!-- DRAWER -->
+<aside class="drawer">
+
+  <div class="drawer-header">
+    <h3 id="drawer-title">Nueva Reserva</h3>
+    <button type="button" class="drawer-close">✕</button>
+  </div>
+
+  <!-- PANEL: NUEVA RESERVA -->
+  <div id="panelReserva" class="drawer-panel">
+    <form class="drawer-form" id="formReserva">
+      <input type="hidden" id="cancha_id">
+      <input type="hidden" id="hora_inicio">
+      <input type="hidden" id="fecha_reserva">
+
+      <div>
+        <label>Cancha</label>
+        <input type="text" id="canchaTexto" readonly>
+      </div>
+
+      <div>
+        <label>Fecha</label>
+        <input type="text" id="fechaTexto" readonly>
+      </div>
+
+      <div>
+        <label>Hora</label>
+        <input type="text" id="horaTexto" readonly>
+      </div>
+
+      <div>
+        <label>Cliente <span class="required">*</span></label>
+        <select id="cliente_id" required>
+          <option value="">Seleccionar cliente</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Observaciones</label>
+        <textarea id="observaciones" rows="4" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:rgba(255,255,255,0.8);font-size:1rem;font-family:inherit"></textarea>
+      </div>
+
+      <button type="submit" class="drawer-submit">Crear Reserva</button>
+    </form>
+  </div>
+
+  <!-- PANEL: DETALLE RESERVA -->
+  <div id="panelDetalle" class="drawer-panel" style="display:none">
+    <input type="hidden" id="detalleReservaId">
+
+    <div style="padding:24px">
+      <div class="detalle-item">
+        <strong>Cliente:</strong>
+        <span id="detalleCliente"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Cancha:</strong>
+        <span id="detalleCancha"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Horario:</strong>
+        <span id="detalleHorario"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Estado:</strong>
+        <span id="detalleEstado"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Observaciones:</strong>
+        <span id="detalleObservaciones"></span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+        <button type="button" id="btnPendiente" class="drawer-submit" style="background:linear-gradient(135deg,#f59e0b,#d97706)">Pendiente</button>
+        <button type="button" id="btnConfirmada" class="drawer-submit" style="background:linear-gradient(135deg,#22c55e,#16a34a)">Confirmar</button>
+        <button type="button" id="btnCancelada" class="drawer-submit" style="background:linear-gradient(135deg,#ef4444,#dc2626)">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+</aside>
