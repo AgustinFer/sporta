@@ -80,6 +80,13 @@ document.addEventListener("click", (e) => {
       limpiarErroresDrawer();
     }
 
+    var rolSelectFAB = document.getElementById("empleado_rol");
+    if (rolSelectFAB) {
+      rolSelectFAB.disabled = false;
+      var hint = document.querySelector(".self-rol-hint");
+      if (hint) hint.remove();
+    }
+
     openDrawer();
 
   }
@@ -118,6 +125,29 @@ document.addEventListener("click", (e) => {
       document.getElementById("drawer-title");
 
     if (title) title.textContent = config.titleEdit;
+
+    if (button.dataset.self === "true" || button.dataset.self === true) {
+      var rolSelect = document.getElementById("empleado_rol");
+      if (rolSelect) {
+        rolSelect.disabled = true;
+        var label = document.querySelector('label[for="empleado_rol"]') || rolSelect.closest('div')?.querySelector('label');
+        if (label) {
+          var hint = document.createElement("small");
+          hint.className = "self-rol-hint";
+          hint.textContent = "No puedes modificar tu propio rol";
+          var existing = label.parentElement.querySelector(".self-rol-hint");
+          if (existing) existing.remove();
+          label.parentElement.appendChild(hint);
+        }
+      }
+    } else {
+      var rolSelect = document.getElementById("empleado_rol");
+      if (rolSelect) {
+        rolSelect.disabled = false;
+        var hint = document.querySelector(".self-rol-hint");
+        if (hint) hint.remove();
+      }
+    }
 
   }
 
