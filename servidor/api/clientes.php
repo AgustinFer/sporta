@@ -1,0 +1,168 @@
+<?php
+
+require_once __DIR__ . '/../config/init.php';
+require_once __DIR__ . '/../config/conexion.php';
+
+header('Content-Type: application/json; charset=utf-8');
+
+if (!isset($_SESSION['usuario'])) {
+    echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
+    exit;
+}
+
+$pdo = conexion();
+$input = json_decode(file_get_contents('php://input'), true);
+$accion = $input['accion'] ?? ($_GET['accion'] ?? '');
+
+try {
+
+    switch ($accion) {
+
+        case 'listar':
+            listar($pdo);
+            break;
+
+        case 'toggle_estado':
+            toggleEstado($pdo, $input);
+            break;
+
+        case 'crear':
+            crear($pdo, $input);
+            break;
+
+        case 'editar':
+            editar($pdo, $input);
+            break;
+
+        default:
+            echo json_encode(['ok' => false, 'mensaje' => 'Acción inválida']);
+            break;
+    }
+
+} catch (Exception $e) {
+    echo json_encode(['ok' => false, 'mensaje' => $e->getMessage()]);
+}
+
+function listar(PDO $pdo): void
+{
+    $stmt = $pdo->query("SELECT * FROM clientes ORDER BY cliente_id");
+    $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode(['ok' => true, 'clientes' => $clientes]);
+}
+
+function toggleEstado(PDO $pdo, array $input): void
+{
+    $id = (int) ($input['cliente_id'] ?? 0);
+    if ($id <= 0) {
+        echo json_encode(['ok' => false, 'mensaje' => 'ID inválido']);
+        return;
+    }
+
+    $stmt = $pdo->prepare("SELECT cliente_estado FROM clientes WHERE cliente_id = ?");
+    $stmt->execute([$id]);
+    $actual = $stmt->fetchColumn();
+
+    $nuevoEstado = ((int)$actual === 1) ? 0 : 1;
+
+    $stmt = $pdo->prepare("UPDATE clientes SET cliente_estado = ? WHERE cliente_id = ?");
+    $stmt->execute([$nuevoEstado, $id]);
+
+    echo json_encode([
+        'ok' => true,
+        'mensaje' => $nuevoEstado === 1 ? 'Cliente activado' : 'Cliente inactivado',
+        'nuevo_estado' => $nuevoEstado
+    ]);
+}
+
+function validarDatos(array $data): array
+{
+    $errores = [];
+    $nombre = trim($data['nombre'] ?? '');
+    $apellido = trim($data['apellido'] ?? '');
+    $email = trim($data['email'] ?? '');
+    $celular = trim($data['celular'] ?? '');
+    $dni = trim($data['dni'] ?? '');
+
+    if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $nombre)) {
+        $errores[] = "El nombre contiene caracteres inválidos";
+    }
+    if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $apellido)) {
+        $errores[] = "El apellido contiene caracteres inválidos";
+    }
+    if ($dni !== "" && !preg_match('/^\d+$/', $dni)) {
+        $errores[] = "El DNI solo debe contener números";
+    }
+    if ($celular !== "" && !preg_match('/^[\d\s\+\-\(\)]+$/', $celular)) {
+        $errores[] = "El teléfono contiene caracteres inválidos";
+    }
+    if ($email !== "" && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errores[] = "El email no tiene un formato válido";
+    }
+    return $errores;
+}
+
+function crear(PDO $pdo, array $input): void
+{
+    $nombre = trim($input['nombre'] ?? '');
+    $apellido = trim($input['apellido'] ?? '');
+    $email = trim($input['email'] ?? '');
+    $celular = trim($input['celular'] ?? '');
+    $dni = trim($input['dni'] ?? '');
+
+    if (empty($nombre) || empty($apellido)) {
+        echo json_encode(['ok' => false, 'mensaje' => 'Nombre y apellido son obligatorios']);
+        return;
+    }
+
+    $errores = validarDatos([
+        'nombre' => $nombre, 'apellido' => $apellido,
+        'email' => $email, 'celular' => $celular, 'dni' => $dni
+    ]);
+
+    if (!empty($errores)) {
+        echo json_encode(['ok' => false, 'mensaje' => implode('<br>', $errores)]);
+        return;
+    }
+
+    $stmt = $pdo->prepare("
+        INSERT INTO clientes (cliente_nombre, cliente_apellido, cliente_email, cliente_celular, cliente_dni, cliente_estado, cliente_localidad_id, cliente_provincia_id, cliente_pais_id)
+        VALUES (?, ?, ?, ?, ?, 1, 1, 1, 1)
+    ");
+    $stmt->execute([$nombre, $apellido, $email ?: null, $celular ?: null, $dni ?: null]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Cliente agregado con éxito']);
+}
+
+function editar(PDO $pdo, array $input): void
+{
+    $id = (int) ($input['cliente_id'] ?? 0);
+    $nombre = trim($input['nombre'] ?? '');
+    $apellido = trim($input['apellido'] ?? '');
+    $email = trim($input['email'] ?? '');
+    $celular = trim($input['celular'] ?? '');
+    $dni = trim($input['dni'] ?? '');
+
+    if ($id <= 0 || empty($nombre) || empty($apellido)) {
+        echo json_encode(['ok' => false, 'mensaje' => 'Datos inválidos']);
+        return;
+    }
+
+    $errores = validarDatos([
+        'nombre' => $nombre, 'apellido' => $apellido,
+        'email' => $email, 'celular' => $celular, 'dni' => $dni
+    ]);
+
+    if (!empty($errores)) {
+        echo json_encode(['ok' => false, 'mensaje' => implode('<br>', $errores)]);
+        return;
+    }
+
+    $stmt = $pdo->prepare("
+        UPDATE clientes
+        SET cliente_nombre = ?, cliente_apellido = ?, cliente_email = ?, cliente_celular = ?, cliente_dni = ?
+        WHERE cliente_id = ?
+    ");
+    $stmt->execute([$nombre, $apellido, $email ?: null, $celular ?: null, $dni ?: null, $id]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Cliente modificado con éxito']);
+}
