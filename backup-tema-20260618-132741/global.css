@@ -1,0 +1,504 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ANIMACIONES GENERALES */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ELEMENTOS BASE */
+button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(90deg, #facc15, #fbbf24);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* INPUTS GENERALES */
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  font-size: 13px;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s ease;
+}
+
+.field input:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+}
+
+.field input::placeholder {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* ABM */
+
+/* =========================
+   TABLA
+========================= */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  padding: 0 30px 30px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  background: rgba(255,255,255,0.04);
+
+  border-radius: 16px;
+  overflow: hidden;
+
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(26, 26, 46, 0.12);
+}
+
+/* =========================
+   CABECERA
+========================= */
+
+.table thead {
+  background: rgba(26, 26, 46, 0.12);
+}
+
+.table th {
+  padding: 16px;
+
+  text-align: left;
+
+  font-weight: 600;
+
+  color: rgba(26, 26, 46, 0.95);
+
+  border-bottom:
+    1px solid rgba(26, 26, 46, 0.12);
+
+  border-right:
+    1px solid rgba(26, 26, 46, 0.08);
+}
+
+.table th[data-sort]::after {
+  content: " ↕";
+  font-size: 0.7em;
+  opacity: 0.3;
+  margin-left: 4px;
+}
+
+.table th.sort-asc::after {
+  content: " ▲";
+  opacity: 1;
+}
+
+.table th.sort-desc::after {
+  content: " ▼";
+  opacity: 1;
+}
+
+/* =========================
+   CELDAS
+========================= */
+
+.table td {
+  padding: 14px 16px;
+
+  color: rgba(26, 26, 46, 0.95);
+
+  border-bottom:
+    1px solid rgba(26, 26, 46, 0.08);
+
+  border-right:
+    1px solid rgba(26, 26, 46, 0.06);
+}
+
+
+/* =========================
+   HOVER
+========================= */
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.20);
+}
+
+/* =========================
+   ESTADOS
+========================= */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.active {
+  background: rgba(0,255,120,0.15);
+  color: rgb(0,120,60);
+}
+
+.status.inactive {
+  background: rgba(255,80,80,0.15);
+  color: rgb(180,40,40);
+}
+
+/* =========================
+   ACCIONES
+========================= */
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =========================
+   BOTÓN EDITAR
+========================= */
+
+.edit-btn {
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: rgba(151, 151, 151,0.2);
+  color: rgb(100, 100, 100);
+
+  transition: 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: rgba(151, 151, 151,0.2);
+  transform: translateY(-1px);
+}
+
+/* =========================
+   BOTÓN ACTIVAR
+========================= */
+
+.activate-btn {
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: rgba(0,255,120,0.12);
+  color: rgb(0,120,60);
+
+  transition: 0.2s ease;
+}
+
+.activate-btn:hover {
+  background: rgba(0,255,120,0.20);
+  transform: translateY(-1px);
+}
+
+.activate-btn:disabled,
+.deactivate-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.activate-btn:disabled:hover,
+.deactivate-btn:disabled:hover {
+  background: inherit;
+  transform: none;
+}
+
+/* =========================
+   BOTÓN DESACTIVAR
+========================= */
+
+.deactivate-btn {
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: rgba(255,80,80,0.12);
+  color: rgb(180,40,40);
+
+  transition: 0.2s ease;
+}
+
+.deactivate-btn:hover {
+  background: rgba(255,80,80,0.20);
+  transform: translateY(-1px);
+}
+
+/* =========================
+   BUSCADOR TABLA
+========================= */
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 30px;
+  margin-top: 20px;
+}
+
+.table-search {
+  width: 100%;
+  max-width: 400px;
+
+  padding: 12px;
+
+  border-radius: 10px;
+  border: 1px solid rgba(26,26,46,0.15);
+
+  background: white;
+
+  font-size: 14px;
+}
+
+/* =========================
+   COLUMN PICKER
+========================= */
+
+.column-picker-wrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.column-picker-btn {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(26,26,46,0.15);
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  color: #333;
+  margin-top: 0;
+  width: auto;
+  box-shadow: none;
+}
+
+.column-picker-btn:hover {
+  transform: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.column-picker-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 6px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid rgba(26,26,46,0.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  padding: 8px;
+  min-width: 170px;
+  display: none;
+  z-index: 100;
+}
+
+.column-picker-dropdown.open {
+  display: block;
+}
+
+.column-picker-item {
+  display: block;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  color: #333;
+  border-radius: 6px;
+}
+
+.column-picker-item:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.column-picker-item input {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.column-hidden {
+  display: none;
+}
+
+/* =========================
+   FILTRO INACTIVOS
+========================= */
+
+.filter-inactivos {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  margin-left: 8px;
+}
+
+.filter-inactivos input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* =========================
+   FLASH ERROR
+========================= */
+
+.flash-error {
+  margin: 0 30px;
+  padding: 12px 16px;
+  background: rgba(231, 76, 60, 0.12);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 10px;
+  color: #c0392b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* =========================
+   TOAST SUCCESS
+========================= */
+
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+
+.toast {
+  padding: 14px 20px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: toastIn 0.3s ease;
+}
+
+.toast-success {
+  background: #22c55e;
+}
+
+.toast-error {
+  background: #ef4444;
+}
+
+.toast-hiding {
+  animation: toastOut 0.3s ease forwards;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  margin-top: 0;
+  width: auto;
+  box-shadow: none;
+}
+
+.toast-close:hover {
+  transform: none;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}

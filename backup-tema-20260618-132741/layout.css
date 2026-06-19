@@ -1,0 +1,196 @@
+/* ========================= */
+/* 🧱 LAYOUT BASE APP */
+/* ========================= */
+
+.screen {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+}
+
+/* ========================= */
+/* 🌌 FONDO GLOBAL */
+/* ========================= */
+
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: url("/recursos/img/fondo1.jpg") center/cover no-repeat;
+  opacity: 0.1;
+}
+
+/* ========================= */
+/* 📌 SIDEBAR */
+/* ========================= */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 260px;
+  height: 100vh;
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(250, 204, 21, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-logo {
+  padding: 30px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(250, 204, 21, 0.2);
+  margin-bottom: 20px;
+}
+
+.sidebar-logo-img {
+  width: 60px;
+  margin-bottom: 10px;
+}
+
+.sidebar-brand {
+  display: block;
+  font-size: 20px;
+  font-weight: bold;
+  color: #facc15;
+  letter-spacing: 2px;
+}
+
+/* MENÚ */
+
+.sidebar-menu {
+  flex: 1;
+  list-style: none;
+  padding: 0 15px;
+}
+
+.menu-item {
+  margin-bottom: 5px;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  font-size: 15px;
+}
+
+.menu-link:hover {
+  background: rgba(250, 204, 21, 0.1);
+  color: #facc15;
+}
+
+.menu-item.active .menu-link {
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+  border-left: 3px solid #facc15;
+}
+
+/* FOOTER */
+
+.sidebar-footer {
+  padding: 20px 15px;
+  border-top: 1px solid rgba(250, 204, 21, 0.2);
+}
+
+.logout {
+  color: #ef4444;
+}
+
+.logout:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ========================= */
+/* 📄 CONTENIDO */
+/* ========================= */
+
+.app-content {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 0 30px 20px;
+}
+
+/* ========================= */
+/* 🧾 HEADER */
+/* ========================= */
+
+#header-container {
+  padding: 10px 30px 0;
+}
+
+.header {
+  margin-bottom: 15px;
+}
+
+.date {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+}
+
+/* ========================= */
+/* 📱 MOBILE */
+/* ========================= */
+
+.menu-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  width: 45px;
+  height: 45px;
+  background: #facc15;
+  border: none;
+  border-radius: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 101;
+  display: none;
+}
+
+/* ========================= */
+/* 📱 RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .app-content {
+    margin-left: 0;
+  }
+
+  #header-container {
+    padding: 60px 15px 0;
+  }
+
+  .main-content {
+    padding: 0 15px 20px;
+  }
+}
