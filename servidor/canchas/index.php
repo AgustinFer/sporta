@@ -4,6 +4,11 @@ if(!isset($_SESSION['usuario'])){
   header("Location: ../index.php");
   exit;
 }
+
+if (!$_SESSION['usuario']->isAdmin()) {
+    header("Location: " . BASE_URL . "/inicio/");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>

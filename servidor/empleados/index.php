@@ -9,9 +9,12 @@ if (!isset($_SESSION['usuario'])) {
 
 }
 
-$esAdmin =
-  isset($_SESSION['usuario']) &&
-  $_SESSION['usuario']->isAdmin();
+if (!$_SESSION['usuario']->isAdmin()) {
+    header("Location: " . BASE_URL . "/inicio/");
+    exit;
+}
+
+$esAdmin = true;
 
 require_once __DIR__ . '/../config/conexion.php';
 
