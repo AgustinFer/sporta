@@ -146,6 +146,14 @@ try {
                 echo json_encode(['ok' => false, 'mensaje' => 'El celular no puede estar vacío']);
                 exit;
             }
+            if (!preg_match('/^\d+$/', $celular)) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El celular solo debe contener números']);
+                exit;
+            }
+            if (strlen($celular) > 10) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El celular no puede tener más de 10 dígitos']);
+                exit;
+            }
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_celular = :celular WHERE usu_id = :id");
             $stmt->execute([':celular' => $celular, ':id' => $userId]);
             $_SESSION['usuario']->setCelular($celular);

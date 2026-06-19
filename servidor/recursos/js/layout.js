@@ -63,6 +63,14 @@ function initUI() {
       }
     };
   });
+  if (sidebar) {
+    document.addEventListener('click', function(e) {
+      if (window.innerWidth > 768) return;
+      if (!sidebar.classList.contains('open')) return;
+      if (sidebar.contains(e.target) || (menuToggle && menuToggle.contains(e.target))) return;
+      sidebar.classList.remove('open');
+    });
+  }
 }
 
 function setActiveMenu(route) {
@@ -575,6 +583,8 @@ function initAjustes() {
       e.preventDefault();
       var celular = inputCelular.value.trim();
       if (!celular) { errorCelular.textContent = 'El celular no puede estar vacío'; errorCelular.classList.add('visible'); inputCelular.focus(); return; }
+      if (!/^\d+$/.test(celular)) { errorCelular.textContent = 'Solo se permiten números'; errorCelular.classList.add('visible'); inputCelular.focus(); return; }
+      if (celular.length > 10) { errorCelular.textContent = 'Máximo 10 dígitos'; errorCelular.classList.add('visible'); inputCelular.focus(); return; }
       fetch(BASE_URL + '/api/ajustes.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

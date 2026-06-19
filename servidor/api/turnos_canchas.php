@@ -55,7 +55,7 @@ try {
 
 function obtenerDatos(PDO $pdo, array $input): void
 {
-    $fecha = $input['fecha'] ?? date('Y-m-d');
+    $fecha = $input['fecha'] ?? gmdate('Y-m-d');
 
     $sql = "
 SELECT cancha_id, cancha_numero, cancha_estado
@@ -124,12 +124,24 @@ function crearReserva(PDO $pdo, array $input): void
     $clienteId = (int)$input['cliente_id'];
     $fecha = trim($input['fecha']);
 
-    if ($fecha < date('Y-m-d')) {
+    if ($fecha < gmdate('Y-m-d')) {
         echo json_encode([
             'ok' => false,
             'mensaje' => 'No se puede reservar en una fecha pasada'
         ]);
         return;
+    }
+
+    if ($fecha === gmdate('Y-m-d')) {
+        $horaTurno = (int)date('G', strtotime($input['hora_inicio']));
+        $horaActual = (int)date('G');
+        if ($horaTurno <= $horaActual) {
+            echo json_encode([
+                'ok' => false,
+                'mensaje' => 'No se puede reservar un horario ya pasado'
+            ]);
+            return;
+        }
     }
 
     $horaInicio = trim($input['hora_inicio']);
@@ -248,6 +260,12 @@ function crearCancha(PDO $pdo, array $input): void
         throw new Exception('El precio no puede ser negativo');
     }
 
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM canchas WHERE cancha_numero = ?");
+    $stmt->execute([$numero]);
+    if ($stmt->fetchColumn() > 0) {
+        throw new Exception('Ya existe una cancha con ese número');
+    }
+
     $sql = "INSERT INTO canchas (cancha_numero, cancha_precio, descripcion, cancha_tipo, cancha_estado) VALUES (?, ?, ?, 1, ?)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$numero, $precio, $descripcion, $estado]);
@@ -268,6 +286,12 @@ function actualizarCancha(PDO $pdo, array $input): void
     }
     if ($precio < 0) {
         throw new Exception('El precio no puede ser negativo');
+    }
+
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM canchas WHERE cancha_numero = ? AND cancha_id != ?");
+    $stmt->execute([$numero, $canchaId]);
+    if ($stmt->fetchColumn() > 0) {
+        throw new Exception('Ya existe otra cancha con ese número');
     }
 
     $sql = "UPDATE canchas SET cancha_numero = ?, cancha_precio = ?, descripcion = ?, cancha_estado = ? WHERE cancha_id = ?";

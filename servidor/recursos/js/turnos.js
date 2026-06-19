@@ -185,12 +185,24 @@ function turnosAbrirNuevaReserva(canchaId, canchaNumero, hora) {
 function turnosGuardarReserva(e) {
     e.preventDefault();
 
+    var fecha = document.getElementById('fecha_reserva').value;
+    var horaInicio = document.getElementById('hora_inicio').value;
+    var hoy = new Date().toISOString().split('T')[0];
+    if (fecha === hoy) {
+        var horaTurno = parseInt(horaInicio.split(':')[0]);
+        var horaActual = new Date().getHours();
+        if (horaTurno <= horaActual) {
+            alert('No se puede reservar un horario ya pasado');
+            return;
+        }
+    }
+
     var payload = {
         accion: 'crear_reserva',
         cancha_id: document.getElementById('cancha_id').value,
         cliente_id: document.getElementById('cliente_id').value,
-        fecha: document.getElementById('fecha_reserva').value,
-        hora_inicio: document.getElementById('hora_inicio').value,
+        fecha: fecha,
+        hora_inicio: horaInicio,
         observaciones: document.getElementById('observaciones').value
     };
 

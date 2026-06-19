@@ -188,3 +188,39 @@ button {
   border-color: #ef4444 !important;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
 }
+
+/* ========================= */
+/* 📱 RESPONSIVE LOGIN */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .screen {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    padding: 20px;
+  }
+
+  .logo-wrapper {
+    display: none;
+  }
+
+  .login-card {
+    width: 100%;
+    padding: 40px 24px 30px;
+  }
+
+  .login-card::before {
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 36px 18px 24px;
+  }
+
+  .login-card h2 {
+    font-size: 1.2rem;
+  }
+}

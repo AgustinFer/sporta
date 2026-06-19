@@ -103,3 +103,32 @@
   font-weight: 600;
   color: #16a34a;
 }
+
+/* ========================= */
+/* 📱 RESPONSIVE RESERVAS */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .filter-pendientes,
+  .filter-fecha {
+    font-size: 13px;
+  }
+
+  .filter-pendientes input,
+  .filter-fecha input {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .btn-pago {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}

@@ -163,7 +163,34 @@
 }
 
 /* ========================= */
-/* 🔘 BUTTON */
+/* 📱 RESPONSIVE AJUSTES */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 20px 12px;
+  }
+
+  .settings-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .settings-card {
+    padding: 20px 16px;
+  }
+
+  .settings-card .field input {
+    font-size: 16px;
+  }
+
+  .btn-settings {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ========================= */
+/* 🔘 SWITCH */
 /* ========================= */
 
 .btn-settings {

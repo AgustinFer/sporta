@@ -41,7 +41,7 @@
 
     <div>
       <label>Teléfono</label>
-      <input type="text" name="empleado_celular" id="empleado_celular" pattern="[\d\s\+\-\(\)]+" title="Solo se permiten números, +, -, ( ) y espacios" data-validate="telefono">
+      <input type="text" name="empleado_celular" id="empleado_celular" pattern="\d{1,10}" title="Solo se permiten números, máximo 10 dígitos" data-validate="telefono" maxlength="10" inputmode="numeric">
       <span class="field-error" id="error_empleado_celular"></span>
     </div>
 
@@ -53,7 +53,7 @@
 
     <div>
       <label>DNI</label>
-      <input type="text" name="empleado_dni" id="empleado_dni" pattern="\d+" title="Solo se permiten números" data-validate="soloNumeros">
+      <input type="text" name="empleado_dni" id="empleado_dni" pattern="\d{1,8}" title="Solo se permiten números, máximo 8 dígitos" data-validate="soloNumeros" maxlength="8" inputmode="numeric">
       <span class="field-error" id="error_empleado_dni"></span>
     </div>
 

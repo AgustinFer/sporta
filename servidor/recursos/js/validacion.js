@@ -2,15 +2,15 @@
 
   const reglas = {
     soloLetras: /^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/,
-    soloNumeros: /^\d+$/,
-    telefono: /^[\d\s\+\-\(\)]+$/,
+    soloNumeros: /^\d{1,8}$/,
+    telefono: /^\d{1,10}$/,
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   };
 
   const mensajes = {
     soloLetras: "Solo se permiten letras",
-    soloNumeros: "Solo se permiten números",
-    telefono: "Ingrese un teléfono válido (números, +, -, ())",
+    soloNumeros: "Máximo 8 dígitos numéricos",
+    telefono: "Máximo 10 dígitos numéricos",
     email: "Ingrese un email válido"
   };
 

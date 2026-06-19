@@ -145,9 +145,19 @@ async function guardarCancha(e) {
     e.preventDefault();
 
     var canchaId = document.getElementById('edit_cancha_id').value;
+    var numeroIngresado = document.getElementById('cancha_numero').value;
+
+    var duplicado = canchasLista.some(function(c) {
+        return String(c.cancha_numero) === numeroIngresado && String(c.cancha_id) !== canchaId;
+    });
+    if (duplicado) {
+        alert('Ya existe una cancha con ese número');
+        return;
+    }
+
     var payload = {
         accion: canchaId ? 'actualizar_cancha' : 'crear_cancha',
-        cancha_numero: document.getElementById('cancha_numero').value,
+        cancha_numero: numeroIngresado,
         cancha_precio: document.getElementById('cancha_precio').value,
         descripcion: document.getElementById('cancha_descripcion').value,
         cancha_estado: document.getElementById('cancha_estado').value

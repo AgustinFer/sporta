@@ -131,7 +131,7 @@
           <form id="formCelular" novalidate>
             <div class="field">
               <label for="edit_celular">Celular</label>
-              <input type="text" name="celular" id="edit_celular" required>
+              <input type="text" name="celular" id="edit_celular" pattern="\d{1,10}" title="Solo se permiten números, máximo 10 dígitos" maxlength="10" inputmode="numeric" required>
               <span class="field-error" id="error_celular"></span>
             </div>
             <button type="submit" class="btn-settings">Guardar celular</button>
