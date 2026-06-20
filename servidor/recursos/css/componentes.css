@@ -22,7 +22,7 @@
   top: 50%;
   left: 30%;
   transform: translate(-50%, -50%);
-  width: 100vw;
+  width: min(460px, 80vw);
   height: 50vh;
   min-width: 320px;
   min-height: 400px;
@@ -102,7 +102,7 @@
 .list-container,
 .settings-container {
   padding: 30px;
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
 }
 
 .list-container h2 {
@@ -115,7 +115,7 @@
 }
 
 .welcome {
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
 }
 
 /* FAB */
@@ -137,4 +137,14 @@
 
   border: none;
   padding: 0;
+}
+
+@media (max-width: 768px) {
+  .fab {
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    font-size: 26px;
+  }
 }
