@@ -1,207 +1,203 @@
-<?php 
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+<?php
 
 require_once __DIR__ . '/config/init.php';
 
-if(isset($_POST['iniciar'])){
-    Usuario::iniciarSesion(
-        $_POST['usuario'],
-        $_POST['password']
-    );
-}
+$BASE = BASE_URL;
 
 ?>
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Sporta - Iniciar Sesión</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- CSS -->
-  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/global.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/layout-login.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/recursos/css/componentes.css">
-  <link rel="icon" href="<?= BASE_URL ?>/recursos/img/favicon.ico">
-</head>
 
+  <link rel="stylesheet" href="<?= $BASE ?>/recursos/css/global.css">
+  <link rel="stylesheet" href="<?= $BASE ?>/recursos/css/componentes.css">
+  <link rel="stylesheet" href="<?= $BASE ?>/recursos/css/layout-login.css">
+</head>
 <body>
 
   <div class="screen">
 
-    <!-- 🔥 FONDO CON CARRUSEL DE MÚLTIPLES IMÁGENES -->
     <div class="background">
-      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/recursos/img/fondo1.jpg')"></div>
-      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/recursos/img/fondo2.jpg')"></div>
-      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/recursos/img/fondo3.jpg')"></div>
-      <div class="background-slide" style="background-image: url('<?= BASE_URL ?>/recursos/img/fondo1.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= $BASE ?>/recursos/img/fondo1.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= $BASE ?>/recursos/img/fondo2.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= $BASE ?>/recursos/img/fondo3.jpg')"></div>
+      <div class="background-slide" style="background-image: url('<?= $BASE ?>/recursos/img/fondo1.jpg')"></div>
     </div>
 
-    <!-- LOGO -->
     <div class="logo-wrapper">
-      <img src="<?= BASE_URL ?>/recursos/img/logo.png" alt="Sporta Logo" class="logo">
+      <img src="<?= $BASE ?>/recursos/img/logo.png" alt="Sporta Logo" class="logo">
     </div>
 
-    <!-- CARD LOGIN -->
     <div class="login-card">
       <div class="card-content">
 
         <h2>Iniciar Sesión</h2>
 
-        <form method="POST">
+        <form id="loginForm">
 
           <div class="field">
             <label>Correo Electrónico o Usuario</label>
-            <input
-                type="text"
-                name="usuario"
-                placeholder="Correo o nombre de usuario"
-                required
-            >
+            <input type="text" id="usuario" placeholder="Correo o nombre de usuario" required>
           </div>
 
           <div class="field">
             <label>Contraseña</label>
-            <input 
-              type="password" 
-              name="password"
-              placeholder="Ingresa tu contraseña"
-              required
-            >
+            <input type="password" id="password" placeholder="Ingresa tu contraseña" required>
           </div>
 
-          <button type="submit" name="iniciar">
-            Iniciar Sesión
-          </button>
+          <div id="loginError" class="field-error" style="text-align:center;margin-bottom:12px"></div>
+
+          <button type="submit" id="loginBtn">Iniciar Sesión</button>
 
         </form>
 
-        <button id="btnCambiarPass" >¿Olvidaste la contraseña?</button>
+        <button id="btnCambiarPass" type="button">¿Olvidaste la contraseña?</button>
 
       </div>
     </div>
 
   </div>
 
-</body>
-</html>
-
-  <!-- Ventana de recuperar contra -->
-  <!-- Fondo oscuro + ventana emergente -->
   <div id="modalPass" class="modal">
-
-    <!-- Contenido de la ventana -->
     <div class="modal-content">
-
-      <!-- Botón X para cerrar -->
       <span id="cerrarModal">&times;</span>
-
-      <!-- Título -->
       <h2>Recuperar contraseña</h2>
-
-      <!-- Input para escribir el email -->
-      <input type="email" id="email" placeholder="Ingresa tu email">
-
-      <!-- Botón para enviar -->
-      <button id="enviarBtn">Enviar</button>
-
+      <div id="recoverForm">
+        <input type="email" id="email" placeholder="Ingresa tu email">
+        <div id="recoverMsg" class="field-error" style="text-align:center;margin-bottom:12px"></div>
+        <button id="enviarBtn">Enviar</button>
+      </div>
     </div>
   </div>
 
-<script>
-  // Mover script a su archivo correspondiente
-  // Solo esta aca para facil acceso hasta que no se modifique mas
-  // Guarda el botón "Cambiar contraseña"
-  const btnAbrir = document.getElementById("btnCambiarPass");
+  <script>
+    var BASE_URL = <?= json_encode($BASE) ?>;
 
-  // Guarda la ventana emergente
-  const modal = document.getElementById("modalPass");
+    var inputUsuario = document.getElementById("usuario");
+    var inputPassword = document.getElementById("password");
 
-  // Guarda la X para cerrar
-  const cerrar = document.getElementById("cerrarModal");
+    var campos = { usuario: inputUsuario, password: inputPassword };
 
-
-  // Cuando se hace click en el botón:
-  // muestra la ventana emergente
-  btnAbrir.onclick = () => {
-    modal.style.display = "block";
-  };
-
-
-  // Cuando se hace click en la X:
-  // oculta la ventana
-  cerrar.onclick = () => {
-    modal.style.display = "none";
-  };
-
-
-  // Si el usuario hace click fuera de la caja blanca:
-  // también se cierra la ventana
-  window.onclick = (e) => {
-
-    // Verifica si se hizo click en el fondo oscuro
-    if (e.target == modal) {
-      modal.style.display = "none";
+    function limpiarErrores() {
+      Object.values(campos).forEach(function(el) { el.classList.remove("input-error"); });
     }
-  };
 
+    function marcarError(nombre) {
+      if (nombre && campos[nombre]) campos[nombre].classList.add("input-error");
+    }
 
-  // Cuando se presiona el botón "Enviar"
-  document.getElementById("enviarBtn").onclick = () => {
-
-    // Obtiene el valor escrito en el input
-    const email = document.getElementById("email").value;
-
-     // ENVÍA LOS DATOS AL ARCHIVO PHP
-    fetch("auth/recuperar.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "email=" + encodeURIComponent(email)
-    })
-
-    .then(respuesta => {
-
-        // Si el archivo no existe o hay error
-        if (!respuesta.ok) {
-
-            // Error 404 = archivo no encontrado
-            if (respuesta.status === 404) {
-            alert("No existe el archivo recuperar.php");
-            }
-
-            // Otro tipo de error
-            else {
-            alert("Error del servidor");
-            }
-
-            // Detiene los siguientes .then()
-            throw new Error("Error HTTP");
-        }
-
-        // Convierte la respuesta a texto
-            return respuesta.text();
-        })
-
-        .then(data => {
-
-        // Respuesta normal del PHP
-            alert(data);
-
-        })
-
-        .catch(error => {
-
-        // Error de conexión o fetch
-        console.log(error);
-
+    Object.values(campos).forEach(function(el) {
+      el.addEventListener("input", limpiarErrores);
     });
-  };
 
-</script>
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      var btn = document.getElementById("loginBtn");
+      var error = document.getElementById("loginError");
+      limpiarErrores();
 
-  <script src="<?= BASE_URL ?>/recursos/js/reservas.js"></script>
+      var valUsuario = inputUsuario.value.trim();
+      var valPassword = inputPassword.value.trim();
+
+      if (!valUsuario) marcarError("usuario");
+      if (!valPassword) marcarError("password");
+      if (!valUsuario || !valPassword) return;
+
+      btn.disabled = true;
+      btn.textContent = "Ingresando...";
+      error.textContent = "";
+      error.classList.remove("visible");
+
+      var formData = new URLSearchParams();
+      formData.append("usuario", valUsuario);
+      formData.append("password", valPassword);
+
+      try {
+        var res = await fetch(BASE_URL + "/api/login.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData.toString()
+        });
+        var data = await res.json();
+        if (data.ok) {
+          window.location.href = data.redirect;
+        } else {
+          error.textContent = data.mensaje;
+          error.classList.add("visible");
+          marcarError(data.campo);
+          btn.disabled = false;
+          btn.textContent = "Iniciar Sesión";
+        }
+      } catch (err) {
+        console.error("Login error:", err);
+        error.textContent = err.message || "Error al conectar con el servidor";
+        error.classList.add("visible");
+        btn.disabled = false;
+        btn.textContent = "Iniciar Sesión";
+      }
+    });
+
+    var modal = document.getElementById("modalPass");
+    var btnAbrir = document.getElementById("btnCambiarPass");
+    var cerrar = document.getElementById("cerrarModal");
+
+    btnAbrir.onclick = function() {
+      modal.classList.add("is-open");
+      var recoverForm = document.getElementById("recoverForm");
+      if (!recoverForm.querySelector("input")) {
+        recoverForm.innerHTML = '<input type="email" id="email" placeholder="Ingresa tu email"><div id="recoverMsg" class="field-error" style="text-align:center;margin-bottom:12px"></div><button id="enviarBtn">Enviar</button>';
+      }
+      var msg = document.getElementById("recoverMsg");
+      if (msg) { msg.textContent = ""; msg.classList.remove("visible"); }
+      var btn = document.getElementById("enviarBtn");
+      if (btn) { btn.disabled = false; btn.textContent = "Enviar"; }
+    };
+    cerrar.onclick = function() { modal.classList.remove("is-open"); };
+    window.onclick = function(e) { if (e.target == modal) modal.classList.remove("is-open"); };
+
+    document.getElementById("modalPass").addEventListener("click", function(e) {
+      if (e.target.id === "enviarBtn") {
+        var email = document.getElementById("email").value;
+        var btn = e.target;
+        var msg = document.getElementById("recoverMsg");
+        msg.textContent = "";
+        msg.classList.remove("visible");
+        if (!email.trim()) {
+          msg.textContent = "Debe ingresar un email";
+          msg.classList.add("visible");
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = "Enviando...";
+        fetch(BASE_URL + "/api/recuperar.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "email=" + encodeURIComponent(email)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.ok) {
+            document.getElementById("recoverForm").innerHTML = '<p style="text-align:center;color:#1a1a2e;margin:20px 0">' + data.mensaje + '</p>';
+          } else {
+            msg.textContent = data.mensaje;
+            msg.classList.add("visible");
+            btn.disabled = false;
+            btn.textContent = "Enviar";
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+          msg.textContent = "Error al conectar con el servidor";
+          msg.classList.add("visible");
+          btn.disabled = false;
+          btn.textContent = "Enviar";
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

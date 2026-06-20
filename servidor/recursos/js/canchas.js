@@ -4,12 +4,6 @@ CANCHAS - Burbujas y CRUD
 
 var canchasLista = [];
 
-function escapeHtml(str) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str || ''));
-    return div.innerHTML;
-}
-
 function initCanchasPage() {
     var btnNueva = document.querySelector('.fab');
     var chkMostrar = document.getElementById('chkMostrarInhabilitadas');
@@ -30,12 +24,28 @@ function initCanchasPage() {
     if (formCancha && !formCancha.dataset.bound) {
         formCancha.dataset.bound = 'true';
         formCancha.addEventListener('submit', guardarCancha);
-        if (typeof bindDrawerValidation === 'function') {
-            bindDrawerValidation(formCancha);
-        }
     }
 
     cargarCanchas();
+}
+
+function mostrarToast(mensaje, tipo) {
+    var contenedor = document.getElementById('toast-container');
+    if (!contenedor) {
+        contenedor = document.createElement('div');
+        contenedor.id = 'toast-container';
+        document.body.appendChild(contenedor);
+    }
+
+    var toast = document.createElement('div');
+    toast.className = 'toast toast-' + (tipo || 'success');
+    toast.innerHTML = '<span>' + mensaje + '</span><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>';
+    contenedor.appendChild(toast);
+
+    setTimeout(function () {
+        toast.classList.add('toast-hiding');
+        setTimeout(function () { toast.remove(); }, 300);
+    }, 3000);
 }
 
 async function cargarCanchas() {
@@ -94,8 +104,8 @@ function generarBurbujas() {
             '</div></div>' +
             '<div class="burbuja-info">' +
             '<div class="info-label">Descripción</div>' +
-            '<div class="info-valor">' + (cancha.descripcion ? escapeHtml(cancha.descripcion) : 'Sin descripción') + '</div></div>' +
-            '<div class="burbuja-estado"><span class="' + claseEstado + '">' + escapeHtml(textoEstado) + '</span></div>' +
+            '<div class="info-valor">' + (cancha.descripcion || 'Sin descripción') + '</div></div>' +
+            '<div class="burbuja-estado"><span class="' + claseEstado + '">' + textoEstado + '</span></div>' +
             '<div class="burbuja-precio">' +
             '<div class="precio-label">Precio por hora</div>' +
             '<div class="precio-valor">$' + parseFloat(cancha.cancha_precio).toFixed(2) + '</div></div>';
@@ -141,7 +151,7 @@ async function guardarCancha(e) {
         return String(c.cancha_numero) === numeroIngresado && String(c.cancha_id) !== canchaId;
     });
     if (duplicado) {
-        mostrarToast('Ya existe una cancha con ese número', 'error');
+        alert('Ya existe una cancha con ese número');
         return;
     }
 
@@ -162,14 +172,14 @@ async function guardarCancha(e) {
         });
 
         var resultado = await respuesta.json();
-        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
+        if (!resultado.ok) { alert(resultado.mensaje); return; }
 
         closeDrawer();
         await cargarCanchas();
         mostrarToast(canchaId ? 'Cancha actualizada' : 'Cancha creada', 'success');
     } catch (error) {
         console.error(error);
-        mostrarToast('Error guardando cancha', 'error');
+        alert('Error guardando cancha');
     }
 }
 
@@ -184,13 +194,13 @@ async function eliminarCancha(canchaId) {
         });
 
         var resultado = await respuesta.json();
-        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
+        if (!resultado.ok) { alert(resultado.mensaje); return; }
 
         await cargarCanchas();
         mostrarToast('Cancha inhabilitada', 'success');
     } catch (error) {
         console.error(error);
-        mostrarToast('Error inhabilitando cancha', 'error');
+        alert('Error inhabilitando cancha');
     }
 }
 
@@ -205,14 +215,12 @@ async function habilitarCancha(canchaId) {
         });
 
         var resultado = await respuesta.json();
-        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
+        if (!resultado.ok) { alert(resultado.mensaje); return; }
 
         await cargarCanchas();
         mostrarToast('Cancha habilitada', 'success');
     } catch (error) {
         console.error(error);
-        mostrarToast('Error habilitando cancha', 'error');
+        alert('Error habilitando cancha');
     }
 }
-
-

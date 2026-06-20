@@ -2,21 +2,20 @@
 
   const reglas = {
     soloLetras: /^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/,
-    soloNumeros: /^\d+$/,
-    telefono: /^[\d\s\+\-\(\)]+$/,
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    numeroCancha: /^[1-9]\d*$/,
-    precio: /^\d+(\.\d{1,2})?$/
+    soloNumeros: /^\d{1,8}$/,
+    telefono: /^\d{1,10}$/,
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   };
 
   const mensajes = {
     soloLetras: "Solo se permiten letras",
-    soloNumeros: "Solo se permiten números",
-    telefono: "Ingrese un teléfono válido (números, +, -, ())",
-    email: "Ingrese un email válido",
-    numeroCancha: "Debe ser un número positivo",
-    precio: "Ingrese un precio válido (ej: 1500 o 1500.50)"
+    soloNumeros: "Máximo 8 dígitos numéricos",
+    telefono: "Máximo 10 dígitos numéricos",
+    email: "Ingrese un email válido"
   };
+
+  const form = document.querySelector(".drawer-form");
+  if (!form) return;
 
   function validarCampo(input) {
     const regla = input.dataset.validate;
@@ -58,42 +57,33 @@
     }
   }
 
-  function bindDrawerValidation(form) {
-    if (!form || form.dataset.validationBound) return;
-    form.dataset.validationBound = 'true';
+  form.addEventListener("submit", function(e) {
+    const inputs = form.querySelectorAll("[data-validate]");
+    let valido = true;
 
-    form.addEventListener("submit", function(e) {
-      const inputs = form.querySelectorAll("[data-validate]");
-      let valido = true;
-
-      inputs.forEach(function(input) {
-        if (!validarCampo(input)) {
-          valido = false;
-        }
-      });
-
-      if (!valido) {
-        e.preventDefault();
-        document.querySelector(".drawer-form [data-validate].input-error")?.focus();
+    inputs.forEach(function(input) {
+      if (!validarCampo(input)) {
+        valido = false;
       }
     });
 
-    form.addEventListener("input", function(e) {
-      const input = e.target;
-      if (input.dataset.validate) {
-        const errorSpan = document.getElementById("error_" + input.id);
-        if (input.classList.contains("input-error") || errorSpan?.classList.contains("visible")) {
-          validarCampo(input);
-        }
-      }
-    });
-  }
+    if (!valido) {
+      e.preventDefault();
+      document.querySelector(".drawer-form [data-validate].input-error")?.focus();
+    }
+  });
 
-  window.bindDrawerValidation = bindDrawerValidation;
+  form.addEventListener("input", function(e) {
+    const input = e.target;
+    if (input.dataset.validate) {
+      const errorSpan = document.getElementById("error_" + input.id);
+      if (input.classList.contains("input-error") || errorSpan?.classList.contains("visible")) {
+        validarCampo(input);
+      }
+    }
+  });
 
   window.limpiarErroresDrawer = function() {
-    var form = document.querySelector(".drawer-form");
-    if (!form) return;
     form.querySelectorAll(".input-error").forEach(function(el) {
       el.classList.remove("input-error");
     });
@@ -103,16 +93,7 @@
     });
   };
 
-  var form = document.querySelector(".drawer-form");
-  if (form) {
-    bindDrawerValidation(form);
-  }
-
 })();
-
-/* ========================= */
-/* 🚪 RESTAURAR DRAWER (form_data) */
-/* ========================= */
 
 function initDrawerPage() {
 

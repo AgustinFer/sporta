@@ -6,13 +6,16 @@
   height: 100vh;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 h2 {
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
 }
 
-/* ELEMENTOS BASE */
 button {
   width: 100%;
   margin-top: 10px;
@@ -27,7 +30,6 @@ button {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* FONDO ANIMADO */
 .background {
   position: absolute;
   inset: 0;
@@ -50,7 +52,6 @@ button {
 .background-slide:nth-child(3) { top: 200%; }
 .background-slide:nth-child(4) { top: 300%; }
 
-/* OVERLAY */
 .background::before {
   content: "";
   position: absolute;
@@ -61,52 +62,50 @@ button {
   pointer-events: none;
 }
 
-/* LOGO WRAPPER */
 .logo-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 60%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   z-index: 3;
-  animation: logoSlide 1s ease-out;
+  display: flex;
+  justify-content: center;
+  order: 2;
+  animation: none;
+  margin-left: -60px;
 }
 
-/* CARD LOGIN */
+.logo-wrapper::before {
+  left: 50%;
+  border-radius: 0 60px 60px 0;
+}
+
 .login-card {
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  transform: translateY(-50%);
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   width: min(400px, 90vw);
   padding: 50px 40px;
   z-index: 4;
+  order: 1;
 }
 
-/* CONTENIDO */
+.login-card::before {
+  border-radius: 20px 0 0 20px;
+}
+
 .card-content {
   position: relative;
   z-index: 5;
 }
 
-/* ANIMACIONES */
 @keyframes backgroundScroll {
   100% {
     transform: translateY(-300%);
   }
 }
 
-@keyframes logoSlide {
-  from {
-    left: 15%;
-    opacity: 0;
-  }
-  to {
-    left: 60%;
-    opacity: 1;
-  }
-}
-
-/* MODAL RECUPERAR CONTRASEÑA */
 .modal {
   display: none;
   position: fixed;
@@ -119,30 +118,34 @@ button {
   padding: 1.5rem;
 }
 
+.modal.is-open {
+  display: flex;
+}
+
 .modal-content {
   width: min(440px, 100%);
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--bg-elevated);
   border-radius: 26px;
   padding: 32px 28px;
-  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.24);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
   position: relative;
 }
 
 .modal-content h2 {
   margin: 0 0 18px;
   font-size: 1.35rem;
-  color: rgba(26, 26, 46, 0.97);
+  color: var(--text-primary);
 }
 
 .modal-content input {
   width: 100%;
   padding: 14px 16px;
   border-radius: 14px;
-  border: 1px solid rgba(26, 26, 46, 0.15);
-  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
   margin-bottom: 18px;
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
   font-size: 0.98rem;
 }
 
@@ -163,10 +166,47 @@ button {
   right: 18px;
   font-size: 1.6rem;
   cursor: pointer;
-  color: rgba(26, 26, 46, 0.65);
+  color: var(--text-secondary);
   transition: color 0.2s ease;
 }
 
 #cerrarModal:hover {
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
+}
+
+.field .input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+@media (max-width: 768px) {
+  .screen {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    padding: 20px;
+  }
+
+  .logo-wrapper {
+    display: none;
+  }
+
+  .login-card {
+    width: 100%;
+    padding: 40px 24px 30px;
+  }
+
+  .login-card::before {
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 36px 18px 24px;
+  }
+
+  .login-card h2 {
+    font-size: 1.2rem;
+  }
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sporta - Canchas</title>
+  <link rel="stylesheet" href="../recursos/css/global.css">
+  <link rel="stylesheet" href="../recursos/css/layout.css">
+  <link rel="stylesheet" href="../recursos/css/componentes.css">
+  <link rel="stylesheet" href="../recursos/css/drawer.css">
+  <link id="page-style" rel="stylesheet" href="canchas.css">
+</head>
+<body class="screen" data-page="Canchas" data-drawer="canchas">
+  <div class="background"></div>
+  <div id="sidebar-container"></div>
+  <button class="menu-toggle" id="menuToggle">☰</button>
+  <div class="app-content">
+  <div id="header-container"></div>
+  <main class="main-content">
+    <div class="canchas-toolbar">
+      <h2>Administración de Canchas</h2>
+      <div class="canchas-acciones">
+        <label class="check-inhabilitadas">
+          <input type="checkbox" id="chkMostrarInhabilitadas">
+          Mostrar inhabilitadas
+        </label>
+      </div>
+    </div>
+    <div class="contenedor-burbujas" id="contenedorBurbujas"></div>
+    <button class="fab">+</button>
+  </main>
+  </div>
+  <div id="drawer-container"></div>
+  <div id="toast-container"></div>
+  <script src="../recursos/js/layout.js"></script>
+  <script src="../recursos/js/table.js"></script>
+  <script src="../recursos/js/drawer.js"></script>
+  <script src="../recursos/js/canchas.js"></script>
+</body>
+</html>

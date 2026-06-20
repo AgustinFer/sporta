@@ -21,8 +21,6 @@ function initTurnosPage() {
 
     fechaInput.value = new Date().toISOString().split('T')[0];
 
-    turnosActualizarFechaDisplay();
-
     if (btnRecargar && !btnRecargar.dataset.bound) {
         btnRecargar.dataset.bound = 'true';
         btnRecargar.addEventListener('click', turnosCargarDatos);
@@ -51,18 +49,6 @@ function initTurnosPage() {
     turnosCargarDatos();
 }
 
-function turnosActualizarFechaDisplay() {
-    var input = document.getElementById('fechaSeleccionada');
-    var span = document.getElementById('fechaDisplay');
-    if (!input || !span) return;
-    if (!input.value) { span.textContent = ''; return; }
-    var partes = input.value.split('-');
-    var fecha = new Date(partes[0], partes[1] - 1, partes[2]);
-    var opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    var texto = fecha.toLocaleDateString('es-AR', opciones);
-    span.textContent = texto.charAt(0).toUpperCase() + texto.slice(1).replace(/,/g, '');
-}
-
 function turnosCargarDatos() {
     var fecha = document.getElementById('fechaSeleccionada').value;
     fetch(BASE_URL + '/api/turnos_canchas.php', {
@@ -72,17 +58,16 @@ function turnosCargarDatos() {
     })
     .then(function (r) { return r.json(); })
     .then(function (datos) {
-        if (!datos.ok) { mostrarToast(datos.mensaje, 'error'); return; }
+        if (!datos.ok) { alert(datos.mensaje); return; }
         turnosCanchas = datos.canchas;
         turnosClientes = datos.clientes;
         turnosReservas = datos.reservas;
         turnosCargarClientes();
         turnosGenerarTabla();
-        turnosActualizarFechaDisplay();
     })
     .catch(function (error) {
         console.error(error);
-        mostrarToast('Error cargando datos', 'error');
+        alert('Error cargando datos');
     });
 }
 
@@ -200,12 +185,24 @@ function turnosAbrirNuevaReserva(canchaId, canchaNumero, hora) {
 function turnosGuardarReserva(e) {
     e.preventDefault();
 
+    var fecha = document.getElementById('fecha_reserva').value;
+    var horaInicio = document.getElementById('hora_inicio').value;
+    var hoy = new Date().toISOString().split('T')[0];
+    if (fecha === hoy) {
+        var horaTurno = parseInt(horaInicio.split(':')[0]);
+        var horaActual = new Date().getHours();
+        if (horaTurno <= horaActual) {
+            alert('No se puede reservar un horario ya pasado');
+            return;
+        }
+    }
+
     var payload = {
         accion: 'crear_reserva',
         cancha_id: document.getElementById('cancha_id').value,
         cliente_id: document.getElementById('cliente_id').value,
-        fecha: document.getElementById('fecha_reserva').value,
-        hora_inicio: document.getElementById('hora_inicio').value,
+        fecha: fecha,
+        hora_inicio: horaInicio,
         observaciones: document.getElementById('observaciones').value
     };
 
@@ -216,14 +213,14 @@ function turnosGuardarReserva(e) {
     })
     .then(function (r) { return r.json(); })
     .then(function (resultado) {
-        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
+        if (!resultado.ok) { alert(resultado.mensaje); return; }
         closeDrawer();
         turnosCargarDatos();
         mostrarToast('Reserva creada', 'success');
     })
     .catch(function (error) {
         console.error(error);
-        mostrarToast('Error al guardar', 'error');
+        alert('Error al guardar');
     });
 }
 
@@ -262,13 +259,32 @@ function turnosCambiarEstado(estado) {
     })
     .then(function (r) { return r.json(); })
     .then(function (resultado) {
-        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
+        if (!resultado.ok) { alert(resultado.mensaje); return; }
         closeDrawer();
         turnosCargarDatos();
     })
     .catch(function (error) {
         console.error(error);
-        mostrarToast('Error actualizando estado', 'error');
+        alert('Error actualizando estado');
     });
 }
 
+
+function mostrarToast(mensaje, tipo) {
+    var contenedor = document.getElementById('toast-container');
+    if (!contenedor) {
+        contenedor = document.createElement('div');
+        contenedor.id = 'toast-container';
+        document.body.appendChild(contenedor);
+    }
+
+    var toast = document.createElement('div');
+    toast.className = 'toast toast-' + (tipo || 'success');
+    toast.innerHTML = '<span>' + mensaje + '</span><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>';
+    contenedor.appendChild(toast);
+
+    setTimeout(function () {
+        toast.classList.add('toast-hiding');
+        setTimeout(function () { toast.remove(); }, 300);
+    }, 3000);
+}
