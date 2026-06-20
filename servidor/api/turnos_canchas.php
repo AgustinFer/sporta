@@ -32,6 +32,7 @@ try {
         case 'crear_cancha':
         case 'actualizar_cancha':
         case 'eliminar_cancha':
+        case 'habilitar_cancha':
             if (!$_SESSION['usuario']->isAdmin()) {
                 echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
                 exit;
@@ -40,8 +41,10 @@ try {
                 crearCancha($pdo, $input);
             } elseif ($input['accion'] === 'actualizar_cancha') {
                 actualizarCancha($pdo, $input);
-            } else {
+            } elseif ($input['accion'] === 'eliminar_cancha') {
                 eliminarCancha($pdo, $input);
+            } else {
+                habilitarCancha($pdo, $input);
             }
             break;
         default:
@@ -132,6 +135,18 @@ function crearReserva(PDO $pdo, array $input): void
             'mensaje' => 'No se puede reservar en una fecha pasada'
         ]);
         return;
+    }
+
+    if ($fecha === date('Y-m-d')) {
+        $horaTurno = (int)date('G', strtotime($input['hora_inicio']));
+        $horaActual = (int)date('G');
+        if ($horaTurno <= $horaActual) {
+            echo json_encode([
+                'ok' => false,
+                'mensaje' => 'No se puede reservar un horario ya pasado'
+            ]);
+            return;
+        }
     }
 
     $horaInicio = trim($input['hora_inicio']);
@@ -250,6 +265,12 @@ function crearCancha(PDO $pdo, array $input): void
         throw new Exception('El precio no puede ser negativo');
     }
 
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM canchas WHERE cancha_numero = ?");
+    $stmt->execute([$numero]);
+    if ($stmt->fetchColumn() > 0) {
+        throw new Exception('Ya existe una cancha con ese número');
+    }
+
     $sql = "INSERT INTO canchas (cancha_numero, cancha_precio, descripcion, cancha_tipo, cancha_estado) VALUES (?, ?, ?, 1, ?)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$numero, $precio, $descripcion, $estado]);
@@ -272,6 +293,12 @@ function actualizarCancha(PDO $pdo, array $input): void
         throw new Exception('El precio no puede ser negativo');
     }
 
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM canchas WHERE cancha_numero = ? AND cancha_id != ?");
+    $stmt->execute([$numero, $canchaId]);
+    if ($stmt->fetchColumn() > 0) {
+        throw new Exception('Ya existe otra cancha con ese número');
+    }
+
     $sql = "UPDATE canchas SET cancha_numero = ?, cancha_precio = ?, descripcion = ?, cancha_estado = ? WHERE cancha_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$numero, $precio, $descripcion, $estado, $canchaId]);
@@ -287,4 +314,14 @@ function eliminarCancha(PDO $pdo, array $input): void
     $stmt->execute([$canchaId]);
 
     echo json_encode(['ok' => true, 'mensaje' => 'Cancha inhabilitada correctamente']);
+}
+
+function habilitarCancha(PDO $pdo, array $input): void
+{
+    $canchaId = (int)$input['cancha_id'];
+    $sql = "UPDATE canchas SET cancha_estado = 1 WHERE cancha_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$canchaId]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Cancha habilitada correctamente']);
 }
