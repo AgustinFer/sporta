@@ -21,7 +21,7 @@ Vanilla PHP SPA (faculty project). No build step, no tests, no framework.
 - **`inicio/index.html` preloads some JS files statically** (`turnos.js`, `canchas.js`, `reservas.js`). These are loaded on initial SPA init AND again by step 7 on each navigation to their module. Because step 7 always re-injects them, the `var` declarations reset, giving fresh closures bound to the new globals. This is fragile but intentional.
 - **`table.js`** must be loaded on every page (not just clientes) because it defines `initTable()` and `initColumnPicker()` which `loadPage()` calls after SPA navigation. Both functions guard against missing DOM elements.
 - **`validacion.js`** runs as IIFE on page load. The drawer form (`.drawer-form`) doesn't exist yet (loaded later by `loadDrawer()`), so the IIFE returns early and the submit handler is **never** attached. To re-bind drawer validation after SPA nav, use a named function called from `loadPage()` / `loadDrawer()`.
-- **`initDrawerPage()`**: `loadPage()` calls this after `loadDrawer()` completes. Define it globally to run page-specific logic. No longer used with the new API-driven approach (clientes/empleados handle forms inline).
+- **`initDrawerPage()`**: `loadPage()` calls this after `loadDrawer()` completes. Define it globally to run page-specific logic. Currently used to restore `form_data` on validation errors in `empleados/`.
 - **Data-table modules** (clientes, empleados, reservas): each defines a global `cargar{Modulo}()` function and a uniquely-named `renderTabla{Modulo}()` function. `loadPage()` step 9 calls the appropriate `cargar{Modulo}()` after scripts are injected and `initTable()`/`initColumnPicker()` have run. The `renderTabla{Modulo}()` function calls `initTable()` internally to re-bind search/sort after repopulating the tbody. **IMPORTANT**: `renderTabla` must NOT be used as a bare global name — it collides across modules since the script dedup prevents re-loading (e.g., `empleados.js` overwrites `window.renderTabla`, breaking clientes on return navigation). Each module must use a unique name.
 - **`cargarReservas()`** must be called from `loadPage()` step 9 (not just from the modul's own script), because `reservas.js` is preloaded from `inicio/index.html` and the SPA navigation re-injects it, but the function only auto-runs if explicitly called.
 - **`await` async page init functions** in `loadPage()` step 9 (`cargarClientes`, `cargarEmpleados`, `cargarReservas`). Without `await`, a subsequent SPA navigation can race ahead before the previous page's data fetch completes, corrupting global state. All three must be awaited.
@@ -58,6 +58,7 @@ servidor/
 │   ├── clientes.php          # CRUD: listar, crear, editar, toggle_estado
 │   ├── empleados.php         # CRUD: listar, crear, editar, toggle_estado
 │   ├── ajustes.php           # check_usuario, cambio_usuario, cambio_contrasena
+│   ├── metodos_pago.php      # GET: métodos de pago disponibles
 │   └── turnos_canchas.php    # Turnos/reservas/canchas data (existing)
 ├── componentes/
 │   ├── header.html           # Loaded via AJAX by loadComponent()
@@ -71,11 +72,12 @@ servidor/
     │   ├── table.js          # Search filter, sort (▲/▼ indicators), column picker, inactive filter
     │   └── validacion.js     # Client-side form validation + initDrawerPage()
     └── img/
+        └── favicon.ico
 ```
 
 ## Key Conventions
 
-- **ABM pattern**: POST to same page → PHP processes → `header("Location: ...")` redirect (PRG). Success message in `$_SESSION['flash_success']`, error in `$_SESSION['flash_error']`. The toast container must handle both; errors use `.toast-error` (red), success uses `.toast-success` (green).
+- **ABM pattern (API)**: `fetch()` to `api/{modulo}.php` with JSON body. Response is JSON `{ok, mensaje, ...}`. Toast feedback handled client-side by `mostrarToast()`. Admin protection via `isAdmin()` gates inside each API function.
 - **Form data preservation on error**: When validation fails on create/edit, save `$_SESSION['form_data']` before redirect. The page outputs `<script>var formData = ...</script>` (outside `.main-content`). `initDrawerPage()` reads it, opens the drawer, pre-fills fields, and clears errors. Currently implemented in `empleados/`.
 - **Settings accordion pattern** (ajustes/): Each setting group uses `.settings-card.accordion` with `.accordion-header` (clickable, shows ▾) and `.accordion-body` (collapsible, `display: none` by default). Structure:
   ```html
@@ -112,6 +114,7 @@ servidor/
 
 ## CSS
 
-- Dark theme with yellow accent (`#facc15` / `#fbbf24`).
+- Light/dark theme system via CSS custom properties (`:root` + `[data-theme="dark"]`). Dark mode enabled by user toggle in settings (`#themeToggle`) or `localStorage` default.
+- Yellow accent (`#facc15` / `#fbbf24`).
 - Glassmorphism (backdrop-filter blur, semi-transparent backgrounds).
 - Sidebar: fixed 260px, responsive hamburger at 768px.
