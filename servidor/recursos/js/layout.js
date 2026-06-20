@@ -124,6 +124,7 @@ async function loadPage(route) {
     if (doc.body.dataset.admin !== undefined) {
       var adminRes = await fetch(BASE_URL + '/api/usuario.php');
       var adminData = await adminRes.json();
+      console.log('[DEBUG admin]', adminData);
       if (!adminData.isAdmin) {
         window.location.href = BASE_URL + '/inicio/';
         return;
