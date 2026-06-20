@@ -81,12 +81,16 @@ function generarBurbujas() {
         if (esMantenimiento) burbuja.classList.add('burbuja-mantenimiento');
         if (esInhabilitado) burbuja.classList.add('burbuja-inhabilitado');
 
+        var claseBotonToggle = esInhabilitado ? 'btn-habilitar-cancha' : 'btn-eliminar-cancha';
+        var textoBotonToggle = esInhabilitado ? 'Habilitar' : 'Inhabilitar';
+        var funcionToggle = esInhabilitado ? 'habilitarCancha' : 'eliminarCancha';
+
         burbuja.innerHTML =
             '<div class="burbuja-header">' +
             '<div class="numero-cancha">Cancha ' + cancha.cancha_numero + '</div>' +
             '<div class="botones-cancha">' +
             '<button class="btn-editar-cancha" onclick="editarCancha(' + cancha.cancha_id + ')">Editar</button>' +
-            '<button class="btn-eliminar-cancha" onclick="eliminarCancha(' + cancha.cancha_id + ')">Inhabilitar</button>' +
+            '<button class="' + claseBotonToggle + '" onclick="' + funcionToggle + '(' + cancha.cancha_id + ')">' + textoBotonToggle + '</button>' +
             '</div></div>' +
             '<div class="burbuja-info">' +
             '<div class="info-label">Descripción</div>' +
@@ -131,9 +135,19 @@ async function guardarCancha(e) {
     e.preventDefault();
 
     var canchaId = document.getElementById('edit_cancha_id').value;
+    var numeroIngresado = document.getElementById('cancha_numero').value;
+
+    var duplicado = canchasLista.some(function(c) {
+        return String(c.cancha_numero) === numeroIngresado && String(c.cancha_id) !== canchaId;
+    });
+    if (duplicado) {
+        mostrarToast('Ya existe una cancha con ese número', 'error');
+        return;
+    }
+
     var payload = {
         accion: canchaId ? 'actualizar_cancha' : 'crear_cancha',
-        cancha_numero: document.getElementById('cancha_numero').value,
+        cancha_numero: numeroIngresado,
         cancha_precio: document.getElementById('cancha_precio').value,
         descripcion: document.getElementById('cancha_descripcion').value,
         cancha_estado: document.getElementById('cancha_estado').value
@@ -177,6 +191,27 @@ async function eliminarCancha(canchaId) {
     } catch (error) {
         console.error(error);
         mostrarToast('Error inhabilitando cancha', 'error');
+    }
+}
+
+async function habilitarCancha(canchaId) {
+    if (!confirm('¿Estás seguro de que deseas habilitar esta cancha?')) return;
+
+    try {
+        var respuesta = await fetch(BASE_URL + '/api/turnos_canchas.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accion: 'habilitar_cancha', cancha_id: canchaId })
+        });
+
+        var resultado = await respuesta.json();
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
+
+        await cargarCanchas();
+        mostrarToast('Cancha habilitada', 'success');
+    } catch (error) {
+        console.error(error);
+        mostrarToast('Error habilitando cancha', 'error');
     }
 }
 
