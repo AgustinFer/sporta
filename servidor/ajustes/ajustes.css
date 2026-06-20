@@ -4,7 +4,7 @@
 
 .settings-container {
   padding: 30px;
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
 }
 
 .settings-container h2 {
@@ -22,19 +22,62 @@
 /* ========================= */
 
 .settings-card {
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--bg-surface);
   backdrop-filter: blur(14px);
   border-radius: 16px;
   padding: 28px;
   margin-bottom: 24px;
   max-width: 520px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card);
 }
 
 .settings-card h3 {
   font-size: 1.2rem;
-  margin-bottom: 20px;
-  color: #1a1a2e;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* ========================= */
+/* 🔽 ACCORDION */
+/* ========================= */
+
+.settings-card.accordion {
+  padding: 0;
+  overflow: hidden;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.accordion-header:hover {
+  background: var(--bg-table-hover);
+}
+
+.accordion-arrow {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: transform 0.25s ease;
+  line-height: 1;
+}
+
+.accordion.open .accordion-arrow {
+  transform: rotate(180deg);
+}
+
+.accordion-body {
+  display: none;
+  padding: 0 28px 24px;
+}
+
+.accordion.open .accordion-body {
+  display: block;
 }
 
 /* ========================= */
@@ -49,23 +92,24 @@
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 6px;
 }
 
-.settings-card input {
+.settings-card input, .settings-card select {
   width: 100%;
   padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
   font-size: 1rem;
+  color: var(--text-primary);
   transition: border-color 0.2s;
 }
 
-.settings-card input:focus {
+.settings-card input:focus, .settings-card select:focus {
   outline: none;
-  border-color: #facc15;
+  border-color: var(--accent-yellow);
   box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.2);
 }
 
@@ -101,7 +145,7 @@
 
 .password-requirements li {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-muted);
   padding: 2px 0;
   transition: color 0.2s;
 }
@@ -119,7 +163,34 @@
 }
 
 /* ========================= */
-/* 🔘 BUTTON */
+/* 📱 RESPONSIVE AJUSTES */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 20px 12px;
+  }
+
+  .settings-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .settings-card {
+    padding: 20px 16px;
+  }
+
+  .settings-card .field input {
+    font-size: 16px;
+  }
+
+  .btn-settings {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ========================= */
+/* 🔘 SWITCH */
 /* ========================= */
 
 .btn-settings {
@@ -137,4 +208,54 @@
 
 .btn-settings:hover {
   opacity: 0.85;
+}
+
+/* ========================= */
+/* 🔄 TOGGLE SWITCH */
+/* ========================= */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ccc;
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+  background: #facc15;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(22px);
 }
