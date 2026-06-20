@@ -135,15 +135,17 @@
     grid-column: span 1;
   }
 
-  .info-card {
-    padding: 18px;
+  .home-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
-  .info-card h3 {
-    font-size: 14px;
+  .weather-card {
+    width: 100%;
+    padding: 16px;
   }
 
-  .big-number {
-    font-size: 34px;
+  .weather-temp {
+    font-size: 28px;
   }
 }
