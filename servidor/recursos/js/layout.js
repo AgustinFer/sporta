@@ -121,6 +121,15 @@ async function loadPage(route) {
     var html = await res.text();
     var doc = new DOMParser().parseFromString(html, 'text/html');
 
+    if (doc.body.dataset.admin !== undefined) {
+      var adminRes = await fetch(BASE_URL + '/api/usuario.php');
+      var adminData = await adminRes.json();
+      if (!adminData.isAdmin) {
+        window.location.href = BASE_URL + '/inicio/';
+        return;
+      }
+    }
+
     /* 1. CONTENT */
     var newContent = doc.querySelector('.main-content');
     var currentContent = document.querySelector('.main-content');
