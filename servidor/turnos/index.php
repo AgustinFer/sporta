@@ -7,7 +7,7 @@ if(!isset($_SESSION['usuario'])){
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

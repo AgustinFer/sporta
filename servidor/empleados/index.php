@@ -366,7 +366,7 @@ $empleados = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 
   <meta charset="UTF-8">

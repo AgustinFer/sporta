@@ -1,3 +1,88 @@
+/* =============================================
+   TEMA CLARO / OSCURO — CSS CUSTOM PROPERTIES
+   ============================================= */
+
+:root {
+  --bg-page: #ffffff;
+  --bg-surface: rgba(255,255,255,0.85);
+  --bg-elevated: rgba(255,255,255,0.95);
+  --bg-input: white;
+  --bg-table-row: rgba(255,255,255,0.5);
+  --bg-table-hover: rgba(26,26,46,0.06);
+  --bg-table-stripe: rgba(26,26,46,0.03);
+
+  --text-primary: rgba(26,26,46,0.95);
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+
+  --border-light: rgba(26,26,46,0.08);
+  --border-medium: rgba(26,26,46,0.12);
+  --border-strong: #d1d5db;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 15px rgba(0,0,0,0.12);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.2);
+  --shadow-card: 0 4px 15px rgba(0,0,0,0.08);
+
+  --table-header-bg: rgba(26,26,46,0.12);
+  --table-header-text: rgba(26,26,46,0.95);
+
+  --scrollbar-thumb: rgba(26,26,46,0.2);
+  --scrollbar-track: transparent;
+
+  --drawer-bg: rgba(255,255,255,0.82);
+  --drawer-header-border: rgba(0,0,0,0.08);
+  --drawer-input-bg: rgba(255,255,255,0.8);
+
+  --toast-bg: rgba(255,255,255,0.90);
+  --toast-text: rgba(26,26,46,0.95);
+  --toast-border: rgba(26,26,46,0.12);
+
+  --accent-yellow: #facc15;
+  --accent-yellow-hover: #fbbf24;
+  --accent-blue: #4a90e2;
+  --accent-red: #ef4444;
+  --accent-green: #22c55e;
+  --accent-orange: #e67e22;
+}
+
+[data-theme="dark"] {
+  --bg-page: #13132a;
+  --bg-surface: rgba(25,25,45,0.88);
+  --bg-elevated: rgba(35,35,55,0.92);
+  --bg-input: rgba(45,45,70,0.85);
+  --bg-table-row: rgba(25,25,45,0.4);
+  --bg-table-hover: rgba(255,255,255,0.06);
+  --bg-table-stripe: rgba(255,255,255,0.03);
+
+  --text-primary: rgba(255,255,255,0.9);
+  --text-secondary: #9ca3af;
+  --text-muted: rgba(156,163,175,0.6);
+
+  --border-light: rgba(255,255,255,0.08);
+  --border-medium: rgba(255,255,255,0.12);
+  --border-strong: rgba(255,255,255,0.2);
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 15px rgba(0,0,0,0.4);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
+  --shadow-card: 0 4px 15px rgba(0,0,0,0.3);
+
+  --table-header-bg: rgba(0,0,0,0.3);
+  --table-header-text: rgba(255,255,255,0.9);
+
+  --scrollbar-thumb: rgba(255,255,255,0.15);
+  --scrollbar-track: transparent;
+
+  --drawer-bg: rgba(25,25,45,0.88);
+  --drawer-header-border: rgba(255,255,255,0.08);
+  --drawer-input-bg: rgba(45,45,70,0.85);
+
+  --toast-bg: rgba(35,35,55,0.92);
+  --toast-text: rgba(255,255,255,0.9);
+  --toast-border: rgba(255,255,255,0.12);
+}
+
 /* RESET */
 * {
   margin: 0;
@@ -6,11 +91,16 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+body {
+  background: var(--bg-page);
+  transition: background 0.3s ease;
+}
+
 /* ANIMACIONES GENERALES */
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -18,37 +108,34 @@
   }
 }
 
-/* ELEMENTOS BASE */
+/* BOTONES GENERALES */
 button {
-  width: 100%;
-  margin-top: 10px;
-  padding: 14px;
-  border-radius: 8px;
   border: none;
-  background: linear-gradient(90deg, #facc15, #fbbf24);
+  padding: 10px 18px;
+  border-radius: 12px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 button:active {
   transform: translateY(0);
 }
 
-/* INPUTS GENERALES */
+/* FORMULARIOS LOGIN */
 .field {
-  margin-bottom: 18px;
+  margin-bottom: 15px;
 }
 
 .field label {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--text-secondary);
   display: block;
   margin-bottom: 6px;
 }
@@ -57,45 +144,63 @@ button:active {
   width: 100%;
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-strong);
   transition: all 0.2s ease;
 }
 
 .field input:focus {
-  border-color: #22c55e;
+  border-color: var(--accent-green);
   box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
 }
 
 .field input::placeholder {
-  color: #9ca3af;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb);
+  opacity: 0.8;
+}
+
 /* ABM */
+
+/* =========================
+   LISTA (CONTENEDOR)
+========================= */
+
+.list-container {
+  margin-top: 24px;
+}
 
 /* =========================
    TABLA
 ========================= */
 
 .table-container {
-  width: 100%;
+  padding: 0 30px 20px;
   overflow-x: auto;
-  margin-top: 20px;
-  padding: 0 30px 30px;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
 
-  background: rgba(255,255,255,0.04);
-
-  border-radius: 16px;
-  overflow: hidden;
-
   backdrop-filter: blur(10px);
 
-  border: 1px solid rgba(26, 26, 46, 0.12);
+  border: 1px solid var(--border-medium);
 }
 
 /* =========================
@@ -103,23 +208,23 @@ button:active {
 ========================= */
 
 .table thead {
-  background: rgba(26, 26, 46, 0.12);
+  background: var(--table-header-bg);
 }
 
 .table th {
-  padding: 16px;
+  padding: 14px 16px;
 
   text-align: left;
 
   font-weight: 600;
 
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--table-header-text);
 
   border-bottom:
-    1px solid rgba(26, 26, 46, 0.12);
+    1px solid var(--border-medium);
 
   border-right:
-    1px solid rgba(26, 26, 46, 0.08);
+    1px solid var(--border-light);
 }
 
 .table th[data-sort]::after {
@@ -146,13 +251,13 @@ button:active {
 .table td {
   padding: 14px 16px;
 
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
 
   border-bottom:
-    1px solid rgba(26, 26, 46, 0.08);
+    1px solid var(--border-light);
 
   border-right:
-    1px solid rgba(26, 26, 46, 0.06);
+    1px solid var(--border-light);
 }
 
 
@@ -161,7 +266,7 @@ button:active {
 ========================= */
 
 .table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.20);
+  background: var(--bg-table-hover);
 }
 
 /* =========================
@@ -255,6 +360,19 @@ button:active {
   transform: translateY(-1px);
 }
 
+.activate-btn:disabled,
+.deactivate-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.activate-btn:disabled:hover,
+.deactivate-btn:disabled:hover {
+  background: inherit;
+  transform: none;
+}
+
 /* =========================
    BOTÓN DESACTIVAR
 ========================= */
@@ -301,9 +419,9 @@ button:active {
   padding: 12px;
 
   border-radius: 10px;
-  border: 1px solid rgba(26,26,46,0.15);
+  border: 1px solid var(--border-medium);
 
-  background: white;
+  background: var(--bg-input);
 
   font-size: 14px;
 }
@@ -320,12 +438,12 @@ button:active {
 .column-picker-btn {
   padding: 12px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(26,26,46,0.15);
-  background: white;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
   cursor: pointer;
   font-size: 14px;
   white-space: nowrap;
-  color: #333;
+  color: var(--text-primary);
   margin-top: 0;
   width: auto;
   box-shadow: none;
@@ -333,7 +451,7 @@ button:active {
 
 .column-picker-btn:hover {
   transform: none;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .column-picker-dropdown {
@@ -341,10 +459,10 @@ button:active {
   right: 0;
   top: 100%;
   margin-top: 6px;
-  background: white;
+  background: var(--bg-elevated);
   border-radius: 10px;
-  border: 1px solid rgba(26,26,46,0.15);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-md);
   padding: 8px;
   min-width: 170px;
   display: none;
@@ -361,12 +479,12 @@ button:active {
   cursor: pointer;
   font-size: 14px;
   white-space: nowrap;
-  color: #333;
+  color: var(--text-primary);
   border-radius: 6px;
 }
 
 .column-picker-item:hover {
-  background: rgba(0,0,0,0.05);
+  background: var(--bg-table-hover);
 }
 
 .column-picker-item input {
@@ -387,7 +505,7 @@ button:active {
   align-items: center;
   gap: 6px;
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
@@ -487,5 +605,98 @@ button:active {
   to {
     opacity: 0;
     transform: translateX(100%);
+  }
+}
+
+/* ========================= */
+/* 📱 RESPONSIVE GLOBAL */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .table-container {
+    padding: 0 12px 20px;
+    margin-top: 12px;
+  }
+
+  .table th {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+
+  .table td {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .table-toolbar {
+    flex-wrap: wrap;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .table-search {
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  .filter-inactivos {
+    margin-left: 0;
+    font-size: 14px;
+    padding: 8px 0;
+  }
+
+  .column-picker-wrapper {
+    margin-left: 0;
+  }
+
+  .column-picker-btn {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  #toast-container {
+    top: auto;
+    bottom: 20px;
+    right: 50%;
+    transform: translateX(50%);
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .toast {
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+
+  .edit-btn,
+  .activate-btn,
+  .deactivate-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .flash-error {
+    margin: 0 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table th {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-inactivos {
+    justify-content: center;
   }
 }
