@@ -121,11 +121,13 @@ async function loadPage(route) {
     var html = await res.text();
     var doc = new DOMParser().parseFromString(html, 'text/html');
 
+    /* 1. CONTENT */
     var newContent = doc.querySelector('.main-content');
     var currentContent = document.querySelector('.main-content');
     if (newContent && currentContent) {
       currentContent.innerHTML = newContent.innerHTML;
 
+      /* Ejecutar scripts inline (innerHTML no los ejecuta) */
       doc.querySelectorAll('script:not([src])').forEach(function(s) {
         try {
           var script = document.createElement('script');
@@ -138,6 +140,7 @@ async function loadPage(route) {
       });
     }
 
+    /* 2. BODY STATE */
     document.body.className = '';
     doc.body.classList.forEach(function(c) { document.body.classList.add(c); });
     document.body.dataset.page = doc.body.dataset.page || cleanRoute;
@@ -147,6 +150,7 @@ async function loadPage(route) {
       delete document.body.dataset.drawer;
     }
 
+    /* 3. CSS DINÁMICO */
     var oldStyle = document.querySelector('#page-style');
     if (oldStyle) oldStyle.remove();
     var newStyle = doc.querySelector('#page-style');
@@ -163,13 +167,18 @@ async function loadPage(route) {
       });
     }
 
+    /* 4. TITLE */
     var pageTitle = doc.body.dataset.page || cleanRoute.charAt(0).toUpperCase() + cleanRoute.slice(1);
     document.title = 'Sporta - ' + pageTitle;
     updateDate();
 
+    /* 5. MENU ACTIVE */
     setActiveMenu(cleanRoute);
+
+    /* 6. UI REINIT */
     initUI();
 
+    /* 7. SCRIPTS DINÁMICOS (load BEFORE page init) */
     var scriptPromises = [];
     doc.querySelectorAll('script[src]').forEach(function(s) {
       var src = s.getAttribute('src');
@@ -186,8 +195,10 @@ async function loadPage(route) {
     });
     await Promise.all(scriptPromises);
 
+    /* 8. DRAWER */
     await loadDrawer();
 
+    /* 9. PAGE INIT */
     if (typeof initTable === 'function') initTable();
     if (typeof initColumnPicker === 'function') initColumnPicker();
     if (typeof initDrawerPage === 'function') initDrawerPage();
@@ -201,6 +212,7 @@ async function loadPage(route) {
     }
     if (cleanRoute === 'inicio') initInicio();
 
+    /* 10. RESET VISUAL */
     window.scrollTo(0, 0);
     document.body.style.background = '';
     document.documentElement.style.background = '';
@@ -334,6 +346,9 @@ function initRouter() {
 }
 
 function initAjustes() {
+  /* ========================= */
+  /* TEMA OSCURO */
+  /* ========================= */
   var themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
     themeToggle.checked = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -469,6 +484,10 @@ function initAjustes() {
     });
   }
 
+  /* ========================= */
+  /* NOMBRE Y APELLIDO */
+  /* ========================= */
+
   var inputNombre = document.getElementById('edit_nombre');
   var inputApellido = document.getElementById('edit_apellido');
   var errorNombre = document.getElementById('error_nombre');
@@ -496,6 +515,10 @@ function initAjustes() {
     });
   }
 
+  /* ========================= */
+  /* DIRECCIÓN */
+  /* ========================= */
+
   var inputDireccion = document.getElementById('edit_direccion');
   var errorDireccion = document.getElementById('error_direccion');
   var formDireccion = document.getElementById('formDireccion');
@@ -518,6 +541,10 @@ function initAjustes() {
       .catch(function() { mostrarToast('Error de conexion', 'error'); });
     });
   }
+
+  /* ========================= */
+  /* EMAIL */
+  /* ========================= */
 
   var inputEmail = document.getElementById('edit_email');
   var errorEmail = document.getElementById('error_email');
@@ -543,6 +570,10 @@ function initAjustes() {
     });
   }
 
+  /* ========================= */
+  /* CELULAR */
+  /* ========================= */
+
   var inputCelular = document.getElementById('edit_celular');
   var errorCelular = document.getElementById('error_celular');
   var formCelular = document.getElementById('formCelular');
@@ -567,6 +598,10 @@ function initAjustes() {
       .catch(function() { mostrarToast('Error de conexion', 'error'); });
     });
   }
+
+  /* ========================= */
+  /* PRE-CARGAR DATOS ACTUALES */
+  /* ========================= */
 
   fetch(BASE_URL + '/api/usuario.php')
     .then(function(r) { return r.json(); })
