@@ -137,33 +137,32 @@
 
 .drawer-form input:focus {
   outline: none;
-  border-color: #4a90e2;
+  border-color: var(--accent-blue);
 }
 
-.drawer-textarea,
-.drawer-select {
+.drawer-form select {
   width: 100%;
   padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid var(--border-medium);
   background: var(--drawer-input-bg);
   font-size: 1rem;
-  font-family: inherit;
-  box-sizing: border-box;
-  color: var(--text-primary);
-}
-
-.drawer-textarea {
-  resize: vertical;
-}
-
-.drawer-select {
   cursor: pointer;
+  color: var(--text-primary);
 }
 
-.detalle-item span {
-  font-size: 15px;
-  color: var(--text-primary);
+.drawer-form select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(200,200,200,0.3);
+}
+
+.self-rol-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #e67e22;
+  margin-top: 4px;
+  font-style: italic;
 }
 
 /* =========================
@@ -185,11 +184,34 @@
 
   background: linear-gradient(
     135deg,
-    #4a90e2,
+    var(--accent-blue),
     #3578d4
   );
 
   color: white;
+}
+
+/* =========================
+   DETALLE ITEMS (DRAWER)
+========================= */
+
+.detalle-item {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.detalle-item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detalle-item span {
+  font-size: 15px;
+  color: var(--text-primary);
 }
 
 /* =========================
