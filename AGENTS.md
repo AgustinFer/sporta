@@ -31,6 +31,7 @@ Vanilla PHP SPA (faculty project). No build step, no tests, no framework.
 - **`#toast-container` must be outside `.main-content`**: Same reason as the drawer — `loadPage()` replaces `.main-content` via `innerHTML`, so toasts placed inside get destroyed on SPA navigation. Always place them after `</main>`.
 - **Toolbar filter elements need CSS**: Checkboxes in `.table-toolbar` (e.g., `.filter-pendientes`, `.filter-fecha`) must have explicit `display: flex; align-items: center; white-space: nowrap` CSS. Without `white-space: nowrap`, the flex container may shrink the label to near-zero width, making it appear invisible. See `reservas/reservas.css` for reference.
 - **`initFiltroHoy()` in reservas**: Called from `renderTablaReservas()` (like `initFiltroPendientes()`). The `#showSoloHoy` checkbox filter is combined with `#showSoloPendientes` in a single `aplicarFiltros()` function that respects both filters simultaneously. Each filter function (`initFiltroPendientes`, `initFiltroHoy`) guards with `chk.dataset.bound` to avoid duplicate event binding.
+- **Admin sidebar hiding timing**: `initLayout()` must hide `.menu-admin` items **after** `loadComponent('sidebar-container', ...)` resolves, not before. The sidebar DOM doesn't exist yet early in `initLayout()`, so `querySelectorAll('.menu-admin')` finds nothing if called before the component is loaded.
 
 ## File Layout
 
@@ -77,7 +78,8 @@ servidor/
 
 ## Key Conventions
 
-- **ABM pattern (API)**: `fetch()` to `api/{modulo}.php` with JSON body. Response is JSON `{ok, mensaje, ...}`. Toast feedback handled client-side by `mostrarToast()`. Admin protection via `isAdmin()` gates inside each API function.
+- **ABM pattern (API)**: `fetch()` to `api/{modulo}.php` with JSON body. Response is JSON `{ok, mensaje, ...}`. Toast feedback handled client-side by `mostrarToast()`.
+- **Admin protection**: two layers. Server-side `isAdmin()` gates inside each admin API function. Frontend: pages with `data-admin` attribute on `<body>` trigger a redirect check in `loadPage()` — non-admin users are sent to `/inicio/`.
 - **Form data preservation on error**: When validation fails on create/edit, save `$_SESSION['form_data']` before redirect. The page outputs `<script>var formData = ...</script>` (outside `.main-content`). `initDrawerPage()` reads it, opens the drawer, pre-fills fields, and clears errors. Currently implemented in `empleados/`.
 - **Settings accordion pattern** (ajustes/): Each setting group uses `.settings-card.accordion` with `.accordion-header` (clickable, shows ▾) and `.accordion-body` (collapsible, `display: none` by default). Structure:
   ```html
