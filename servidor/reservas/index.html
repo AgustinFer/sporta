@@ -4,23 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sporta - Señas y Reservas</title>
+
   <link rel="stylesheet" href="../recursos/css/global.css">
   <link rel="stylesheet" href="../recursos/css/layout.css">
   <link rel="stylesheet" href="../recursos/css/componentes.css">
   <link rel="stylesheet" href="../recursos/css/drawer.css">
+
   <link id="page-style" rel="stylesheet" href="reservas.css">
 </head>
+
 <body class="screen" data-page="Señas y Reservas" data-drawer="reservas">
+
   <div class="background"></div>
+
   <div id="sidebar-container"></div>
+
   <button class="menu-toggle" id="menuToggle">☰</button>
+
   <div class="app-content">
+
   <div id="header-container"></div>
+
   <main class="main-content">
+
     <div class="list-container">
       <h2>Señas y Reservas</h2>
       <p>Gestión de pagos y reservas</p>
     </div>
+
     <div class="table-toolbar">
       <input type="text" id="tableSearch" class="table-search" placeholder="Buscar reserva...">
       <label class="filter-pendientes">
@@ -30,6 +41,7 @@
         <input type="checkbox" id="showSoloHoy"> Solo turnos de hoy
       </label>
     </div>
+
     <div class="table-container">
       <table class="table">
         <thead>
@@ -47,10 +59,15 @@
         <tbody id="reservasTableBody"></tbody>
       </table>
     </div>
+
   </main>
+
   </div>
+
   <div id="drawer-container"></div>
+
   <div id="toast-container"></div>
+
   <script src="../recursos/js/layout.js"></script>
   <script src="../recursos/js/table.js"></script>
   <script src="../recursos/js/drawer.js"></script>
