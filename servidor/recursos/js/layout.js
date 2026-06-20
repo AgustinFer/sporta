@@ -647,11 +647,6 @@ async function initLayout() {
       return false;
     }
     window.currentUserId = data.usuario.id;
-    if (!data.usuario.isAdmin) {
-      document.querySelectorAll('.menu-admin').forEach(function(el) {
-        el.style.display = 'none';
-      });
-    }
   } catch (e) {
     window.location.href = BASE_URL + '/';
     return false;
@@ -659,6 +654,12 @@ async function initLayout() {
 
   await loadComponent('sidebar-container', BASE_URL + '/componentes/sidebar.html');
   await loadComponent('header-container', BASE_URL + '/componentes/header.html');
+
+  if (!data.usuario.isAdmin) {
+    document.querySelectorAll('.menu-admin').forEach(function(el) {
+      el.style.display = 'none';
+    });
+  }
 
   updateDate();
   initRouter();
