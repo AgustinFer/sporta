@@ -89,11 +89,21 @@ function validarDatos(array $data): array
     if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $apellido)) {
         $errores[] = "El apellido contiene caracteres inválidos";
     }
-    if ($dni !== "" && !preg_match('/^\d+$/', $dni)) {
-        $errores[] = "El DNI solo debe contener números";
+    if ($dni !== "") {
+        if (!preg_match('/^\d+$/', $dni)) {
+            $errores[] = "El DNI solo debe contener números";
+        } elseif (strlen($dni) > 8) {
+            $errores[] = "El DNI no puede tener más de 8 dígitos";
+        }
     }
-    if ($celular !== "" && !preg_match('/^[\d\s\+\-\(\)]+$/', $celular)) {
-        $errores[] = "El teléfono contiene caracteres inválidos";
+    if ($celular !== "") {
+        $digitos = preg_replace('/\D/', '', $celular);
+        if (strlen($digitos) > 10) {
+            $errores[] = "El teléfono no puede tener más de 10 dígitos";
+        }
+        if (!preg_match('/^[\d\s\+\-\(\)]+$/', $celular)) {
+            $errores[] = "El teléfono contiene caracteres inválidos";
+        }
     }
     if ($email !== "" && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errores[] = "El email no tiene un formato válido";
