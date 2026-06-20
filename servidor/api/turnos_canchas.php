@@ -30,22 +30,16 @@ try {
             obtenerCanchas($pdo, $input);
             break;
         case 'crear_cancha':
+            crearCancha($pdo, $input);
+            break;
         case 'actualizar_cancha':
+            actualizarCancha($pdo, $input);
+            break;
         case 'eliminar_cancha':
+            eliminarCancha($pdo, $input);
+            break;
         case 'habilitar_cancha':
-            if (!$_SESSION['usuario']->isAdmin()) {
-                echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
-                exit;
-            }
-            if ($input['accion'] === 'crear_cancha') {
-                crearCancha($pdo, $input);
-            } elseif ($input['accion'] === 'actualizar_cancha') {
-                actualizarCancha($pdo, $input);
-            } elseif ($input['accion'] === 'eliminar_cancha') {
-                eliminarCancha($pdo, $input);
-            } else {
-                habilitarCancha($pdo, $input);
-            }
+            habilitarCancha($pdo, $input);
             break;
         default:
             throw new Exception('Acción inválida');
@@ -253,6 +247,11 @@ function obtenerCanchas(PDO $pdo, array $input): void
 
 function crearCancha(PDO $pdo, array $input): void
 {
+    if (!$_SESSION['usuario']->isAdmin()) {
+        echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
+        return;
+    }
+
     $numero = (int)$input['cancha_numero'];
     $precio = (float)$input['cancha_precio'];
     $descripcion = trim($input['descripcion'] ?? '');
@@ -280,6 +279,11 @@ function crearCancha(PDO $pdo, array $input): void
 
 function actualizarCancha(PDO $pdo, array $input): void
 {
+    if (!$_SESSION['usuario']->isAdmin()) {
+        echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
+        return;
+    }
+
     $canchaId = (int)$input['cancha_id'];
     $numero = (int)$input['cancha_numero'];
     $precio = (float)$input['cancha_precio'];
@@ -308,6 +312,11 @@ function actualizarCancha(PDO $pdo, array $input): void
 
 function eliminarCancha(PDO $pdo, array $input): void
 {
+    if (!$_SESSION['usuario']->isAdmin()) {
+        echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
+        return;
+    }
+
     $canchaId = (int)$input['cancha_id'];
     $sql = "UPDATE canchas SET cancha_estado = 3 WHERE cancha_id = ?";
     $stmt = $pdo->prepare($sql);
@@ -318,6 +327,11 @@ function eliminarCancha(PDO $pdo, array $input): void
 
 function habilitarCancha(PDO $pdo, array $input): void
 {
+    if (!$_SESSION['usuario']->isAdmin()) {
+        echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
+        return;
+    }
+
     $canchaId = (int)$input['cancha_id'];
     $sql = "UPDATE canchas SET cancha_estado = 1 WHERE cancha_id = ?";
     $stmt = $pdo->prepare($sql);
