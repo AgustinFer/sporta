@@ -100,7 +100,7 @@ body {
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -108,11 +108,14 @@ body {
   }
 }
 
-/* BOTONES GENERALES */
+/* ELEMENTOS BASE */
 button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 8px;
   border: none;
-  padding: 10px 18px;
-  border-radius: 12px;
+  background: linear-gradient(90deg, #facc15, #fbbf24);
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -128,9 +131,9 @@ button:active {
   transform: translateY(0);
 }
 
-/* FORMULARIOS LOGIN */
+/* INPUTS GENERALES */
 .field {
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 
 .field label {
@@ -178,25 +181,24 @@ button:active {
 /* ABM */
 
 /* =========================
-   LISTA (CONTENEDOR)
-========================= */
-
-.list-container {
-  margin-top: 24px;
-}
-
-/* =========================
    TABLA
 ========================= */
 
 .table-container {
-  padding: 0 30px 20px;
+  width: 100%;
   overflow-x: auto;
+  margin-top: 20px;
+  padding: 0 30px 30px;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
+
+  background: rgba(255,255,255,0.04);
+
+  border-radius: 16px;
+  overflow: hidden;
 
   backdrop-filter: blur(10px);
 
@@ -212,7 +214,7 @@ button:active {
 }
 
 .table th {
-  padding: 14px 16px;
+  padding: 16px;
 
   text-align: left;
 
