@@ -27,14 +27,11 @@ function conexion(){
 
     } catch (PDOException $e) {
 
-        $isApi = isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/api/') !== false;
-        if ($isApi) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode(['ok' => false, 'mensaje' => 'Error de conexion a la base de datos']);
-            exit;
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=utf-8');
         }
-        die("Error DB: " . $e->getMessage());
+        http_response_code(500);
+        die(json_encode(['ok' => false, 'mensaje' => 'Error de conexión a la base de datos']));
 
     }
 }
