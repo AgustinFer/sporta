@@ -16,6 +16,7 @@ h2 {
   color: var(--text-primary);
 }
 
+/* ELEMENTOS BASE */
 button {
   width: 100%;
   margin-top: 10px;
@@ -30,6 +31,7 @@ button {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* FONDO ANIMADO */
 .background {
   position: absolute;
   inset: 0;
@@ -52,6 +54,7 @@ button {
 .background-slide:nth-child(3) { top: 200%; }
 .background-slide:nth-child(4) { top: 300%; }
 
+/* OVERLAY */
 .background::before {
   content: "";
   position: absolute;
@@ -62,6 +65,7 @@ button {
   pointer-events: none;
 }
 
+/* LOGO WRAPPER — a la derecha */
 .logo-wrapper {
   position: relative;
   top: auto;
@@ -75,11 +79,13 @@ button {
   margin-left: -60px;
 }
 
+/* centrar el fondo glass detrás del logo */
 .logo-wrapper::before {
   left: 50%;
   border-radius: 0 60px 60px 0;
 }
 
+/* CARD LOGIN — a la izquierda */
 .login-card {
   position: relative;
   top: auto;
@@ -95,17 +101,20 @@ button {
   border-radius: 20px 0 0 20px;
 }
 
+/* CONTENIDO */
 .card-content {
   position: relative;
   z-index: 5;
 }
 
+/* ANIMACIONES */
 @keyframes backgroundScroll {
   100% {
     transform: translateY(-300%);
   }
 }
 
+/* MODAL RECUPERAR CONTRASEÑA */
 .modal {
   display: none;
   position: fixed;
@@ -174,10 +183,15 @@ button {
   color: var(--text-primary);
 }
 
+/* ERROR EN INPUTS */
 .field .input-error {
   border-color: #ef4444 !important;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
 }
+
+/* ========================= */
+/* 📱 RESPONSIVE LOGIN */
+/* ========================= */
 
 @media (max-width: 768px) {
   .screen {
