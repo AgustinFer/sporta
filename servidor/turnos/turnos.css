@@ -7,17 +7,6 @@
   align-items: center;
   padding: 0 30px;
   margin-bottom: 20px;
-  position: relative;
-}
-
-.turnos-fecha {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(26, 26, 46, 0.7);
-  white-space: nowrap;
 }
 
 .turnos-filtros {
@@ -29,17 +18,18 @@
 
 .turnos-filtros label {
   font-size: 14px;
-  color: rgba(26, 26, 46, 0.8);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .turnos-filtros input[type="date"] {
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(26, 26, 46, 0.15);
-  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
   font-size: 14px;
   font-family: inherit;
+  color: var(--text-primary);
 }
 
 .turnos-btn {
@@ -52,12 +42,12 @@
   transition: all 0.3s ease;
   margin-top: 0;
   width: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .turnos-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 /* ======================== */
@@ -77,16 +67,16 @@
   border-collapse: collapse;
   width: max-content;
   min-width: 100%;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
 }
 
 #tablaTurnos th,
 #tablaTurnos td {
-  border: 1px solid rgba(26, 26, 46, 0.1);
+  border: 1px solid var(--border-light);
   min-width: 150px;
   height: 54px;
   text-align: center;
@@ -187,12 +177,12 @@ thead .columna-hora {
   font-weight: bold;
   font-size: 14px;
   margin-bottom: 3px;
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
 }
 
 .estado-texto {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 /* ======================== */
@@ -201,25 +191,84 @@ thead .columna-hora {
 
 .detalle-item {
   padding: 14px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .detalle-item strong {
   display: block;
   margin-bottom: 4px;
   font-size: 13px;
-  color: #6b7280;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .detalle-item span {
   font-size: 15px;
-  color: rgba(26, 26, 46, 0.95);
+  color: var(--text-primary);
+}
+
+/* ======================== */
+/* OCULTAR FAB EN TURNOS   */
+/* ======================== */
+
+.fab {
+  display: none;
 }
 
 /* ======================== */
 /* DRAWER PANEL SWITCH     */
 /* ======================== */
+
+/* ========================= */
+/* 📱 RESPONSIVE TURNOS */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .turnos-toolbar {
+    padding: 0 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .turnos-filtros {
+    margin-left: 0;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .turnos-filtros input[type="date"] {
+    flex: 1;
+    min-width: 0;
+    font-size: 16px;
+  }
+
+  .contenedor-tabla {
+    height: calc(100vh - 180px);
+    margin: 0 0 20px;
+  }
+
+  #tablaTurnos th,
+  #tablaTurnos td {
+    min-width: 100px;
+    height: 44px;
+    padding: 4px;
+    font-size: 12px;
+  }
+
+  .columna-hora,
+  .hora {
+    min-width: 60px !important;
+    font-size: 12px;
+  }
+
+  .nombre-cliente {
+    font-size: 12px;
+  }
+
+  .libre {
+    font-size: 18px;
+  }
+}
 
 
