@@ -1,119 +1,134 @@
-/* ========================= */
-/* 🔷 SEÑAS Y RESERVAS */
-/* ========================= */
-
-.reservas-page .list-container {
-  margin-top: 0;
-}
-
-/* ========================= */
-/* ESTADO BADGES */
-/* ========================= */
-
-.estado-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
+.filter-pendientes,
+.filter-fecha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
   white-space: nowrap;
 }
 
-/* 1 = Pendiente */
-.estado-1 {
-  background: rgba(251, 191, 36, 0.15);
-  color: #facc15;
+.filter-pendientes input,
+.filter-fecha input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
-
-/* 2 = Confirmada */
-.estado-2 {
-  background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
-}
-
-/* 3 = Cancelada */
-.estado-3 {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-}
-
-/* ========================= */
-/* PAGO BADGES */
-/* ========================= */
 
 .pago-badge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .pago-pagada {
   background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
+  color: #16a34a;
+}
+
+.pago-sena {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
 }
 
 .pago-pendiente {
-  background: rgba(251, 191, 36, 0.15);
-  color: #facc15;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
 }
 
 .pago-sin {
-  background: rgba(107, 114, 128, 0.15);
-  color: #9ca3af;
+  background: rgba(107, 114, 128, 0.1);
+  color: #6b7280;
 }
 
-/* ========================= */
-/* ACCIONES */
-/* ========================= */
+.saldo-positivo {
+  color: #dc2626;
+  font-weight: 600;
+}
 
-.acciones-cell {
+.saldo-cero {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.table-actions {
   display: flex;
-  gap: 8px;
-  align-items: center;
+  gap: 6px;
+  justify-content: center;
 }
 
 .btn-pago {
-  background: rgba(251, 191, 36, 0.1);
-  border: 1px solid rgba(251, 191, 36, 0.3);
+  padding: 6px 12px;
   border-radius: 8px;
-  padding: 6px 10px;
+  border: none;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .btn-pago:hover {
-  background: rgba(251, 191, 36, 0.25);
-  border-color: #facc15;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
 }
 
-/* ========================= */
-/* DRAWER INFO GRID */
-/* ========================= */
-
-.drawer-info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+.pago-historial-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 14px;
+  color: var(--text-primary);
 }
 
-.drawer-info-item label {
-  display: block;
-  font-size: 0.9rem;
-  color: #222;
+.pago-historial-item:last-child {
+  border-bottom: none;
+}
+
+.pago-historial-item .pago-fecha {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pago-historial-item .pago-metodo {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pago-historial-item .pago-monto {
   font-weight: 600;
-  margin-bottom: 2px;
+  color: #16a34a;
 }
 
-.drawer-info-item span {
-  font-size: 0.95rem;
-  color: #111;
-  font-weight: 400;
+/* ========================= */
+/* 📱 RESPONSIVE RESERVAS */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .filter-pendientes,
+  .filter-fecha {
+    font-size: 13px;
+  }
+
+  .filter-pendientes input,
+  .filter-fecha input {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .btn-pago {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
 }
