@@ -1,0 +1,102 @@
+.filter-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.filter-date input[type="date"] {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filter-date input[type="date"]:focus {
+  border-color: #facc15;
+}
+
+.pago-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pago-pagada {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.pago-sena {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+.pago-pendiente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.pago-sin {
+  background: rgba(107, 114, 128, 0.1);
+  color: #6b7280;
+}
+
+.monto-col {
+  font-variant-numeric: tabular-nums;
+}
+
+.btn-ver {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: auto;
+  margin-top: 0;
+  box-shadow: none;
+}
+
+.btn-ver:hover {
+  transform: translateY(-1px);
+  background: var(--bg-table-hover);
+}
+
+.pago-historial-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.pago-historial-item:last-child {
+  border-bottom: none;
+}
+
+.pago-historial-item .pago-fecha {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pago-historial-item .pago-metodo {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pago-historial-item .pago-monto {
+  font-weight: 600;
+  color: #16a34a;
+}

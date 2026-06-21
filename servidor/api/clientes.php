@@ -111,6 +111,41 @@ function validarDatos(array $data): array
     return $errores;
 }
 
+function verificarDuplicados(PDO $pdo, string $email, string $dni, ?int $excludeId = null): array
+{
+    $errores = [];
+
+    if ($dni !== "") {
+        $sql = "SELECT COUNT(*) FROM clientes WHERE cliente_dni = ?";
+        $params = [$dni];
+        if ($excludeId !== null) { $sql .= " AND cliente_id != ?"; $params[] = $excludeId; }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        if ($stmt->fetchColumn() > 0) $errores[] = "El DNI ya pertenece a otro cliente";
+
+        $sql = "SELECT COUNT(*) FROM usuarios WHERE usu_dni = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$dni]);
+        if ($stmt->fetchColumn() > 0) $errores[] = "El DNI ya pertenece a un empleado";
+    }
+
+    if ($email !== "") {
+        $sql = "SELECT COUNT(*) FROM clientes WHERE cliente_email = ?";
+        $params = [$email];
+        if ($excludeId !== null) { $sql .= " AND cliente_id != ?"; $params[] = $excludeId; }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        if ($stmt->fetchColumn() > 0) $errores[] = "El email ya pertenece a otro cliente";
+
+        $sql = "SELECT COUNT(*) FROM usuarios WHERE usu_email = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$email]);
+        if ($stmt->fetchColumn() > 0) $errores[] = "El email ya pertenece a un empleado";
+    }
+
+    return $errores;
+}
+
 function crear(PDO $pdo, array $input): void
 {
     $nombre = trim($input['nombre'] ?? '');
@@ -134,13 +169,20 @@ function crear(PDO $pdo, array $input): void
         return;
     }
 
+    $erroresDuplicados = verificarDuplicados($pdo, $email, $dni);
+    if (!empty($erroresDuplicados)) {
+        echo json_encode(['ok' => false, 'mensaje' => implode('<br>', $erroresDuplicados)]);
+        return;
+    }
+
     $stmt = $pdo->prepare("
         INSERT INTO clientes (cliente_nombre, cliente_apellido, cliente_email, cliente_celular, cliente_dni, cliente_estado, cliente_localidad_id, cliente_provincia_id, cliente_pais_id)
         VALUES (?, ?, ?, ?, ?, 1, 1, 1, 1)
     ");
     $stmt->execute([$nombre, $apellido, $email ?: null, $celular ?: null, $dni ?: null]);
 
-    echo json_encode(['ok' => true, 'mensaje' => 'Cliente agregado con éxito']);
+    $clienteId = (int) $pdo->lastInsertId();
+    echo json_encode(['ok' => true, 'mensaje' => 'Cliente agregado con éxito', 'cliente_id' => $clienteId]);
 }
 
 function editar(PDO $pdo, array $input): void
@@ -164,6 +206,12 @@ function editar(PDO $pdo, array $input): void
 
     if (!empty($errores)) {
         echo json_encode(['ok' => false, 'mensaje' => implode('<br>', $errores)]);
+        return;
+    }
+
+    $erroresDuplicados = verificarDuplicados($pdo, $email, $dni, $id);
+    if (!empty($erroresDuplicados)) {
+        echo json_encode(['ok' => false, 'mensaje' => implode('<br>', $erroresDuplicados)]);
         return;
     }
 

@@ -128,6 +128,11 @@ function verificarDuplicados(PDO $pdo, string $usuario, string $email, string $d
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         if ($stmt->fetchColumn() > 0) $errores[] = "El DNI ya pertenece a otro empleado";
+
+        $sql = "SELECT COUNT(*) FROM clientes WHERE cliente_dni = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$dni]);
+        if ($stmt->fetchColumn() > 0) $errores[] = "El DNI ya pertenece a un cliente";
     }
 
     if ($email !== "") {
@@ -137,6 +142,11 @@ function verificarDuplicados(PDO $pdo, string $usuario, string $email, string $d
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         if ($stmt->fetchColumn() > 0) $errores[] = "El email ya pertenece a otro empleado";
+
+        $sql = "SELECT COUNT(*) FROM clientes WHERE cliente_email = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$email]);
+        if ($stmt->fetchColumn() > 0) $errores[] = "El email ya pertenece a un cliente";
     }
 
     $sql = "SELECT COUNT(*) FROM usuarios WHERE usu_usuario = ?";

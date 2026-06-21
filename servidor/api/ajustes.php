@@ -96,6 +96,13 @@ try {
             echo json_encode(['ok' => true, 'mensaje' => 'Contraseña actualizada correctamente']);
             break;
 
+        case 'cambio_contrasena_default':
+            $hash = password_hash("1234", PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare("UPDATE usuarios SET usu_contrasena = :hash WHERE usu_id = :id");
+            $stmt->execute([':hash' => $hash, ':id' => $userId]);
+            echo json_encode(['ok' => true, 'mensaje' => 'Contraseña restablecida a 1234']);
+            break;
+
         case 'cambio_nombre':
             $nombre = trim($input['nombre'] ?? '');
             $apellido = trim($input['apellido'] ?? '');

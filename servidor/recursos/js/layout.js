@@ -210,6 +210,7 @@ async function loadPage(route) {
     if (typeof cargarReservas === 'function' && cleanRoute === 'reservas') {
       await cargarReservas();
     }
+    if (typeof cargarPagos === 'function' && cleanRoute === 'pagos') await cargarPagos();
     if (cleanRoute === 'inicio') initInicio();
 
     /* 10. RESET VISUAL */
@@ -232,6 +233,10 @@ function updateDate() {
 var clockInterval = null;
 
 function initInicio() {
+  var welcomeEl = document.querySelector('.welcome');
+  if (welcomeEl && window.currentUser) {
+    welcomeEl.textContent = 'Bienvenido, ' + window.currentUser.nombre + ' ' + window.currentUser.apellido;
+  }
   initClock();
   loadWeather();
   cargarDashboard();
@@ -345,24 +350,31 @@ function initRouter() {
   });
 }
 
-function initAjustes() {
-  /* ========================= */
-  /* TEMA OSCURO */
-  /* ========================= */
-  var themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) {
-    themeToggle.checked = document.documentElement.getAttribute('data-theme') === 'dark';
-    themeToggle.addEventListener('change', function() {
-      if (themeToggle.checked) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('sporta-theme', 'dark');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('sporta-theme', 'light');
-      }
-    });
+function setTheme(dark) {
+  if (dark) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('sporta-theme', 'dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('sporta-theme', 'light');
   }
+  var chk = document.getElementById('themeToggleCheckbox');
+  if (chk) chk.checked = dark;
+}
 
+function initThemeToggle() {
+  var chk = document.getElementById('themeToggleCheckbox');
+  if (!chk || chk.dataset.bound) return;
+  chk.dataset.bound = 'true';
+
+  chk.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  chk.addEventListener('change', function() {
+    setTheme(chk.checked);
+  });
+}
+
+function initAjustes() {
   var usuarioInput = document.getElementById('nuevo_usuario');
   var errorUsuario = document.getElementById('error_usuario');
   var okUsuario = document.getElementById('ok_usuario');
@@ -461,6 +473,24 @@ function initAjustes() {
       })
       .catch(function() { mostrarToast('Error de conexion', 'error'); });
     });
+
+    var btnReset = document.querySelector('.btn-reset-pass');
+    if (btnReset) {
+      btnReset.addEventListener('click', function() {
+        if (!confirm('¿Restablecer contraseña a 1234?')) return;
+        fetch(BASE_URL + '/api/ajustes.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accion: 'cambio_contrasena_default' })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.ok) mostrarToast(data.mensaje, 'success');
+          else mostrarToast(data.mensaje, 'error');
+        })
+        .catch(function() { mostrarToast('Error de conexion', 'error'); });
+      });
+    }
   }
   var formUser = document.getElementById('formUsuario');
   if (formUser) {
@@ -638,6 +668,7 @@ async function initLayout() {
       return false;
     }
     window.currentUserId = data.usuario.id;
+    window.currentUser = data.usuario;
     if (!data.usuario.isAdmin) {
       document.querySelectorAll('.menu-admin').forEach(function(el) {
         el.style.display = 'none';
@@ -649,6 +680,7 @@ async function initLayout() {
   }
 
   await loadComponent('sidebar-container', BASE_URL + '/componentes/sidebar.html');
+  initThemeToggle();
   await loadComponent('header-container', BASE_URL + '/componentes/header.html');
 
   updateDate();

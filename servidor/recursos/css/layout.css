@@ -43,15 +43,15 @@
 
 .sidebar-logo {
   flex-shrink: 0;
-  padding: 30px 20px;
+  padding: 10px;
   text-align: center;
   border-bottom: 1px solid rgba(250, 204, 21, 0.2);
   margin-bottom: 20px;
 }
 
 .sidebar-logo-img {
-  width: 60px;
-  margin-bottom: 10px;
+  width: 180px;
+  margin-bottom: -30px;
 }
 
 .sidebar-brand {
@@ -103,6 +103,68 @@
   flex-shrink: 0;
   padding: 20px 15px;
   border-top: 1px solid rgba(250, 204, 21, 0.2);
+}
+
+/* ========================= */
+/* 🌗 THEME TOGGLE SWITCH */
+/* ========================= */
+
+.theme-toggle-switch {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 10px 0 10px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.theme-toggle-icon {
+  font-size: 16px;
+  line-height: 1;
+  transition: opacity 0.3s;
+}
+
+.switch-track {
+  position: relative;
+  width: 46px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+
+#themeToggleCheckbox:checked ~ .switch-track {
+  background: #facc15;
+}
+
+.switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+#themeToggleCheckbox:checked ~ .switch-track .switch-thumb {
+  transform: translateX(22px);
+}
+
+.moon-icon {
+  opacity: 0.4;
+}
+
+#themeToggleCheckbox:checked ~ .moon-icon {
+  opacity: 1;
+}
+
+#themeToggleCheckbox:checked ~ .sun-icon {
+  opacity: 0.4;
 }
 
 .logout {

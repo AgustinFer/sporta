@@ -25,6 +25,12 @@ declare(strict_types=1);
 define('BASE_URL', '/sporta/servidor');
 
 /* ========================= */
+/* 🌎 TIMEZONE */
+/* ========================= */
+
+date_default_timezone_set('America/Argentina/Buenos_Aires');
+
+/* ========================= */
 /* 📦 CLASES */
 /* ========================= */
 

@@ -2,17 +2,25 @@
 /* ⚙️ AJUSTES */
 /* ========================= */
 
-.settings-container {
+.ajustes-page {
+  display: grid !important;
+  grid-template-columns: auto 320px;
+  gap: 40px;
+  align-items: start;
+  padding: 30px 0;
+}
+
+.settings-cards {
   padding: 30px;
   color: var(--text-primary);
 }
 
-.settings-container h2 {
+.settings-cards h2 {
   font-size: 2rem;
   margin-bottom: 10px;
 }
 
-.settings-container > p {
+.settings-cards > p {
   opacity: 0.8;
   margin-bottom: 30px;
 }
@@ -167,11 +175,16 @@
 /* ========================= */
 
 @media (max-width: 768px) {
-  .settings-container {
+  .ajustes-page {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .settings-cards {
     padding: 20px 12px;
   }
 
-  .settings-container h2 {
+  .settings-cards h2 {
     font-size: 1.5rem;
   }
 
@@ -181,6 +194,11 @@
 
   .settings-card .field input {
     font-size: 16px;
+  }
+
+  .burbuja-pass {
+    width: 100%;
+    max-width: 520px;
   }
 
   .btn-settings {
@@ -211,51 +229,93 @@
 }
 
 /* ========================= */
-/* 🔄 TOGGLE SWITCH */
+/* 🔑 BURBUJA CONTRASEÑA */
 /* ========================= */
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 26px;
+.burbuja-pass {
+  width: 320px;
+  min-width: 280px;
   flex-shrink: 0;
+  padding: 28px;
+  border-radius: 24px;
+  border: none;
+  background: var(--bg-surface);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-card);
 }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+.burbuja-pass h3 {
+  font-size: 1.1rem;
+  margin: 0 0 18px;
+  color: var(--text-primary);
 }
 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #ccc;
-  transition: 0.3s;
-  border-radius: 26px;
+.burbuja-pass .field {
+  margin-bottom: 14px;
 }
 
-.slider::before {
-  content: "";
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background: white;
-  transition: 0.3s;
-  border-radius: 50%;
+.burbuja-pass label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
 }
 
-.switch input:checked + .slider {
-  background: #facc15;
+.burbuja-pass input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
-.switch input:checked + .slider::before {
-  transform: translateX(22px);
+.burbuja-pass input:focus {
+  outline: none;
+  border-color: var(--accent-yellow);
+  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.2);
 }
+
+.burbuja-pass .password-requirements {
+  padding: 6px 0 0;
+  margin: 0;
+  list-style: none;
+}
+
+.burbuja-pass .password-requirements li {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 1px 0;
+  transition: color 0.2s;
+}
+
+.burbuja-pass .password-requirements li::before {
+  content: "○ ";
+}
+
+.burbuja-pass .password-requirements li.req-ok {
+  color: #27ae60;
+}
+
+.burbuja-pass .password-requirements li.req-ok::before {
+  content: "● ";
+}
+
+.burbuja-pass .field-error {
+  display: none;
+  font-size: 0.78rem;
+  color: #e74c3c;
+  margin-top: 4px;
+}
+
+.burbuja-pass .field-error.visible {
+  display: block;
+}
+
+
+
+

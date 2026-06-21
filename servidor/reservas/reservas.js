@@ -31,7 +31,8 @@ function renderTablaReservas() {
   reservasData.forEach(function(r, i) {
     var estadoHtml = badgeEstado(r.reser_estado, r.estado_reserva_descripcion);
     var pagoHtml = badgePago(r.factura_estado, r.total_pagado, r.factura_total);
-    var saldo = (parseFloat(r.factura_total || 0) - parseFloat(r.total_pagado || 0)).toFixed(2);
+    var total = parseFloat(r.factura_total || r.cancha_precio || 0);
+    var saldo = (total - parseFloat(r.total_pagado || 0)).toFixed(2);
     var saldoHtml = saldo > 0
       ? '<span class="saldo-positivo">$' + Number(saldo).toLocaleString('es-AR', {minimumFractionDigits:2}) + '</span>'
       : '<span class="saldo-cero">$0,00</span>';
@@ -48,7 +49,7 @@ function renderTablaReservas() {
       '<td data-column="acciones">' +
         '<div class="table-actions">' +
           '<button type="button" class="edit-btn" data-id="' + r.reserva_id + '" data-estado="' + r.reser_estado + '" data-observaciones="' + escAttr(r.reser_observaciones || '') + '" data-cliente="' + escAttr(clienteNombre.trim()) + '" data-cancha="Cancha ' + r.cancha_numero + '" data-horario="' + escAttr(r.tur_fecha + ' ' + horario) + '">Modificar</button>' +
-          '<button type="button" class="btn-pago" data-id="' + r.reserva_id + '" data-cliente="' + escAttr(clienteNombre.trim()) + '" data-cancha="Cancha ' + r.cancha_numero + '" data-total="' + r.factura_total + '" data-pagado="' + (r.total_pagado || 0) + '">Pago</button>' +
+          '<button type="button" class="btn-pago" data-id="' + r.reserva_id + '" data-cliente="' + escAttr(clienteNombre.trim()) + '" data-cancha="Cancha ' + r.cancha_numero + '" data-horario="' + escAttr(r.tur_fecha + ' ' + horario) + '" data-precio="' + (r.cancha_precio || '') + '" data-total="' + (r.factura_total || '') + '" data-pagado="' + (r.total_pagado || 0) + '">Pago</button>' +
         '</div>' +
       '</td>' +
     '</tr>';
@@ -178,12 +179,14 @@ if (!document.body.dataset.reservasFormBound) {
       document.getElementById("pago_reserva_id").value = reservaId;
       document.getElementById("pago_cliente").textContent = pagoBtn.dataset.cliente || "";
       document.getElementById("pago_cancha").textContent = pagoBtn.dataset.cancha || "";
+      document.getElementById("pago_horario").textContent = pagoBtn.dataset.horario || "";
 
-      var totalFact = parseFloat(pagoBtn.dataset.total || 0);
-      var pagado = parseFloat(pagoBtn.dataset.pagado || 0);
+      var precioCancha = parseFloat(pagoBtn.dataset.precio) || 0;
+      var totalFact = parseFloat(pagoBtn.dataset.total) || precioCancha;
+      var pagado = parseFloat(pagoBtn.dataset.pagado) || 0;
       var saldo = Math.max(0, totalFact - pagado);
 
-      document.getElementById("pago_total").textContent = "$" + totalFact.toLocaleString('es-AR', {minimumFractionDigits:2});
+      document.getElementById("pago_total").textContent = "$" + precioCancha.toLocaleString('es-AR', {minimumFractionDigits:2});
       document.getElementById("pago_pagado").textContent = "$" + pagado.toLocaleString('es-AR', {minimumFractionDigits:2});
       document.getElementById("pago_saldo").textContent = "$" + saldo.toLocaleString('es-AR', {minimumFractionDigits:2});
       document.getElementById("pago_monto").value = saldo > 0 ? saldo.toFixed(2) : "";

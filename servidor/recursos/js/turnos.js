@@ -8,6 +8,8 @@ const HORA_FIN = 23;
 var turnosCanchas = [];
 var turnosClientes = [];
 var turnosReservas = [];
+var turnosNuevoClienteActivo = false;
+var turnosNuevoClienteReserva = null;
 
 function initTurnosPage() {
     var fechaInput = document.getElementById('fechaSeleccionada');
@@ -75,11 +77,27 @@ function turnosCargarClientes() {
     var select = document.getElementById('cliente_id');
     if (!select) return;
     var html = '<option value="">Seleccionar cliente</option>';
+    html += '<option value="nuevo">+ Nuevo Cliente</option>';
     turnosClientes.forEach(function (cliente) {
         html += '<option value="' + cliente.cliente_id + '">' +
             cliente.cliente_apellido + ', ' + cliente.cliente_nombre + '</option>';
     });
     select.innerHTML = html;
+
+    if (window._turnosNuevoClienteId) {
+        select.value = String(window._turnosNuevoClienteId);
+        window._turnosNuevoClienteId = null;
+    }
+
+    if (!select.dataset.turnosBound) {
+        select.dataset.turnosBound = 'true';
+        select.addEventListener('change', function () {
+            if (this.value === 'nuevo') {
+                turnosAbrirNuevoCliente();
+                this.value = '';
+            }
+        });
+    }
 }
 
 function turnosGenerarTabla() {
@@ -94,7 +112,7 @@ function turnosGenerarCabecera() {
 
     turnosCanchas.forEach(function (cancha) {
         var indicador = '';
-        if (Number(cancha.cancha_estado) === 2) indicador = ' \U0001F527';
+        if (Number(cancha.cancha_estado) === 2) indicador = ' \uD83D\uDD27';
         if (Number(cancha.cancha_estado) === 3) indicador = ' \u26D4';
         fila.innerHTML += '<th>Cancha ' + cancha.cancha_numero + indicador + '</th>';
     });
@@ -182,16 +200,118 @@ function turnosAbrirNuevaReserva(canchaId, canchaNumero, hora) {
     openDrawer();
 }
 
+function turnosAbrirNuevoCliente() {
+    turnosNuevoClienteReserva = {
+        cancha_id: document.getElementById('cancha_id').value,
+        hora: document.getElementById('hora_inicio').value,
+        fecha: document.getElementById('fecha_reserva').value,
+        canchaTexto: document.getElementById('canchaTexto').value,
+        horaTexto: document.getElementById('horaTexto').value,
+        fechaTexto: document.getElementById('fechaTexto').value,
+        observaciones: document.getElementById('observaciones').value
+    };
+
+    turnosNuevoClienteActivo = true;
+    closeDrawer();
+
+    document.body.dataset.drawer = 'clientes';
+    loadDrawer().then(function () {
+        var form = document.getElementById('formCliente');
+        if (!form) return;
+
+        form.reset();
+        document.getElementById('edit_cliente_id').value = '';
+        document.getElementById('drawer-title').textContent = 'Nuevo Cliente';
+
+        if (form._turnosSubmit) {
+            form.removeEventListener('submit', form._turnosSubmit);
+        }
+
+        form._turnosSubmit = function (e) {
+            e.preventDefault();
+
+            var payload = {
+                accion: 'crear',
+                nombre: document.getElementById('cliente_nombre').value.trim(),
+                apellido: document.getElementById('cliente_apellido').value.trim(),
+                email: document.getElementById('cliente_email').value.trim(),
+                celular: document.getElementById('cliente_celular').value.trim(),
+                dni: document.getElementById('cliente_dni').value.trim()
+            };
+
+            fetch(BASE_URL + '/api/clientes.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (result) {
+                if (result.ok) {
+                    closeDrawer();
+                    turnosNuevoClienteActivo = false;
+                    window._turnosNuevoClienteId = result.cliente_id;
+                    document.body.dataset.drawer = 'turnos';
+                    loadDrawer().then(function () {
+                        document.getElementById('cancha_id').value = turnosNuevoClienteReserva.cancha_id;
+                        document.getElementById('hora_inicio').value = turnosNuevoClienteReserva.hora;
+                        document.getElementById('fecha_reserva').value = turnosNuevoClienteReserva.fecha;
+                        document.getElementById('canchaTexto').value = turnosNuevoClienteReserva.canchaTexto;
+                        document.getElementById('fechaTexto').value = turnosNuevoClienteReserva.fecha;
+                        document.getElementById('horaTexto').value = turnosNuevoClienteReserva.horaTexto;
+                        document.getElementById('observaciones').value = turnosNuevoClienteReserva.observaciones || '';
+
+                        document.getElementById('panelDetalle').style.display = 'none';
+                        document.getElementById('panelReserva').style.display = 'block';
+                        document.getElementById('drawer-title').textContent = 'Nueva Reserva';
+
+                        var nuevoForm = document.getElementById('formReserva');
+                        if (nuevoForm && !nuevoForm.dataset.bound) {
+                            nuevoForm.dataset.bound = 'true';
+                            nuevoForm.addEventListener('submit', turnosGuardarReserva);
+                        }
+
+                        turnosCargarDatos();
+                        openDrawer();
+                    });
+                    mostrarToast(result.mensaje, 'success');
+                } else {
+                    mostrarToast(result.mensaje, 'error');
+                }
+            })
+            .catch(function (err) { console.error(err); });
+        };
+
+        form.addEventListener('submit', form._turnosSubmit);
+
+        /* Cancel: restore turnos drawer if closed without saving */
+        function onCancel(e) {
+            if (!turnosNuevoClienteActivo) return;
+            if (e.target.closest('.drawer-close') || e.target.classList.contains('drawer-overlay')) {
+                document.removeEventListener('click', onCancel);
+                setTimeout(function () {
+                    if (document.body.dataset.drawer === 'clientes') {
+                        turnosNuevoClienteActivo = false;
+                        document.body.dataset.drawer = 'turnos';
+                        loadDrawer();
+                    }
+                }, 100);
+            }
+        }
+        document.addEventListener('click', onCancel);
+
+        openDrawer();
+    });
+}
+
 function turnosGuardarReserva(e) {
     e.preventDefault();
 
     var fecha = document.getElementById('fecha_reserva').value;
     var horaInicio = document.getElementById('hora_inicio').value;
-    var hoy = new Date().toISOString().split('T')[0];
+    var hoy = new Date().toLocaleDateString('en-CA');
     if (fecha === hoy) {
-        var horaTurno = parseInt(horaInicio.split(':')[0]);
-        var horaActual = new Date().getHours();
-        if (horaTurno <= horaActual) {
+        var inicioTurno = new Date(fecha + 'T' + horaInicio).getTime();
+        if (inicioTurno <= Date.now()) {
             alert('No se puede reservar un horario ya pasado');
             return;
         }

@@ -1,0 +1,54 @@
+<div class="drawer-overlay"></div>
+
+<aside class="drawer">
+
+  <div class="drawer-header">
+    <h3 id="drawer-title">Factura</h3>
+    <button type="button" class="drawer-close">✕</button>
+  </div>
+
+  <div class="drawer-content">
+
+    <div id="panelPago" class="drawer-panel">
+      <input type="hidden" id="pago_factura_id">
+
+      <div class="detalle-item">
+        <strong>Cliente:</strong>
+        <span id="pago_cliente"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Cancha:</strong>
+        <span id="pago_cancha"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Horario:</strong>
+        <span id="pago_horario"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Estado:</strong>
+        <span id="pago_estado"></span>
+      </div>
+      <div class="detalle-item">
+        <strong>Total:</strong>
+        <span id="pago_total">$0</span>
+      </div>
+      <div class="detalle-item">
+        <strong>Pagado:</strong>
+        <span id="pago_pagado">$0</span>
+      </div>
+      <div class="detalle-item">
+        <strong>Saldo pendiente:</strong>
+        <span id="pago_saldo">$0</span>
+      </div>
+
+      <div style="margin-top:24px">
+        <h4 style="margin:0 0 12px;font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px">Pagos realizados</h4>
+        <div id="pagoHistorialLista" style="max-height:300px;overflow-y:auto">
+          <p style="color:#9ca3af;font-size:13px;text-align:center;padding:10px">Sin pagos registrados</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</aside>

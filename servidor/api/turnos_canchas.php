@@ -124,7 +124,9 @@ function crearReserva(PDO $pdo, array $input): void
     $clienteId = (int)$input['cliente_id'];
     $fecha = trim($input['fecha']);
 
-    if ($fecha < gmdate('Y-m-d')) {
+    $hoy = date('Y-m-d');
+
+    if ($fecha < $hoy) {
         echo json_encode([
             'ok' => false,
             'mensaje' => 'No se puede reservar en una fecha pasada'
@@ -132,10 +134,9 @@ function crearReserva(PDO $pdo, array $input): void
         return;
     }
 
-    if ($fecha === gmdate('Y-m-d')) {
-        $horaTurno = (int)date('G', strtotime($input['hora_inicio']));
-        $horaActual = (int)date('G');
-        if ($horaTurno <= $horaActual) {
+    if ($fecha === $hoy) {
+        $inicioTurno = strtotime($fecha . ' ' . $input['hora_inicio']);
+        if ($inicioTurno <= time()) {
             echo json_encode([
                 'ok' => false,
                 'mensaje' => 'No se puede reservar un horario ya pasado'

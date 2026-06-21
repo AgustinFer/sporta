@@ -91,9 +91,10 @@ function generarBurbujas() {
         if (esMantenimiento) burbuja.classList.add('burbuja-mantenimiento');
         if (esInhabilitado) burbuja.classList.add('burbuja-inhabilitado');
 
-        var claseBotonToggle = esInhabilitado ? 'btn-habilitar-cancha' : 'btn-eliminar-cancha';
-        var textoBotonToggle = esInhabilitado ? 'Habilitar' : 'Inhabilitar';
-        var funcionToggle = esInhabilitado ? 'habilitarCancha' : 'eliminarCancha';
+        var esDisponible = Number(cancha.cancha_estado) === 1;
+        var claseBotonToggle = esDisponible ? 'btn-eliminar-cancha' : 'btn-habilitar-cancha';
+        var textoBotonToggle = esDisponible ? 'Inhabilitar' : 'Habilitar';
+        var funcionToggle = esDisponible ? 'eliminarCancha' : 'habilitarCancha';
 
         burbuja.innerHTML =
             '<div class="burbuja-header">' +

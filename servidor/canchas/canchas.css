@@ -115,6 +115,14 @@
   color: #b91c1c;
 }
 
+[data-theme="dark"] .burbuja-mantenimiento {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+[data-theme="dark"] .burbuja-mantenimiento .numero-cancha {
+  color: #fca5a5;
+}
+
 .burbuja-inhabilitado {
   border: 2px solid #9ca3af;
   background: var(--bg-elevated);
@@ -229,6 +237,10 @@
   color: #b91c1c;
 }
 
+[data-theme="dark"] .estado-mantenimiento-badge {
+  color: #fca5a5;
+}
+
 .estado-inhabilitado-badge {
   display: inline-block;
   padding: 4px 14px;
@@ -237,6 +249,10 @@
   font-weight: bold;
   background: rgba(107, 114, 128, 0.12);
   color: #6b7280;
+}
+
+[data-theme="dark"] .estado-inhabilitado-badge {
+  color: #d1d5db;
 }
 
 .burbuja-precio {

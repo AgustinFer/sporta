@@ -50,6 +50,7 @@ servidor/
 │   ├── turnos/               # Grilla horaria (JS + API)
 │   ├── canchas/              # Burbujas CRUD (JS + API)
 │   ├── reservas/             # Pagos y reservas con tabla JS + API
+│   ├── pagos/                # Todos los pagos individuales (JS + API)
 │   └── ajustes/              # Ajustes de cuenta (API-driven)
 ├── api/                      # Backend JSON endpoints
 │   ├── login.php             # POST: autenticación
@@ -59,6 +60,7 @@ servidor/
 │   ├── clientes.php          # CRUD: listar, crear, editar, toggle_estado
 │   ├── empleados.php         # CRUD: listar, crear, editar, toggle_estado
 │   ├── ajustes.php           # check_usuario, cambio_usuario, cambio_contrasena
+│   ├── pagos.php             # listar pagos individuales, factura_detalle
 │   └── turnos_canchas.php    # Turnos/reservas/canchas data (existing)
 ├── componentes/
 │   ├── header.html           # Loaded via AJAX by loadComponent()
@@ -114,3 +116,25 @@ servidor/
 - Dark theme with yellow accent (`#facc15` / `#fbbf24`).
 - Glassmorphism (backdrop-filter blur, semi-transparent backgrounds).
 - Sidebar: fixed 260px, responsive hamburger at 768px.
+
+## Known Bugs — "Errores críticos" (trigger phrase)
+
+When asked to fix "Errores críticos", the following 4 bugs must be corrected:
+
+### 1. `toISOString()` uses UTC instead of local timezone
+**Files:** `recursos/js/turnos.js:22`, `recursos/js/reservas.js:194,319`
+**Fix:** Replace `new Date().toISOString().split('T')[0]` with `new Date().toLocaleDateString('en-CA')` everywhere. In Argentina (UTC-3), after 9 PM local time, UTC rolls to the next day, breaking date pickers and the "Solo turnos de hoy" filter.
+
+### 2. `gmdate('Y-m-d')` in turnos_canchas.php
+**File:** `api/turnos_canchas.php:58` — `obtenerDatos()` defaults to `gmdate('Y-m-d')` (GMT), ignoring the configured `America/Argentina/Buenos_Aires` timezone.
+**Fix:** Replace `gmdate('Y-m-d')` with `date('Y-m-d')`.
+
+### 3. `reservasMetodosPago` variable overwritten
+**File:** `recursos/js/reservas.js:10,114`
+**Bug:** `reservasMetodosPago = data.metodos_pago` on line 10 assigns to the hoisted variable, but `var reservasMetodosPago = []` on line 114 runs later and overwrites the data with an empty array. The payment method select in the drawer ends up empty.
+**Fix:** Move `var reservasMetodosPago = [];` above `cargarReservas()` (before line 3).
+
+### 4. `cargar*()` not awaited after form submit
+**Files:** `clientes/clientes.js:131`, `empleados/empleados.js:138`, `reservas/reservas.js:235,270`
+**Bug:** After saving a form, the table reload function (`cargarClientes()`, etc.) is called inside a `.then()` callback without `await`. If the user navigates away quickly, the table data isn't refreshed.
+**Fix:** Convert the submit event listener callbacks to `async` and use `await` on the reload calls. Also add `mostrarToast()` error feedback in the `.catch()` instead of just `console.error`.
