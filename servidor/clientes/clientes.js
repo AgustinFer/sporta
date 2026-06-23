@@ -64,7 +64,7 @@ function escAttr(s) {
 }
 
 async function toggleCliente(id) {
-  if (!confirm("¿Cambiar estado del cliente?")) return;
+  if (!await showConfirm("¿Cambiar estado del cliente?")) return;
   try {
     const res = await fetch(BASE_URL + "/api/clientes.php", {
       method: "POST",
@@ -124,15 +124,15 @@ if (!document.body.dataset.clientesFormBound) {
       body: JSON.stringify(data)
     })
     .then(function(r) { return r.json(); })
-    .then(function(result) {
+    .then(async function(result) {
       if (result.ok) {
         closeDrawer();
         mostrarToast(result.mensaje, "success");
-        cargarClientes();
+        await cargarClientes();
       } else {
         mostrarToast(result.mensaje, "error");
       }
     })
-    .catch(function(err) { console.error(err); });
+    .catch(function(err) { console.error(err); mostrarToast("Error de conexión", "error"); });
   });
 }

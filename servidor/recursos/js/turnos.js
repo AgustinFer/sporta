@@ -60,7 +60,7 @@ function turnosCargarDatos() {
     })
     .then(function (r) { return r.json(); })
     .then(function (datos) {
-        if (!datos.ok) { alert(datos.mensaje); return; }
+        if (!datos.ok) { mostrarToast(datos.mensaje || 'Error cargando datos', 'error'); return; }
         turnosCanchas = datos.canchas;
         turnosClientes = datos.clientes;
         turnosReservas = datos.reservas;
@@ -69,7 +69,7 @@ function turnosCargarDatos() {
     })
     .catch(function (error) {
         console.error(error);
-        alert('Error cargando datos');
+        mostrarToast('Error de conexión al cargar datos', 'error');
     });
 }
 
@@ -230,12 +230,21 @@ function turnosAbrirNuevoCliente() {
         form._turnosSubmit = function (e) {
             e.preventDefault();
 
+            var nombre = document.getElementById('cliente_nombre').value.trim();
+            var apellido = document.getElementById('cliente_apellido').value.trim();
+            var celular = document.getElementById('cliente_celular').value.trim();
+
+            if (!celular) {
+                mostrarToast('El teléfono es obligatorio', 'error');
+                return;
+            }
+
             var payload = {
                 accion: 'crear',
-                nombre: document.getElementById('cliente_nombre').value.trim(),
-                apellido: document.getElementById('cliente_apellido').value.trim(),
+                nombre: nombre,
+                apellido: apellido,
                 email: document.getElementById('cliente_email').value.trim(),
-                celular: document.getElementById('cliente_celular').value.trim(),
+                celular: celular,
                 dni: document.getElementById('cliente_dni').value.trim()
             };
 
@@ -278,7 +287,7 @@ function turnosAbrirNuevoCliente() {
                     mostrarToast(result.mensaje, 'error');
                 }
             })
-            .catch(function (err) { console.error(err); });
+            .catch(function (err) { console.error(err); mostrarToast('Error al crear cliente', 'error'); });
         };
 
         form.addEventListener('submit', form._turnosSubmit);
@@ -292,7 +301,29 @@ function turnosAbrirNuevoCliente() {
                     if (document.body.dataset.drawer === 'clientes') {
                         turnosNuevoClienteActivo = false;
                         document.body.dataset.drawer = 'turnos';
-                        loadDrawer();
+                        loadDrawer().then(function () {
+                            if (!turnosNuevoClienteReserva) return;
+                            document.getElementById('cancha_id').value = turnosNuevoClienteReserva.cancha_id;
+                            document.getElementById('hora_inicio').value = turnosNuevoClienteReserva.hora;
+                            document.getElementById('fecha_reserva').value = turnosNuevoClienteReserva.fecha;
+                            document.getElementById('canchaTexto').value = turnosNuevoClienteReserva.canchaTexto;
+                            document.getElementById('fechaTexto').value = turnosNuevoClienteReserva.fecha;
+                            document.getElementById('horaTexto').value = turnosNuevoClienteReserva.horaTexto;
+                            document.getElementById('observaciones').value = turnosNuevoClienteReserva.observaciones || '';
+
+                            document.getElementById('panelDetalle').style.display = 'none';
+                            document.getElementById('panelReserva').style.display = 'block';
+                            document.getElementById('drawer-title').textContent = 'Nueva Reserva';
+
+                            var nuevoForm = document.getElementById('formReserva');
+                            if (nuevoForm && !nuevoForm.dataset.bound) {
+                                nuevoForm.dataset.bound = 'true';
+                                nuevoForm.addEventListener('submit', turnosGuardarReserva);
+                            }
+
+                            turnosCargarClientes();
+                            openDrawer();
+                        });
                     }
                 }, 100);
             }

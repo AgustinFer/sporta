@@ -69,7 +69,7 @@ function escAttr(s) {
 }
 
 async function toggleEmpleado(id) {
-  if (!confirm("¿Cambiar estado del empleado?")) return;
+  if (!await showConfirm("¿Cambiar estado del empleado?")) return;
   try {
     var res = await fetch(BASE_URL + "/api/empleados.php", {
       method: "POST",
@@ -131,16 +131,16 @@ if (!document.body.dataset.empleadosFormBound) {
       body: JSON.stringify(data)
     })
     .then(function(r) { return r.json(); })
-    .then(function(result) {
+    .then(async function(result) {
       if (result.ok) {
         closeDrawer();
         mostrarToast(result.mensaje, "success");
-        cargarEmpleados();
+        await cargarEmpleados();
       } else {
         mostrarToast(result.mensaje, "error");
       }
     })
-    .catch(function(err) { console.error(err); });
+    .catch(function(err) { console.error(err); mostrarToast("Error de conexión", "error"); });
   });
 }
 

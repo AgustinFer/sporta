@@ -351,15 +351,37 @@ function initRouter() {
 }
 
 function setTheme(dark) {
-  if (dark) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    localStorage.setItem('sporta-theme', 'dark');
+  if (document.startViewTransition) {
+    var toggle = document.getElementById('themeToggleSwitch');
+    if (toggle) {
+      var rect = toggle.getBoundingClientRect();
+      var x = rect.left + rect.width / 2;
+      var y = rect.top + rect.height / 2;
+      document.documentElement.style.setProperty('--toggle-x', x + 'px');
+      document.documentElement.style.setProperty('--toggle-y', y + 'px');
+    }
+    document.startViewTransition(function() {
+      if (dark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('sporta-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('sporta-theme', 'light');
+      }
+      var chk = document.getElementById('themeToggleCheckbox');
+      if (chk) chk.checked = dark;
+    });
   } else {
-    document.documentElement.removeAttribute('data-theme');
-    localStorage.setItem('sporta-theme', 'light');
+    if (dark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('sporta-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('sporta-theme', 'light');
+    }
+    var chk = document.getElementById('themeToggleCheckbox');
+    if (chk) chk.checked = dark;
   }
-  var chk = document.getElementById('themeToggleCheckbox');
-  if (chk) chk.checked = dark;
 }
 
 function initThemeToggle() {
@@ -371,6 +393,53 @@ function initThemeToggle() {
 
   chk.addEventListener('change', function() {
     setTheme(chk.checked);
+  });
+}
+
+/* ========================= */
+/* CONFIRM MODAL */
+/* ========================= */
+function showConfirm(message) {
+  return new Promise(function(resolve) {
+    var overlay = document.createElement('div');
+    overlay.className = 'confirm-overlay';
+    overlay.innerHTML =
+      '<div class="confirm-modal">' +
+        '<div class="confirm-icon-wrap">' +
+          '<span class="confirm-icon">🔒</span>' +
+        '</div>' +
+        '<p class="confirm-message">' + message + '</p>' +
+        '<div class="confirm-actions">' +
+          '<button class="confirm-btn confirm-cancel">Cancelar</button>' +
+          '<button class="confirm-btn confirm-ok">Confirmar</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+
+    requestAnimationFrame(function() {
+      overlay.classList.add('active');
+    });
+
+    function close(result) {
+      overlay.classList.remove('active');
+      setTimeout(function() {
+        overlay.remove();
+        resolve(result);
+      }, 300);
+    }
+
+    overlay.querySelector('.confirm-cancel').addEventListener('click', function() {
+      close(false);
+    });
+
+    overlay.querySelector('.confirm-ok').addEventListener('click', function() {
+      close(true);
+    });
+
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) close(false);
+    });
   });
 }
 
@@ -420,8 +489,8 @@ function initAjustes() {
   if (usuarioInput) {
     usuarioInput.addEventListener('input', function() {
       var val = usuarioInput.value.trim();
-      if (val === usuarioOriginal) { errorUsuario.textContent = ''; errorUsuario.classList.remove('visible'); okUsuario.textContent = ''; return; }
-      if (val.length < 3) { errorUsuario.textContent = 'Minimo 3 caracteres'; errorUsuario.classList.add('visible'); okUsuario.textContent = ''; return; }
+      if (val === usuarioOriginal) { errorUsuario.textContent = ''; errorUsuario.classList.remove('visible'); okUsuario.textContent = ''; okUsuario.classList.remove('visible'); return; }
+      if (val.length < 3) { errorUsuario.textContent = 'Minimo 3 caracteres'; errorUsuario.classList.add('visible'); okUsuario.textContent = ''; okUsuario.classList.remove('visible'); return; }
       if (checkTimeout) clearTimeout(checkTimeout);
       checkTimeout = setTimeout(function() {
         fetch(BASE_URL + '/api/ajustes.php', {
@@ -431,8 +500,8 @@ function initAjustes() {
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {
-          if (data.disponible) { errorUsuario.textContent = ''; errorUsuario.classList.remove('visible'); okUsuario.textContent = '✓ Disponible'; }
-          else { errorUsuario.textContent = 'El nombre de usuario ya esta en uso'; errorUsuario.classList.add('visible'); okUsuario.textContent = ''; }
+          if (data.disponible) { errorUsuario.textContent = ''; errorUsuario.classList.remove('visible'); okUsuario.textContent = '✓ Disponible'; okUsuario.classList.add('visible'); }
+          else { errorUsuario.textContent = 'El nombre de usuario ya esta en uso'; errorUsuario.classList.add('visible'); okUsuario.textContent = ''; okUsuario.classList.remove('visible'); }
         })
         .catch(function() { errorUsuario.textContent = 'Error al verificar'; errorUsuario.classList.add('visible'); });
       }, 400);
@@ -440,7 +509,7 @@ function initAjustes() {
   }
   var formPass = document.getElementById('formPassword');
   if (formPass) {
-    formPass.addEventListener('submit', function(e) {
+    formPass.addEventListener('submit', async function(e) {
       e.preventDefault();
       var validaPass = validarPassword(passInput.value);
       var validaConf = validarConfirmacion();
@@ -452,7 +521,7 @@ function initAjustes() {
         }
         return;
       }
-      if (!confirm('¿Está seguro de que desea cambiar su contraseña?')) return;
+      if (!await showConfirm('¿Está seguro de que desea cambiar su contraseña?')) return;
       fetch(BASE_URL + '/api/ajustes.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -476,8 +545,8 @@ function initAjustes() {
 
     var btnReset = document.querySelector('.btn-reset-pass');
     if (btnReset) {
-      btnReset.addEventListener('click', function() {
-        if (!confirm('¿Restablecer contraseña a 1234?')) return;
+      btnReset.addEventListener('click', async function() {
+        if (!await showConfirm('¿Restablecer contraseña a 1234?')) return;
         fetch(BASE_URL + '/api/ajustes.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -507,7 +576,7 @@ function initAjustes() {
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        if (data.ok) { usuarioOriginal = val; mostrarToast(data.mensaje, 'success'); }
+        if (data.ok) { usuarioOriginal = val; okUsuario.textContent = '✓ Cambio aplicado'; okUsuario.classList.add('visible'); errorUsuario.classList.remove('visible'); mostrarToast(data.mensaje, 'success'); }
         else mostrarToast(data.mensaje, 'error');
       })
       .catch(function() { mostrarToast('Error de conexion', 'error'); });

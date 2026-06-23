@@ -167,6 +167,26 @@
   opacity: 0.4;
 }
 
+/* =====================================
+   VIEW TRANSITION — circle reveal
+   ===================================== */
+::view-transition-old(root) {
+  animation: none;
+}
+
+::view-transition-new(root) {
+  animation: theme-circle-reveal 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes theme-circle-reveal {
+  from {
+    clip-path: circle(0px at var(--toggle-x, 50%) var(--toggle-y, 50%));
+  }
+  to {
+    clip-path: circle(calc(150vmax) at var(--toggle-x, 50%) var(--toggle-y, 50%));
+  }
+}
+
 .logout {
   color: #ef4444;
 }

@@ -49,7 +49,7 @@ function renderTablaReservas() {
       '<td data-column="acciones">' +
         '<div class="table-actions">' +
           '<button type="button" class="edit-btn" data-id="' + r.reserva_id + '" data-estado="' + r.reser_estado + '" data-observaciones="' + escAttr(r.reser_observaciones || '') + '" data-cliente="' + escAttr(clienteNombre.trim()) + '" data-cancha="Cancha ' + r.cancha_numero + '" data-horario="' + escAttr(r.tur_fecha + ' ' + horario) + '">Modificar</button>' +
-          '<button type="button" class="btn-pago" data-id="' + r.reserva_id + '" data-cliente="' + escAttr(clienteNombre.trim()) + '" data-cancha="Cancha ' + r.cancha_numero + '" data-horario="' + escAttr(r.tur_fecha + ' ' + horario) + '" data-precio="' + (r.cancha_precio || '') + '" data-total="' + (r.factura_total || '') + '" data-pagado="' + (r.total_pagado || 0) + '">Pago</button>' +
+          '<button type="button" class="btn-pago"' + (Number(r.reser_estado) === 3 ? ' disabled' : '') + ' data-id="' + r.reserva_id + '" data-cliente="' + escAttr(clienteNombre.trim()) + '" data-cancha="Cancha ' + r.cancha_numero + '" data-horario="' + escAttr(r.tur_fecha + ' ' + horario) + '" data-precio="' + (r.cancha_precio || '') + '" data-total="' + (r.factura_total || '') + '" data-pagado="' + (r.total_pagado || 0) + '">Pago</button>' +
         '</div>' +
       '</td>' +
     '</tr>';
@@ -60,6 +60,8 @@ function renderTablaReservas() {
   }
   initFiltroPendientes();
   initFiltroHoy();
+  initFiltroFecha();
+  initLimitSelector();
 }
 
 function badgeEstado(estado, descripcion) {
@@ -316,8 +318,11 @@ function cargarHistorialPagos(reservaId, totalFact, pagado) {
 function aplicarFiltros() {
   var mostrarSoloPendientes = document.getElementById("showSoloPendientes")?.checked;
   var mostrarSoloHoy = document.getElementById("showSoloHoy")?.checked;
-  var hoyStr = new Date().toISOString().split('T')[0];
+  var fechaDesde = document.getElementById("filterFechaDesde")?.value;
+  var limit = parseInt(document.querySelector(".limit-selector-btn")?.dataset.limitValue || 0);
+  var hoyStr = new Date().toLocaleDateString('en-CA');
 
+  var visibleCount = 0;
   document.querySelectorAll("#reservasTableBody tr").forEach(function(row) {
     if (row.querySelector("td[colspan]")) return;
 
@@ -339,6 +344,20 @@ function aplicarFiltros() {
       }
     }
 
+    if (fechaDesde) {
+      var fechaCell = row.querySelector('[data-column="fecha"]');
+      if (fechaCell && fechaCell.textContent.trim() < fechaDesde) {
+        row.style.display = "none";
+        return;
+      }
+    }
+
+    visibleCount++;
+    if (limit > 0 && visibleCount > limit) {
+      row.style.display = "none";
+      return;
+    }
+
     row.style.display = "";
   });
 }
@@ -355,6 +374,77 @@ function initFiltroHoy() {
   if (!chk || chk.dataset.bound) return;
   chk.dataset.bound = "true";
   chk.addEventListener("change", aplicarFiltros);
+}
+
+function initFiltroFecha() {
+  var input = document.getElementById("filterFechaDesde");
+  if (!input || input.dataset.bound) return;
+  input.dataset.bound = "true";
+  input.addEventListener("change", aplicarFiltros);
+}
+
+function initLimitSelector() {
+  var toolbar = document.querySelector(".table-toolbar");
+  if (!toolbar) return;
+  if (toolbar.dataset.limitSelectorBound) return;
+  toolbar.dataset.limitSelectorBound = "true";
+
+  var btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "limit-selector-btn";
+  btn.style.position = "relative";
+  btn.dataset.limitValue = "0";
+
+  var labelSpan = document.createElement("span");
+  labelSpan.textContent = "Mostrar: Todos \u25BC";
+  btn.appendChild(labelSpan);
+
+  var dropdown = document.createElement("div");
+  dropdown.className = "limit-selector-dropdown";
+
+  var options = [
+    { value: 0, label: "Todos" },
+    { value: 100, label: "\u00DAltimos 100" },
+    { value: 50, label: "\u00DAltimos 50" },
+    { value: 20, label: "\u00DAltimos 20" },
+    { value: 10, label: "\u00DAltimos 10" }
+  ];
+
+  options.forEach(function(opt) {
+    var item = document.createElement("div");
+    item.className = "limit-selector-item";
+    item.textContent = opt.label;
+    item.dataset.value = opt.value;
+    item.addEventListener("click", function() {
+      labelSpan.textContent = "Mostrar: " + opt.label + " \u25BC";
+      btn.dataset.limitValue = opt.value;
+      dropdown.classList.remove("open");
+      aplicarFiltros();
+    });
+    dropdown.appendChild(item);
+  });
+
+  btn.appendChild(dropdown);
+
+  var columnBtn = toolbar.querySelector(".column-picker-btn");
+  if (columnBtn) {
+    toolbar.insertBefore(btn, columnBtn);
+  } else {
+    toolbar.appendChild(btn);
+  }
+
+  btn.addEventListener("click", function(e) {
+    e.stopPropagation();
+    dropdown.classList.toggle("open");
+  });
+
+  document.addEventListener("click", function() {
+    dropdown.classList.remove("open");
+  });
+
+  dropdown.addEventListener("click", function(e) {
+    e.stopPropagation();
+  });
 }
 
 

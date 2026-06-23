@@ -2,16 +2,18 @@
 
   const reglas = {
     soloLetras: /^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/,
-    soloNumeros: /^\d{1,8}$/,
-    telefono: /^\d{1,10}$/,
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    soloNumeros: /^\d{7,8}$/,
+    telefono: /^\d{7,10}$/,
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    usuario: /^[a-zA-Z0-9_]{3,20}$/
   };
 
   const mensajes = {
     soloLetras: "Solo se permiten letras",
-    soloNumeros: "Máximo 8 dígitos numéricos",
-    telefono: "Máximo 10 dígitos numéricos",
-    email: "Ingrese un email válido"
+    soloNumeros: "Debe tener entre 7 y 8 dígitos numéricos",
+    telefono: "Debe tener entre 7 y 10 dígitos numéricos",
+    email: "Ingrese un email válido",
+    usuario: "Entre 3 y 20 caracteres alfanuméricos"
   };
 
   const form = document.querySelector(".drawer-form");

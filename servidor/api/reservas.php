@@ -129,7 +129,7 @@ function togglePago(PDO $pdo, array $input): void
     }
 
     $stmt = $pdo->prepare("
-        SELECT f.factura_id, f.factura_estado, ca.cancha_precio
+        SELECT r.reser_estado, f.factura_id, f.factura_estado, ca.cancha_precio
         FROM reservas r
         JOIN turnos t ON r.tur_id = t.tur_id
         JOIN canchas ca ON t.id_cancha = ca.cancha_id
@@ -141,6 +141,11 @@ function togglePago(PDO $pdo, array $input): void
 
     if (!$row) {
         echo json_encode(['ok' => false, 'mensaje' => 'Reserva no encontrada']);
+        return;
+    }
+
+    if ((int)$row['reser_estado'] === 3) {
+        echo json_encode(['ok' => false, 'mensaje' => 'No se pueden registrar pagos en una reserva cancelada']);
         return;
     }
 
@@ -195,6 +200,14 @@ function registrarPago(PDO $pdo, array $input): void
 
     if ($reservaId <= 0 || $monto <= 0 || $metodoPagoId <= 0) {
         echo json_encode(['ok' => false, 'mensaje' => 'Datos de pago inválidos']);
+        return;
+    }
+
+    $stmtCheck = $pdo->prepare("SELECT reser_estado FROM reservas WHERE reserva_id = ?");
+    $stmtCheck->execute([$reservaId]);
+    $estado = (int) $stmtCheck->fetchColumn();
+    if ($estado === 3) {
+        echo json_encode(['ok' => false, 'mensaje' => 'No se pueden registrar pagos en una reserva cancelada']);
         return;
     }
 

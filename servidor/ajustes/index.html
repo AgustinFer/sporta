@@ -123,37 +123,41 @@
             <button type="submit" class="btn-settings">Guardar celular</button>
           </form>
         </div>
-      </div><!-- .settings-cards -->
+      </div>
 
-    </div>
+      <div class="settings-card accordion">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <h3>Contraseña</h3>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body" id="password-body">
+          <form id="formPassword" novalidate>
+            <div class="field">
+              <label for="pass_actual">Contraseña actual</label>
+              <input type="password" name="pass_actual" id="pass_actual" required autocomplete="current-password">
+            </div>
+            <div class="field">
+              <label for="pass_nueva">Nueva contraseña</label>
+              <input type="password" name="pass_nueva" id="pass_nueva" required autocomplete="new-password">
+              <ul class="password-requirements">
+                <li id="req-length">Mínimo 6 caracteres</li>
+                <li id="req-upper">Una mayúscula</li>
+                <li id="req-number">Un número</li>
+                <li id="req-special">Un caracter especial</li>
+              </ul>
+            </div>
+            <div class="field">
+              <label for="pass_confirmar">Confirmar contraseña</label>
+              <input type="password" name="pass_confirmar" id="pass_confirmar" required autocomplete="new-password">
+              <span class="field-error" id="error_password"></span>
+            </div>
+            <button type="submit" class="btn-settings">Cambiar contraseña</button>
+            <button type="button" class="btn-settings btn-reset-pass">Restablecer a 1234</button>
+          </form>
+        </div>
+      </div>
 
-    <div class="burbuja-pass">
-      <h3>🔑 Cambiar contraseña</h3>
-      <form id="formPassword" novalidate>
-        <div class="field">
-          <label for="pass_actual">Contraseña actual</label>
-          <input type="password" name="pass_actual" id="pass_actual" required autocomplete="current-password">
-        </div>
-        <div class="field">
-          <label for="pass_nueva">Nueva contraseña</label>
-          <input type="password" name="pass_nueva" id="pass_nueva" required autocomplete="new-password">
-          <ul class="password-requirements">
-            <li id="req-length">Mínimo 6 caracteres</li>
-            <li id="req-upper">Una mayúscula</li>
-            <li id="req-number">Un número</li>
-            <li id="req-special">Un caracter especial</li>
-          </ul>
-        </div>
-        <div class="field">
-          <label for="pass_confirmar">Confirmar contraseña</label>
-          <input type="password" name="pass_confirmar" id="pass_confirmar" required autocomplete="new-password">
-          <span class="field-error" id="error_password"></span>
-        </div>
-        <button type="submit" class="btn-settings">Cambiar contraseña</button>
-      </form>
-      <button type="button" class="btn-settings btn-reset-pass">Restablecer a 1234</button>
-
-    </div>
+    </div><!-- .settings-cards -->
 
   </main>
 

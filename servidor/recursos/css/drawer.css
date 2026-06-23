@@ -140,6 +140,24 @@
   border-color: var(--accent-blue);
 }
 
+.drawer-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-medium);
+  background: var(--drawer-input-bg);
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.drawer-form textarea:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+}
+
 .drawer-form select {
   width: 100%;
   padding: 12px 14px;

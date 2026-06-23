@@ -88,31 +88,33 @@ function validarDatos(array $data): array
     $email = trim($data['email'] ?? '');
     $celular = trim($data['celular'] ?? '');
     $dni = trim($data['dni'] ?? '');
+    $usuario = trim($data['usuario'] ?? '');
 
     if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $nombre)) {
         $errores[] = "El nombre contiene caracteres inválidos";
+    } elseif (strlen($nombre) < 2) {
+        $errores[] = "El nombre debe tener al menos 2 caracteres";
     }
     if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $apellido)) {
         $errores[] = "El apellido contiene caracteres inválidos";
+    } elseif (strlen($apellido) < 2) {
+        $errores[] = "El apellido debe tener al menos 2 caracteres";
     }
     if ($dni !== "") {
-        if (!preg_match('/^\d+$/', $dni)) {
-            $errores[] = "El DNI solo debe contener números";
-        } elseif (strlen($dni) > 8) {
-            $errores[] = "El DNI no puede tener más de 8 dígitos";
+        if (!preg_match('/^\d{7,8}$/', $dni)) {
+            $errores[] = "El DNI debe tener entre 7 y 8 dígitos numéricos";
         }
     }
     if ($celular !== "") {
-        $digitos = preg_replace('/\D/', '', $celular);
-        if (strlen($digitos) > 10) {
-            $errores[] = "El teléfono no puede tener más de 10 dígitos";
-        }
-        if (!preg_match('/^[\d\s\+\-\(\)]+$/', $celular)) {
-            $errores[] = "El teléfono contiene caracteres inválidos";
+        if (!preg_match('/^\d{7,10}$/', $celular)) {
+            $errores[] = "El teléfono debe tener entre 7 y 10 dígitos numéricos";
         }
     }
     if ($email !== "" && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errores[] = "El email no tiene un formato válido";
+    }
+    if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $usuario)) {
+        $errores[] = "El usuario debe tener entre 3 y 20 caracteres alfanuméricos";
     }
     return $errores;
 }
@@ -175,7 +177,7 @@ function crear(PDO $pdo, array $input): void
         return;
     }
 
-    $errores = validarDatos(compact('nombre', 'apellido', 'email', 'celular', 'dni'));
+    $errores = validarDatos(compact('nombre', 'apellido', 'email', 'celular', 'dni', 'usuario'));
 
     if (empty($errores)) {
         $erroresDuplicados = verificarDuplicados($pdo, $usuario, $email, $dni);
@@ -223,7 +225,7 @@ function editar(PDO $pdo, array $input): void
         }
     }
 
-    $errores = validarDatos(compact('nombre', 'apellido', 'email', 'celular', 'dni'));
+    $errores = validarDatos(compact('nombre', 'apellido', 'email', 'celular', 'dni', 'usuario'));
 
     if (empty($errores)) {
         $erroresDuplicados = verificarDuplicados($pdo, $usuario, $email, $dni, $id);

@@ -172,12 +172,10 @@ function initColumnPicker() {
 
   const storageKey = "sporta_columnVisibility_" + page.toLowerCase();
 
-  const wrapper = document.createElement("div");
-  wrapper.className = "column-picker-wrapper";
-
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "column-picker-btn";
+  btn.style.position = "relative";
   btn.textContent = "Columnas \u25BC";
 
   const dropdown = document.createElement("div");
@@ -205,9 +203,8 @@ function initColumnPicker() {
     dropdown.appendChild(item);
   });
 
-  wrapper.appendChild(btn);
-  wrapper.appendChild(dropdown);
-  toolbar.appendChild(wrapper);
+  btn.appendChild(dropdown);
+  toolbar.appendChild(btn);
 
   loadState();
 

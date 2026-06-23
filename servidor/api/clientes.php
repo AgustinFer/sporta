@@ -85,25 +85,23 @@ function validarDatos(array $data): array
 
     if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $nombre)) {
         $errores[] = "El nombre contiene caracteres inválidos";
+    } elseif (strlen($nombre) < 2) {
+        $errores[] = "El nombre debe tener al menos 2 caracteres";
     }
     if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $apellido)) {
         $errores[] = "El apellido contiene caracteres inválidos";
+    } elseif (strlen($apellido) < 2) {
+        $errores[] = "El apellido debe tener al menos 2 caracteres";
     }
     if ($dni !== "") {
-        if (!preg_match('/^\d+$/', $dni)) {
-            $errores[] = "El DNI solo debe contener números";
-        } elseif (strlen($dni) > 8) {
-            $errores[] = "El DNI no puede tener más de 8 dígitos";
+        if (!preg_match('/^\d{7,8}$/', $dni)) {
+            $errores[] = "El DNI debe tener entre 7 y 8 dígitos numéricos";
         }
     }
-    if ($celular !== "") {
-        $digitos = preg_replace('/\D/', '', $celular);
-        if (strlen($digitos) > 10) {
-            $errores[] = "El teléfono no puede tener más de 10 dígitos";
-        }
-        if (!preg_match('/^[\d\s\+\-\(\)]+$/', $celular)) {
-            $errores[] = "El teléfono contiene caracteres inválidos";
-        }
+    if ($celular === "") {
+        $errores[] = "El teléfono es obligatorio";
+    } elseif (!preg_match('/^\d{7,10}$/', $celular)) {
+        $errores[] = "El teléfono debe tener entre 7 y 10 dígitos numéricos";
     }
     if ($email !== "" && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errores[] = "El email no tiene un formato válido";
@@ -154,8 +152,8 @@ function crear(PDO $pdo, array $input): void
     $celular = trim($input['celular'] ?? '');
     $dni = trim($input['dni'] ?? '');
 
-    if (empty($nombre) || empty($apellido)) {
-        echo json_encode(['ok' => false, 'mensaje' => 'Nombre y apellido son obligatorios']);
+    if (empty($nombre) || empty($apellido) || empty($celular)) {
+        echo json_encode(['ok' => false, 'mensaje' => 'Nombre, apellido y teléfono son obligatorios']);
         return;
     }
 
@@ -194,8 +192,8 @@ function editar(PDO $pdo, array $input): void
     $celular = trim($input['celular'] ?? '');
     $dni = trim($input['dni'] ?? '');
 
-    if ($id <= 0 || empty($nombre) || empty($apellido)) {
-        echo json_encode(['ok' => false, 'mensaje' => 'Datos inválidos']);
+    if ($id <= 0 || empty($nombre) || empty($apellido) || empty($celular)) {
+        echo json_encode(['ok' => false, 'mensaje' => 'Nombre, apellido y teléfono son obligatorios']);
         return;
     }
 

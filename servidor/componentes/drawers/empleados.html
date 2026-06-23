@@ -27,7 +27,7 @@
 
     <div>
       <label>Usuario <span class="required">*</span></label>
-      <input type="text" name="empleado_usuario" id="empleado_usuario" required>
+      <input type="text" name="empleado_usuario" id="empleado_usuario" pattern="[a-zA-Z0-9_]{3,20}" title="Entre 3 y 20 caracteres alfanuméricos" data-validate="usuario" minlength="3" maxlength="20" required>
     </div>
 
     <div>
@@ -41,7 +41,7 @@
 
     <div>
       <label>Teléfono</label>
-      <input type="text" name="empleado_celular" id="empleado_celular" pattern="\d{1,10}" title="Solo se permiten números, máximo 10 dígitos" data-validate="telefono" maxlength="10" inputmode="numeric">
+      <input type="text" name="empleado_celular" id="empleado_celular" pattern="\d{7,10}" title="Solo números, entre 7 y 10 dígitos" data-validate="telefono" maxlength="10" inputmode="numeric">
       <span class="field-error" id="error_empleado_celular"></span>
     </div>
 
@@ -53,7 +53,7 @@
 
     <div>
       <label>DNI</label>
-      <input type="text" name="empleado_dni" id="empleado_dni" pattern="\d{1,8}" title="Solo se permiten números, máximo 8 dígitos" data-validate="soloNumeros" maxlength="8" inputmode="numeric">
+      <input type="text" name="empleado_dni" id="empleado_dni" pattern="\d{7,8}" title="Solo números, entre 7 y 8 dígitos" data-validate="soloNumeros" maxlength="8" inputmode="numeric">
       <span class="field-error" id="error_empleado_dni"></span>
     </div>
 
