@@ -22,7 +22,7 @@ declare(strict_types=1);
 |
 */
 
-define('BASE_URL', '/sportaV0.8/servidor');
+define('BASE_URL', '');
 
 /* ========================= */
 /* 🌎 TIMEZONE */
