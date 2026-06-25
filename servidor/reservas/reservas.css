@@ -53,6 +53,10 @@
   box-shadow: var(--shadow-sm);
 }
 
+.limit-selector-btn:active {
+  transform: none !important;
+}
+
 .limit-selector-dropdown {
   position: absolute;
   right: 0;

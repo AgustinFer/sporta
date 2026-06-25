@@ -137,6 +137,25 @@
 
   border: none;
   padding: 0;
+
+  transition: all 0.3s ease;
+  animation: fabAppear 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fab:hover {
+  transform: scale(1.15) rotate(90deg);
+  box-shadow: 0 8px 30px rgba(250, 204, 21, 0.4), 0 0 60px rgba(250, 204, 21, 0.15);
+}
+
+.fab:active {
+  transform: scale(0.95) rotate(90deg);
+}
+
+@keyframes fabAppear {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  60% { transform: scale(1.2) rotate(15deg); opacity: 1; }
+  80% { transform: scale(0.9) rotate(-5deg); }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
 }
 
 @media (max-width: 768px) {

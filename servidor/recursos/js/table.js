@@ -172,6 +172,10 @@ function initColumnPicker() {
 
   const storageKey = "sporta_columnVisibility_" + page.toLowerCase();
 
+  if (page.toLowerCase().includes("reservas") || page.toLowerCase() === "pagos") {
+    localStorage.removeItem(storageKey);
+  }
+
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "column-picker-btn";
