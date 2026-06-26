@@ -48,7 +48,7 @@ function renderTablaEmpleados() {
       '<td data-column="acciones">' +
         '<div class="table-actions">' +
           '<button type="button" class="edit-btn" data-id="' + e.usu_id + '" data-self="' + isSelf + '" data-nombre="' + escAttr(e.usu_nombre) + '" data-apellido="' + escAttr(e.usu_apellido) + '" data-email="' + escAttr(e.usu_email || "") + '" data-celular="' + escAttr(e.usu_celular || "") + '" data-dni="' + escAttr(e.usu_dni || "") + '" data-usuario="' + escAttr(e.usu_usuario) + '" data-direccion="' + escAttr(e.usu_direccion || "") + '" data-rol="' + e.usu_rol + '">Modificar</button>' +
-          '<button type="button" class="' + (parseInt(e.usu_estado) === 1 ? "deactivate-btn" : "activate-btn") + '" ' + (isSelf ? 'disabled' : '') + ' onclick="toggleEmpleado(' + e.usu_id + ')">' + (parseInt(e.usu_estado) === 1 ? "Inactivar" : "Activar") + '</button>' +
+          '<button type="button" class="' + (parseInt(e.usu_estado) === 1 ? "deactivate-btn" : "activate-btn") + '" ' + (isSelf ? 'disabled' : '') + ' onclick="toggleEmpleado(' + e.usu_id + ')">' + (parseInt(e.usu_estado) === 1 ? "Inhabilitar" : "Activar") + '</button>' +
         '</div>' +
       '</td>' +
     '</tr>';
@@ -69,7 +69,7 @@ function escAttr(s) {
 }
 
 async function toggleEmpleado(id) {
-  if (!await showConfirm("¿Cambiar estado del empleado?")) return;
+  if (!await showConfirm("¿Cambiar estado del empleado?", "🚫")) return;
   try {
     var res = await fetch(BASE_URL + "/api/empleados.php", {
       method: "POST",

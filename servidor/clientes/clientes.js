@@ -43,7 +43,7 @@ function renderTablaClientes() {
       '<td data-column="acciones">' +
         '<div class="table-actions">' +
           '<button type="button" class="edit-btn" data-id="' + c.cliente_id + '" data-nombre="' + escAttr(c.cliente_nombre) + '" data-apellido="' + escAttr(c.cliente_apellido) + '" data-email="' + escAttr(c.cliente_email || "") + '" data-celular="' + escAttr(c.cliente_celular || "") + '" data-dni="' + escAttr(c.cliente_dni || "") + '">Modificar</button>' +
-          '<button type="button" class="' + (parseInt(c.cliente_estado) === 1 ? "deactivate-btn" : "activate-btn") + '" onclick="toggleCliente(' + c.cliente_id + ')">' + (parseInt(c.cliente_estado) === 1 ? "Inactivar" : "Activar") + '</button>' +
+          '<button type="button" class="' + (parseInt(c.cliente_estado) === 1 ? "deactivate-btn" : "activate-btn") + '" onclick="toggleCliente(' + c.cliente_id + ')">' + (parseInt(c.cliente_estado) === 1 ? "Inhabilitar" : "Activar") + '</button>' +
         '</div>' +
       '</td>' +
     '</tr>';
@@ -64,7 +64,7 @@ function escAttr(s) {
 }
 
 async function toggleCliente(id) {
-  if (!await showConfirm("¿Cambiar estado del cliente?")) return;
+  if (!await showConfirm("¿Cambiar estado del cliente?", "🚫")) return;
   try {
     const res = await fetch(BASE_URL + "/api/clientes.php", {
       method: "POST",

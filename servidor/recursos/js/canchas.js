@@ -185,7 +185,7 @@ async function guardarCancha(e) {
 }
 
 async function eliminarCancha(canchaId) {
-    if (!await showConfirm('¿Estás seguro de que deseas inhabilitar esta cancha?')) return;
+    if (!await showConfirm('¿Estás seguro de que deseas inhabilitar esta cancha?', '🚫')) return;
 
     try {
         var respuesta = await fetch(BASE_URL + '/api/turnos_canchas.php', {
@@ -206,7 +206,7 @@ async function eliminarCancha(canchaId) {
 }
 
 async function habilitarCancha(canchaId) {
-    if (!await showConfirm('¿Estás seguro de que deseas habilitar esta cancha?')) return;
+    if (!await showConfirm('¿Estás seguro de que deseas habilitar esta cancha?', '✅')) return;
 
     try {
         var respuesta = await fetch(BASE_URL + '/api/turnos_canchas.php', {

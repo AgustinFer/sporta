@@ -402,14 +402,20 @@ function initThemeToggle() {
 /* ========================= */
 /* CONFIRM MODAL */
 /* ========================= */
-function showConfirm(message) {
+function showConfirm(message, icon) {
+  if (!icon) icon = '🔒';
+  var colorClass = '';
+  if (icon === '🚫' || icon === '⚠️') colorClass = ' confirm-icon-wrap--red';
+  else if (icon === '✅') colorClass = ' confirm-icon-wrap--green';
+  else if (icon === '🔑') colorClass = ' confirm-icon-wrap--yellow';
+
   return new Promise(function(resolve) {
     var overlay = document.createElement('div');
     overlay.className = 'confirm-overlay';
     overlay.innerHTML =
       '<div class="confirm-modal">' +
-        '<div class="confirm-icon-wrap">' +
-          '<span class="confirm-icon">🔒</span>' +
+        '<div class="confirm-icon-wrap' + colorClass + '">' +
+          '<span class="confirm-icon">' + icon + '</span>' +
         '</div>' +
         '<p class="confirm-message">' + message + '</p>' +
         '<div class="confirm-actions">' +
@@ -524,7 +530,7 @@ function initAjustes() {
         }
         return;
       }
-      if (!await showConfirm('¿Está seguro de que desea cambiar su contraseña?')) return;
+      if (!await showConfirm('¿Está seguro de que desea cambiar su contraseña?', '🔒')) return;
       fetch(BASE_URL + '/api/ajustes.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -549,7 +555,7 @@ function initAjustes() {
     var btnReset = document.querySelector('.btn-reset-pass');
     if (btnReset) {
       btnReset.addEventListener('click', async function() {
-        if (!await showConfirm('¿Restablecer contraseña a 1234?')) return;
+        if (!await showConfirm('¿Restablecer contraseña a 1234?', '🔑')) return;
         fetch(BASE_URL + '/api/ajustes.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
