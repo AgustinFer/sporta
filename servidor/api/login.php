@@ -70,7 +70,8 @@ $_SESSION['usuario'] = new Usuario(
     $datos['usu_usuario'],
     $datos['rol_nombre'],
     $datos['usu_direccion'],
-    $datos['localidad_nombre']
+    $datos['localidad_nombre'],
+    $datos['usu_fecha_alta']
 );
 
 echo json_encode([

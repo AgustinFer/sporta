@@ -34,6 +34,26 @@
       <h2>Ajustes</h2>
       <p>Configuración de tu cuenta</p>
 
+      <div class="settings-card profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar" id="profileAvatar">👤</div>
+          <div class="profile-info">
+            <h3 id="profileName">—</h3>
+            <span class="profile-role-badge" id="profileRole">—</span>
+          </div>
+        </div>
+        <div class="profile-details">
+          <div class="profile-detail">
+            <span class="detail-label">Usuario</span>
+            <span class="detail-value" id="profileUsuario">—</span>
+          </div>
+          <div class="profile-detail">
+            <span class="detail-label">Miembro desde</span>
+            <span class="detail-value" id="profileFechaAlta">—</span>
+          </div>
+        </div>
+      </div>
+
       <div class="settings-card accordion">
         <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
           <h3>Nombre de usuario</h3>
@@ -121,6 +141,23 @@
               <span class="field-error" id="error_celular"></span>
             </div>
             <button type="submit" class="btn-settings">Guardar celular</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="settings-card accordion">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <h3>DNI</h3>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body" id="dni-body">
+          <form id="formDni" novalidate>
+            <div class="field">
+              <label for="edit_dni">Documento</label>
+              <input type="text" name="dni" id="edit_dni" pattern="\d{1,10}" title="Solo números" maxlength="10" inputmode="numeric" required>
+              <span class="field-error" id="error_dni"></span>
+            </div>
+            <button type="submit" class="btn-settings">Guardar DNI</button>
           </form>
         </div>
       </div>

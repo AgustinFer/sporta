@@ -167,6 +167,22 @@ try {
             echo json_encode(['ok' => true, 'mensaje' => 'Celular actualizado']);
             break;
 
+        case 'cambio_dni':
+            $dni = trim($input['dni'] ?? '');
+            if ($dni === '') {
+                echo json_encode(['ok' => false, 'mensaje' => 'El DNI no puede estar vacío']);
+                exit;
+            }
+            if (!preg_match('/^\d+$/', $dni)) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El DNI solo debe contener números']);
+                exit;
+            }
+            $stmt = $pdo->prepare("UPDATE usuarios SET usu_dni = :dni WHERE usu_id = :id");
+            $stmt->execute([':dni' => $dni, ':id' => $userId]);
+            $_SESSION['usuario']->setDni($dni);
+            echo json_encode(['ok' => true, 'mensaje' => 'DNI actualizado']);
+            break;
+
         default:
             echo json_encode(['ok' => false, 'mensaje' => 'Acción inválida']);
             break;

@@ -19,9 +19,11 @@ echo json_encode([
         'apellido' => $user->getApellido(),
         'email' => $user->getEmail(),
         'celular' => $user->getCelular(),
+        'dni' => $user->getDni(),
         'direccion' => $user->getDireccion(),
         'usuario' => $user->getUsuario(),
         'rol' => $user->getRol(),
-        'isAdmin' => $user->isAdmin()
+        'isAdmin' => $user->isAdmin(),
+        'fecha_alta' => $user->getFechaAlta()
     ]
 ]);

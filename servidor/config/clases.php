@@ -58,9 +58,9 @@ class Cliente extends Persona{
 
 class Usuario extends Persona{
     
-    private $id, $usuario, $rol, $direccion, $localidad;
+    private $id, $usuario, $rol, $direccion, $localidad, $fecha_alta;
 
-    public function __construct($id,$nombre,$apellido,$email,$celular,$dni,$usuario,$rol,$direccion,$localidad){
+    public function __construct($id,$nombre,$apellido,$email,$celular,$dni,$usuario,$rol,$direccion,$localidad,$fecha_alta=null){
         $this->id = $id;
         $this->nombre = $nombre;
         $this->apellido = $apellido;
@@ -71,6 +71,7 @@ class Usuario extends Persona{
         $this->rol = $rol;
         $this->direccion = $direccion;
         $this->localidad = $localidad;
+        $this->fecha_alta = $fecha_alta;
     }
 
     #region GETTERS
@@ -97,6 +98,10 @@ class Usuario extends Persona{
 
     public function getLocalidad(){
         return $this->localidad;
+    }
+
+    public function getFechaAlta(){
+        return $this->fecha_alta;
     }
 
     public function setDireccion($direccion){
@@ -220,7 +225,8 @@ class Usuario extends Persona{
             $datos['usu_usuario'],
             $datos['rol_nombre'],
             $datos['usu_direccion'],
-            $datos['localidad_nombre']
+            $datos['localidad_nombre'],
+            $datos['usu_fecha_alta']
 
         );
 

@@ -708,18 +708,62 @@ function initAjustes() {
   }
 
   /* ========================= */
-  /* PRE-CARGAR DATOS ACTUALES */
+  /* DNI */
+  /* ========================= */
+
+  var inputDni = document.getElementById('edit_dni');
+  var errorDni = document.getElementById('error_dni');
+  var formDni = document.getElementById('formDni');
+
+  if (formDni) {
+    formDni.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var dni = inputDni.value.trim();
+      if (!dni) { errorDni.textContent = 'El DNI no puede estar vacío'; errorDni.classList.add('visible'); inputDni.focus(); return; }
+      if (!/^\d+$/.test(dni)) { errorDni.textContent = 'Solo se permiten números'; errorDni.classList.add('visible'); inputDni.focus(); return; }
+      fetch(BASE_URL + '/api/ajustes.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accion: 'cambio_dni', dni: dni })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) { mostrarToast(data.mensaje, 'success'); }
+        else mostrarToast(data.mensaje, 'error');
+      })
+      .catch(function() { mostrarToast('Error de conexion', 'error'); });
+    });
+  }
+
+  /* ========================= */
+  /* PRE-CARGAR DATOS ACTUALES + PERFIL */
   /* ========================= */
 
   fetch(BASE_URL + '/api/usuario.php')
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (!data.ok || !data.usuario) return;
-      if (document.getElementById('edit_nombre')) document.getElementById('edit_nombre').value = data.usuario.nombre || '';
-      if (document.getElementById('edit_apellido')) document.getElementById('edit_apellido').value = data.usuario.apellido || '';
-      if (document.getElementById('edit_direccion')) document.getElementById('edit_direccion').value = data.usuario.direccion || '';
-      if (document.getElementById('edit_email')) document.getElementById('edit_email').value = data.usuario.email || '';
-      if (document.getElementById('edit_celular')) document.getElementById('edit_celular').value = data.usuario.celular || '';
+      var u = data.usuario;
+
+      if (document.getElementById('edit_nombre')) document.getElementById('edit_nombre').value = u.nombre || '';
+      if (document.getElementById('edit_apellido')) document.getElementById('edit_apellido').value = u.apellido || '';
+      if (document.getElementById('edit_direccion')) document.getElementById('edit_direccion').value = u.direccion || '';
+      if (document.getElementById('edit_email')) document.getElementById('edit_email').value = u.email || '';
+      if (document.getElementById('edit_celular')) document.getElementById('edit_celular').value = u.celular || '';
+      if (document.getElementById('edit_dni')) document.getElementById('edit_dni').value = u.dni || '';
+
+      /* Profile card */
+      var nameEl = document.getElementById('profileName');
+      if (nameEl) nameEl.textContent = (u.nombre || '') + ' ' + (u.apellido || '');
+
+      var roleEl = document.getElementById('profileRole');
+      if (roleEl) { roleEl.textContent = u.rol || '—'; roleEl.dataset.role = u.rol || ''; }
+
+      var userEl = document.getElementById('profileUsuario');
+      if (userEl) userEl.textContent = u.usuario || '—';
+
+      var fechaEl = document.getElementById('profileFechaAlta');
+      if (fechaEl && u.fecha_alta) fechaEl.textContent = u.fecha_alta;
     })
     .catch(function(err) { console.error('Error cargando datos de usuario:', err); });
 }
