@@ -10,4 +10,3 @@ node_modules/
 vendor/
 .vscode/
 .idea/
-servidor/config/init.php
