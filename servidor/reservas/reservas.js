@@ -61,8 +61,10 @@ function renderTablaReservas() {
   }
   initFiltroPendientes();
   initFiltroHoy();
+  initFiltroCanceladas();
   initFiltroFecha();
   initLimitSelector();
+  aplicarFiltros();
 }
 
 function badgeEstado(estado, descripcion) {
@@ -317,6 +319,7 @@ function cargarHistorialPagos(reservaId, totalFact, pagado) {
 function aplicarFiltros() {
   var mostrarSoloPendientes = document.getElementById("showSoloPendientes")?.checked;
   var mostrarSoloHoy = document.getElementById("showSoloHoy")?.checked;
+  var mostrarCanceladas = parseInt(document.getElementById("showCanceladas")?.value || 0);
   var fechaDesde = document.getElementById("filterFechaDesde")?.value;
   var fechaHasta = document.getElementById("filterFechaHasta")?.value;
   var limit = parseInt(document.querySelector(".limit-selector-btn")?.dataset.limitValue || 0);
@@ -329,6 +332,21 @@ function aplicarFiltros() {
     if (mostrarSoloHoy) {
       var fechaCell = row.querySelector('[data-column="fecha"]');
       if (!fechaCell || fechaCell.textContent.trim() !== hoyStr) {
+        row.style.display = "none";
+        return;
+      }
+    }
+
+    /* 0 = hide canceladas, 1 = show all, 2 = only canceladas */
+    if (mostrarCanceladas === 0) {
+      var estadoCell = row.querySelector('[data-column="estado"]');
+      if (estadoCell && estadoCell.querySelector(".inactive")) {
+        row.style.display = "none";
+        return;
+      }
+    } else if (mostrarCanceladas === 2) {
+      var estadoCell = row.querySelector('[data-column="estado"]');
+      if (!estadoCell || !estadoCell.querySelector(".inactive")) {
         row.style.display = "none";
         return;
       }
@@ -382,6 +400,40 @@ function initFiltroHoy() {
   if (!chk || chk.dataset.bound) return;
   chk.dataset.bound = "true";
   chk.addEventListener("change", aplicarFiltros);
+}
+
+function initFiltroCanceladas() {
+  var hidden = document.getElementById("showCanceladas");
+  var label = document.getElementById("filterCanceladasLabel");
+  if (!hidden || !label || label.dataset.bound) return;
+  label.dataset.bound = "true";
+
+  function actualizarUI() {
+    var val = parseInt(hidden.value);
+    var indicator = document.getElementById("canceladasIndicator");
+    var text = document.getElementById("canceladasText");
+    if (val === 0) {
+      indicator.textContent = "\u2610";
+      text.textContent = "Mostrar canceladas";
+      label.dataset.state = "0";
+    } else if (val === 1) {
+      indicator.textContent = "\u2611";
+      text.textContent = "Mostrando canceladas";
+      label.dataset.state = "1";
+    } else {
+      indicator.textContent = "\u25C9";
+      text.textContent = "Solo canceladas";
+      label.dataset.state = "2";
+    }
+    aplicarFiltros();
+  }
+
+  label.addEventListener("click", function(e) {
+    e.preventDefault();
+    var val = parseInt(hidden.value);
+    hidden.value = ((val + 1) % 3).toString();
+    actualizarUI();
+  });
 }
 
 function initFiltroFecha() {
