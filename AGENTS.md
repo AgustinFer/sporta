@@ -20,7 +20,16 @@ Vanilla PHP SPA (faculty project). No build step, no tests, no framework.
 - **Script loading**: each HTML page declares its own `<script>` tags in `index.html`. `loadPage()` step 7 injects scripts dynamically with an intentionally broken dedup (`document.querySelector('script[src="..."]')` checks the raw attribute value, not the resolved URL). This means scripts are ALWAYS re-injected on every SPA navigation, which resets closures and global state. **DO NOT fix this dedup** — proper dedup (normalizing URLs, checking `document.scripts`) breaks all SPA data modules because stale closures lose their binding to re-assigned globals.
 - **`inicio/index.html` preloads some JS files statically** (`turnos.js`, `canchas.js`, `reservas.js`). These are loaded on initial SPA init AND again by step 7 on each navigation to their module. Because step 7 always re-injects them, the `var` declarations reset, giving fresh closures bound to the new globals. This is fragile but intentional.
 - **`table.js`** must be loaded on every page (not just clientes) because it defines `initTable()` and `initColumnPicker()` which `loadPage()` calls after SPA navigation. Both functions guard against missing DOM elements.
-- **`validacion.js`** runs as IIFE on page load. The drawer form (`.drawer-form`) doesn't exist yet (loaded later by `loadDrawer()`), so the IIFE returns early and the submit handler is **never** attached. To re-bind drawer validation after SPA nav, use a named function called from `loadPage()` / `loadDrawer()`.
+- **`validacion.js`** defines `initDrawerValidation()` — a named function called from `loadDrawer()` after the drawer HTML is injected. It binds submit/input validation to `.drawer-form`. Uses `dataset.validationBound` guard to prevent duplicate binding across SPA navigations. On validation failure, calls `e.stopPropagation()` to prevent the delegated `clientes.js` submit handler from firing. Also exports `window.limpiarErroresDrawer` and `initDrawerPage()`.
+- **Real-time input sanitization in `initDrawerValidation()`**: The `input` event handler strips invalid characters as the user types. Pattern:
+  ```js
+  if (regla === "soloLetras") {
+    input.value = input.value.replace(/[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]/g, "");
+  } else if (regla === "soloNumeros" || regla === "telefono") {
+    input.value = input.value.replace(/\D/g, "");
+  }
+  ```
+  To add sanitization to new drawers, update the `input` listener in `initDrawerValidation()` with additional `regla` branches. Currently implemented for clientes (campos nombre, apellido, celular, DNI). Pendiente: aplicar en empleados y reservas drawers.
 - **`initDrawerPage()`**: `loadPage()` calls this after `loadDrawer()` completes. Define it globally to run page-specific logic. No longer used with the new API-driven approach (clientes/empleados handle forms inline).
 - **Data-table modules** (clientes, empleados, reservas): each defines a global `cargar{Modulo}()` function and a uniquely-named `renderTabla{Modulo}()` function. `loadPage()` step 9 calls the appropriate `cargar{Modulo}()` after scripts are injected and `initTable()`/`initColumnPicker()` have run. The `renderTabla{Modulo}()` function calls `initTable()` internally to re-bind search/sort after repopulating the tbody. **IMPORTANT**: `renderTabla` must NOT be used as a bare global name — it collides across modules since the script dedup prevents re-loading (e.g., `empleados.js` overwrites `window.renderTabla`, breaking clientes on return navigation). Each module must use a unique name.
 - **`cargarReservas()`** must be called from `loadPage()` step 9 (not just from the modul's own script), because `reservas.js` is preloaded from `inicio/index.html` and the SPA navigation re-injects it, but the function only auto-runs if explicitly called.
@@ -138,3 +147,32 @@ When asked to fix "Errores críticos", the following 4 bugs must be corrected:
 **Files:** `clientes/clientes.js:131`, `empleados/empleados.js:138`, `reservas/reservas.js:235,270`
 **Bug:** After saving a form, the table reload function (`cargarClientes()`, etc.) is called inside a `.then()` callback without `await`. If the user navigates away quickly, the table data isn't refreshed.
 **Fix:** Convert the submit event listener callbacks to `async` and use `await` on the reload calls. Also add `mostrarToast()` error feedback in the `.catch()` instead of just `console.error`.
+
+## Pendientes (futuras correcciones)
+
+Issues identificados en el audit de clientes, pendientes de corregir:
+
+### 1. `conexion()` fuera del try-catch en `clientes.php`
+**File:** `api/clientes.php:13`
+**Bug:** `$pdo = conexion()` se ejecuta fuera del bloque try-catch. Si falla, `conexion.php` ejecuta `die()` con JSON crudo que corta la ejecución antes del catch.
+**Fix:** Mover `$pdo = conexion()` dentro del try-catch, o refactorizar `conexion.php` para que lance excepción en vez de `die()`.
+
+### 2. `toggleCliente()` catch sin toast al usuario
+**File:** `clientes/clientes.js:82-83`
+**Bug:** El `catch` de `toggleCliente()` solo hace `console.error(err)` sin feedback visual.
+**Fix:** Agregar `mostrarToast("Error de conexión", "error")` después de `console.error(err)`.
+
+### 3. Sin protección double-submit en formularios
+**Files:** `clientes/clientes.js:102-137`, `empleados/empleados.js`, `reservas/reservas.js`
+**Bug:** El botón de submit no se deshabilita durante la petición. Clics múltiples rápidos envían requests duplicadas (crea clientes duplicados, etc.).
+**Fix:** Deshabilitar el botón submit con `disabled` o trackear estado `pending` con una variable global.
+
+### 4. `openDrawer()` antes de rellenar campos en `drawer.js`
+**File:** `recursos/js/drawer.js:106`
+**Bug:** El handler de `.edit-btn` llama `openDrawer()` primero y luego llena los campos. Si `openDrawer()` falla (no encuentra `.drawer`), el código sigue y lanza TypeError al intentar llenar campos inexistentes.
+**Fix:** Llenar campos antes de `openDrawer()`, o agregar un guard contra `null`.
+
+### 5. `SELECT *` en listar clientes
+**File:** `api/clientes.php:48`
+**Bug:** `$stmt = $pdo->query("SELECT * FROM clientes ...")` devuelve 15+ columnas que el frontend jamás usa (ej: `cliente_localidad_id`, `cliente_provincia_id`, `cliente_pais_id`, `cliente_fecha_alta`).
+**Fix:** Especificar solo las columnas necesarias en la consulta.

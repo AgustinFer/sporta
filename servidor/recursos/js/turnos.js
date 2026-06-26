@@ -263,6 +263,7 @@ function turnosAbrirNuevoCliente() {
             .then(function (result) {
                 if (result.ok) {
                     closeDrawer();
+                    document.removeEventListener('click', onCancel);
                     turnosNuevoClienteActivo = false;
                     turnosOnCancel = null;
                     window._turnosNuevoClienteId = result.cliente_id;

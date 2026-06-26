@@ -102,6 +102,9 @@ async function loadDrawer() {
     var html = await response.text();
     html = html.replace(/\{BASE_URL\}/g, BASE_URL);
     container.innerHTML = html;
+    if (typeof initDrawerValidation === 'function') {
+      initDrawerValidation();
+    }
   } catch (err) {
     console.error('Error cargando drawer:', err);
     container.innerHTML = '';

@@ -319,6 +319,7 @@ function aplicarFiltros() {
   var mostrarSoloPendientes = document.getElementById("showSoloPendientes")?.checked;
   var mostrarSoloHoy = document.getElementById("showSoloHoy")?.checked;
   var fechaDesde = document.getElementById("filterFechaDesde")?.value;
+  var fechaHasta = document.getElementById("filterFechaHasta")?.value;
   var limit = parseInt(document.querySelector(".limit-selector-btn")?.dataset.limitValue || 0);
   var hoyStr = new Date().toLocaleDateString('en-CA');
 
@@ -352,6 +353,14 @@ function aplicarFiltros() {
       }
     }
 
+    if (fechaHasta) {
+      var fechaCell = row.querySelector('[data-column="fecha"]');
+      if (fechaCell && fechaCell.textContent.trim() > fechaHasta) {
+        row.style.display = "none";
+        return;
+      }
+    }
+
     visibleCount++;
     if (limit > 0 && visibleCount > limit) {
       row.style.display = "none";
@@ -377,10 +386,16 @@ function initFiltroHoy() {
 }
 
 function initFiltroFecha() {
-  var input = document.getElementById("filterFechaDesde");
-  if (!input || input.dataset.bound) return;
-  input.dataset.bound = "true";
-  input.addEventListener("change", aplicarFiltros);
+  var inputDesde = document.getElementById("filterFechaDesde");
+  var inputHasta = document.getElementById("filterFechaHasta");
+  if (inputDesde && !inputDesde.dataset.bound) {
+    inputDesde.dataset.bound = "true";
+    inputDesde.addEventListener("change", aplicarFiltros);
+  }
+  if (inputHasta && !inputHasta.dataset.bound) {
+    inputHasta.dataset.bound = "true";
+    inputHasta.addEventListener("change", aplicarFiltros);
+  }
 }
 
 function initLimitSelector() {
