@@ -70,7 +70,13 @@ function aplicarFiltros() {
     var hide = false;
 
     if (term) {
-      var text = row.innerText.toLowerCase();
+      var text = '';
+      row.querySelectorAll('td').forEach(function(td) {
+        var col = td.dataset.column;
+        if (col !== 'acciones') {
+          text += td.textContent.toLowerCase() + ' ';
+        }
+      });
       if (!text.includes(term)) hide = true;
     }
 
