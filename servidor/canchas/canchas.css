@@ -284,3 +284,57 @@
   color: var(--text-muted);
   font-size: 18px;
 }
+
+/* ======================== */
+/* ANIMACIONES              */
+/* ======================== */
+
+/* Entrance: bubbles disponibles */
+.burbuja-entrance {
+  animation: burbujaEntrance 0.4s ease-out both;
+}
+
+@keyframes burbujaEntrance {
+  0% { opacity: 0; transform: translateY(20px) scale(0.93); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Entrance: bubbles inhabilitadas (rebote vistoso) */
+.burbuja-entrance-inhabilitada {
+  animation: burbujaEntranceInhabilitada 0.7s ease-out both;
+}
+
+@keyframes burbujaEntranceInhabilitada {
+  0% { opacity: 0; transform: translateY(-30px) scale(0.8) rotate(6deg); }
+  35% { opacity: 1; transform: translateY(8px) scale(1.06) rotate(-3deg); }
+  60% { transform: translateY(-4px) scale(0.97) rotate(1deg); }
+  100% { transform: translateY(0) scale(1) rotate(0); }
+}
+
+/* Deshabilitar: shake + flash + desaturación */
+.burbuja-deshabilitar {
+  animation: burbujaDeshabilitar 0.8s ease-in-out forwards;
+}
+
+@keyframes burbujaDeshabilitar {
+  0% { transform: scale(1); filter: none; box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
+  15% { transform: scale(1.08); filter: brightness(1.4); box-shadow: 0 0 50px rgba(239, 68, 68, 0.5); }
+  30% { transform: scale(0.94) rotate(-4deg); border-color: #ef4444; }
+  45% { transform: scale(1.04) rotate(3deg); }
+  60% { transform: scale(0.96) rotate(-2deg); filter: grayscale(0.4); }
+  80% { transform: scale(1.01); }
+  100% { transform: scale(1); filter: grayscale(0.7); border-color: #9ca3af; }
+}
+
+/* Habilitar: pulso + glow + color */
+.burbuja-habilitar {
+  animation: burbujaHabilitar 0.8s ease-out forwards;
+}
+
+@keyframes burbujaHabilitar {
+  0% { transform: scale(1); filter: grayscale(0.7); box-shadow: 0 0 0 rgba(34, 197, 94, 0); }
+  25% { transform: scale(1.12); filter: grayscale(0) brightness(1.3); box-shadow: 0 0 60px rgba(34, 197, 94, 0.4); }
+  50% { transform: scale(0.95); }
+  75% { transform: scale(1.04); }
+  100% { transform: scale(1); filter: grayscale(0); }
+}

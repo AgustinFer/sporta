@@ -77,9 +77,10 @@ function generarBurbujas() {
         return;
     }
 
-    canchasLista.forEach(function (cancha) {
+    canchasLista.forEach(function (cancha, index) {
         var burbuja = document.createElement('div');
         burbuja.className = 'burbuja-cancha';
+        burbuja.dataset.canchaId = cancha.cancha_id;
 
         var esMantenimiento = Number(cancha.cancha_estado) === 2;
         var esInhabilitado = Number(cancha.cancha_estado) === 3;
@@ -110,6 +111,15 @@ function generarBurbujas() {
             '<div class="burbuja-precio">' +
             '<div class="precio-label">Precio por hora</div>' +
             '<div class="precio-valor">$' + parseFloat(cancha.cancha_precio).toFixed(2) + '</div></div>';
+
+        /* Entrance animation */
+        if (esInhabilitado) {
+            burbuja.classList.add('burbuja-entrance-inhabilitada');
+            burbuja.style.animationDelay = (index * 0.06 + 0.15) + 's';
+        } else {
+            burbuja.classList.add('burbuja-entrance');
+            burbuja.style.animationDelay = (index * 0.04) + 's';
+        }
 
         contenedor.appendChild(burbuja);
     });
@@ -152,7 +162,7 @@ async function guardarCancha(e) {
         return String(c.cancha_numero) === numeroIngresado && String(c.cancha_id) !== canchaId;
     });
     if (duplicado) {
-        alert('Ya existe una cancha con ese número');
+        mostrarToast('Ya existe una cancha con ese número', 'error');
         return;
     }
 
@@ -173,19 +183,25 @@ async function guardarCancha(e) {
         });
 
         var resultado = await respuesta.json();
-        if (!resultado.ok) { alert(resultado.mensaje); return; }
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
 
         closeDrawer();
         await cargarCanchas();
         mostrarToast(canchaId ? 'Cancha actualizada' : 'Cancha creada', 'success');
     } catch (error) {
         console.error(error);
-        alert('Error guardando cancha');
+        mostrarToast('Error guardando cancha', 'error');
     }
 }
 
 async function eliminarCancha(canchaId) {
     if (!await showConfirm('¿Estás seguro de que deseas inhabilitar esta cancha?', '🚫')) return;
+
+    var burbuja = document.querySelector('.burbuja-cancha[data-cancha-id="' + canchaId + '"]');
+    if (burbuja) {
+        burbuja.classList.add('burbuja-deshabilitar');
+        await new Promise(function (resolve) { setTimeout(resolve, 800); });
+    }
 
     try {
         var respuesta = await fetch(BASE_URL + '/api/turnos_canchas.php', {
@@ -195,18 +211,24 @@ async function eliminarCancha(canchaId) {
         });
 
         var resultado = await respuesta.json();
-        if (!resultado.ok) { alert(resultado.mensaje); return; }
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
 
         await cargarCanchas();
         mostrarToast('Cancha inhabilitada', 'success');
     } catch (error) {
         console.error(error);
-        alert('Error inhabilitando cancha');
+        mostrarToast('Error inhabilitando cancha', 'error');
     }
 }
 
 async function habilitarCancha(canchaId) {
     if (!await showConfirm('¿Estás seguro de que deseas habilitar esta cancha?', '✅')) return;
+
+    var burbuja = document.querySelector('.burbuja-cancha[data-cancha-id="' + canchaId + '"]');
+    if (burbuja) {
+        burbuja.classList.add('burbuja-habilitar');
+        await new Promise(function (resolve) { setTimeout(resolve, 800); });
+    }
 
     try {
         var respuesta = await fetch(BASE_URL + '/api/turnos_canchas.php', {
@@ -216,13 +238,13 @@ async function habilitarCancha(canchaId) {
         });
 
         var resultado = await respuesta.json();
-        if (!resultado.ok) { alert(resultado.mensaje); return; }
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
 
         await cargarCanchas();
         mostrarToast('Cancha habilitada', 'success');
     } catch (error) {
         console.error(error);
-        alert('Error habilitando cancha');
+        mostrarToast('Error habilitando cancha', 'error');
     }
 }
 

@@ -1,4 +1,5 @@
 var reservasData = [];
+var reservasMetodosPago = [];
 
 async function cargarReservas() {
   try {
@@ -112,8 +113,6 @@ function mostrarToast(mensaje, tipo) {
     setTimeout(function() { toast.remove(); }, 300);
   }, 3500);
 }
-
-var reservasMetodosPago = [];
 
 async function cargarMetodosPago() {
   try {
@@ -230,16 +229,16 @@ if (!document.body.dataset.reservasFormBound) {
         body: JSON.stringify(data)
       })
       .then(function(r) { return r.json(); })
-      .then(function(result) {
+      .then(async function(result) {
         if (result.ok) {
           closeDrawer();
           mostrarToast(result.mensaje, "success");
-          cargarReservas();
+          await cargarReservas();
         } else {
           mostrarToast(result.mensaje, "error");
         }
       })
-      .catch(function(err) { console.error(err); });
+      .catch(function(err) { console.error(err); mostrarToast("Error de conexión", "error"); });
       return;
     }
 
@@ -265,16 +264,16 @@ if (!document.body.dataset.reservasFormBound) {
         body: JSON.stringify(data)
       })
       .then(function(r) { return r.json(); })
-      .then(function(result) {
+      .then(async function(result) {
         if (result.ok) {
           closeDrawer();
           mostrarToast(result.mensaje, "success");
-          cargarReservas();
+          await cargarReservas();
         } else {
           mostrarToast(result.mensaje, "error");
         }
       })
-      .catch(function(err) { console.error(err); });
+      .catch(function(err) { console.error(err); mostrarToast("Error de conexión", "error"); });
       return;
     }
   });
