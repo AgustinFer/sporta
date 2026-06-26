@@ -42,7 +42,7 @@ function initTurnosPage() {
 
     if (!fechaInput) return;
 
-    fechaInput.value = new Date().toISOString().split('T')[0];
+    fechaInput.value = new Date().toLocaleDateString('en-CA');
 
     if (btnRecargar && !btnRecargar.dataset.bound) {
         btnRecargar.dataset.bound = 'true';
@@ -442,7 +442,7 @@ function turnosGuardarReserva(e) {
 
     var clienteId = document.getElementById('cliente_id').value;
     if (!clienteId) {
-        alert('Debe seleccionar un cliente');
+        mostrarToast('Debe seleccionar un cliente', 'error');
         return;
     }
 
@@ -452,7 +452,7 @@ function turnosGuardarReserva(e) {
     if (fecha === hoy) {
         var inicioTurno = new Date(fecha + 'T' + horaInicio).getTime();
         if (inicioTurno <= Date.now()) {
-            alert('No se puede reservar un horario ya pasado');
+            mostrarToast('No se puede reservar un horario ya pasado', 'error');
             return;
         }
     }
@@ -473,14 +473,14 @@ function turnosGuardarReserva(e) {
     })
     .then(function (r) { return r.json(); })
     .then(function (resultado) {
-        if (!resultado.ok) { alert(resultado.mensaje); return; }
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
         closeDrawer();
         turnosCargarDatos();
         mostrarToast('Reserva creada', 'success');
     })
     .catch(function (error) {
         console.error(error);
-        alert('Error al guardar');
+        mostrarToast('Error al guardar', 'error');
     });
 }
 
@@ -519,13 +519,14 @@ function turnosCambiarEstado(estado) {
     })
     .then(function (r) { return r.json(); })
     .then(function (resultado) {
-        if (!resultado.ok) { alert(resultado.mensaje); return; }
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
         closeDrawer();
         turnosCargarDatos();
+        mostrarToast('Estado actualizado', 'success');
     })
     .catch(function (error) {
         console.error(error);
-        alert('Error actualizando estado');
+        mostrarToast('Error actualizando estado', 'error');
     });
 }
 

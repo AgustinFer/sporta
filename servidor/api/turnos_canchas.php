@@ -55,7 +55,7 @@ try {
 
 function obtenerDatos(PDO $pdo, array $input): void
 {
-    $fecha = $input['fecha'] ?? gmdate('Y-m-d');
+    $fecha = $input['fecha'] ?? date('Y-m-d');
 
     $sql = "
 SELECT cancha_id, cancha_numero, cancha_estado
