@@ -220,6 +220,55 @@ function cambiarEstado(PDO $pdo, array $input): void
         throw new Exception('Estado inválido');
     }
 
+    /* Get the turno info for this reserva */
+    $sql = "SELECT t.id_cancha, t.tur_fecha, t.tur_hora_inicio, r.reser_estado AS estado_actual
+            FROM reservas r
+            INNER JOIN turnos t ON r.tur_id = t.tur_id
+            WHERE r.reserva_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$reservaId]);
+    $reserva = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$reserva) {
+        throw new Exception('Reserva no encontrada');
+    }
+
+    $estadoActual = (int)$reserva['estado_actual'];
+
+    /* If estado hasn't changed, no-op */
+    if ($estado === $estadoActual) {
+        echo json_encode(['ok' => true, 'mensaje' => 'Estado actualizado']);
+        return;
+    }
+
+    /* If the current reserva is cancelled and there's another active one at the same slot, block */
+    if ($estadoActual === 3) {
+        $sql = "SELECT COUNT(*)
+                FROM reservas r
+                INNER JOIN turnos t ON r.tur_id = t.tur_id
+                WHERE t.id_cancha = ?
+                  AND t.tur_fecha = ?
+                  AND t.tur_hora_inicio = ?
+                  AND r.reserva_id != ?
+                  AND r.reser_estado IN (1,2)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $reserva['id_cancha'],
+            $reserva['tur_fecha'],
+            $reserva['tur_hora_inicio'],
+            $reservaId
+        ]);
+        $activos = (int)$stmt->fetchColumn();
+
+        if ($activos > 0) {
+            echo json_encode([
+                'ok' => false,
+                'mensaje' => 'No se puede modificar: ya hay una reserva activa en este horario'
+            ]);
+            return;
+        }
+    }
+
     $sql = "UPDATE reservas SET reser_estado = ? WHERE reserva_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$estado, $reservaId]);
