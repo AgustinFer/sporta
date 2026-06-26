@@ -21,8 +21,13 @@ function initTable() {
 
         if (row.querySelector("td[colspan]")) return;
 
-        const text =
-          row.innerText.toLowerCase();
+        var text = '';
+        row.querySelectorAll('td').forEach(function(td) {
+          var col = td.dataset.column;
+          if (col !== 'estado' && col !== 'acciones' && col !== 'pago') {
+            text += td.textContent.toLowerCase() + ' ';
+          }
+        });
 
         const isInactive =
           row.querySelector(".status.inactive");

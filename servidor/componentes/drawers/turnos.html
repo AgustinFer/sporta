@@ -33,9 +33,10 @@
 
       <div>
         <label>Cliente <span class="required">*</span></label>
-        <select id="cliente_id" required>
-          <option value="">Seleccionar cliente</option>
-        </select>
+        <div class="cliente-search-wrapper">
+          <input type="text" id="cliente_search" placeholder="Buscar por nombre o apellido..." autocomplete="off">
+          <input type="hidden" id="cliente_id">
+        </div>
       </div>
 
       <div>

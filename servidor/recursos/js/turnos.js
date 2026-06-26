@@ -76,28 +76,129 @@ function turnosCargarDatos() {
 }
 
 function turnosCargarClientes() {
-    var select = document.getElementById('cliente_id');
-    if (!select) return;
-    var html = '<option value="">Seleccionar cliente</option>';
-    html += '<option value="nuevo">+ Nuevo Cliente</option>';
-    turnosClientes.forEach(function (cliente) {
-        html += '<option value="' + cliente.cliente_id + '">' +
-            cliente.cliente_apellido + ', ' + cliente.cliente_nombre + '</option>';
-    });
-    select.innerHTML = html;
+    var searchInput = document.getElementById('cliente_search');
+    var hiddenInput = document.getElementById('cliente_id');
+    var dropdown = document.getElementById('cliente_dropdown');
+    if (!dropdown) {
+        dropdown = document.createElement('div');
+        dropdown.id = 'cliente_dropdown';
+        dropdown.className = 'search-dropdown';
+        document.body.appendChild(dropdown);
+    }
+    if (!searchInput) return;
+
+    searchInput._clientes = turnosClientes;
 
     if (window._turnosNuevoClienteId) {
-        select.value = String(window._turnosNuevoClienteId);
+        for (var i = 0; i < turnosClientes.length; i++) {
+            if (Number(turnosClientes[i].cliente_id) === Number(window._turnosNuevoClienteId)) {
+                searchInput.value = turnosClientes[i].cliente_apellido + ', ' + turnosClientes[i].cliente_nombre;
+                hiddenInput.value = turnosClientes[i].cliente_id;
+                break;
+            }
+        }
         window._turnosNuevoClienteId = null;
     }
 
-    if (!select.dataset.turnosBound) {
-        select.dataset.turnosBound = 'true';
-        select.addEventListener('change', function () {
-            if (this.value === 'nuevo') {
-                turnosAbrirNuevoCliente();
-                this.value = '';
+    if (!searchInput.dataset.turnosBound) {
+        searchInput.dataset.turnosBound = 'true';
+
+        searchInput.addEventListener('input', function () {
+            hiddenInput.value = '';
+            renderTurnosDropdown();
+            posicionarDropdownCliente(this);
+        });
+
+        searchInput.addEventListener('focus', function () {
+            if (dropdown.style.display === 'block') return;
+            renderTurnosDropdown();
+            posicionarDropdownCliente(this);
+        });
+
+        searchInput.addEventListener('blur', function () {
+            setTimeout(function () { dropdown.style.display = 'none'; }, 200);
+        });
+
+        searchInput.addEventListener('keydown', function (e) {
+            var items = dropdown.querySelectorAll('.search-dropdown-item');
+            var active = dropdown.querySelector('.search-dropdown-item.active');
+            var idx = -1;
+            if (active) idx = Array.prototype.indexOf.call(items, active);
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                var next = Math.min(idx + 1, items.length - 1);
+                if (active) active.classList.remove('active');
+                if (next >= 0 && items[next]) items[next].classList.add('active');
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                var prev = Math.max(idx - 1, 0);
+                if (active) active.classList.remove('active');
+                if (items[prev]) items[prev].classList.add('active');
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (active) active.click();
+            } else if (e.key === 'Escape') {
+                dropdown.style.display = 'none';
             }
+        });
+    }
+
+    renderTurnosDropdown();
+    dropdown.style.display = 'none';
+}
+
+function posicionarDropdownCliente(input) {
+    var dropdown = document.getElementById('cliente_dropdown');
+    if (!dropdown) return;
+    var rect = input.getBoundingClientRect();
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = (rect.bottom + 4) + 'px';
+    dropdown.style.left = rect.left + 'px';
+    dropdown.style.width = rect.width + 'px';
+    dropdown.style.zIndex = '9999';
+    dropdown.style.display = 'block';
+}
+
+function renderTurnosDropdown() {
+    var searchInput = document.getElementById('cliente_search');
+    var hiddenInput = document.getElementById('cliente_id');
+    var dropdown = document.getElementById('cliente_dropdown');
+    if (!searchInput || !dropdown) return;
+
+    var clientes = searchInput._clientes || [];
+    var query = searchInput.value.toLowerCase().trim();
+
+    var html = '<div class="search-dropdown-item nuevo-cliente" data-id="nuevo">+ Nuevo Cliente</div>';
+    for (var i = 0; i < clientes.length; i++) {
+        var c = clientes[i];
+        var haystack = (c.cliente_apellido + ', ' + c.cliente_nombre).toLowerCase();
+        if (!query || haystack.indexOf(query) !== -1) {
+            html += '<div class="search-dropdown-item" data-id="' + c.cliente_id + '">' +
+                c.cliente_apellido + ', ' + c.cliente_nombre + '</div>';
+        }
+    }
+
+    dropdown.innerHTML = html;
+
+    var items = dropdown.querySelectorAll('.search-dropdown-item');
+    for (var j = 0; j < items.length; j++) {
+        items[j].addEventListener('click', function (e) {
+            e.stopPropagation();
+            var id = this.dataset.id;
+            if (id === 'nuevo') {
+                turnosAbrirNuevoCliente();
+                dropdown.style.display = 'none';
+                return;
+            }
+            for (var k = 0; k < clientes.length; k++) {
+                if (Number(clientes[k].cliente_id) === Number(id)) {
+                    searchInput.value = clientes[k].cliente_apellido + ', ' + clientes[k].cliente_nombre;
+                    hiddenInput.value = id;
+                    break;
+                }
+            }
+            dropdown.style.display = 'none';
         });
     }
 }
@@ -194,6 +295,8 @@ function turnosAbrirNuevaReserva(canchaId, canchaNumero, hora) {
     document.getElementById('horaTexto').value = hora.substring(0, 5);
     document.getElementById('fechaTexto').value = document.getElementById('fechaSeleccionada').value;
     document.getElementById('observaciones').value = '';
+    document.getElementById('cliente_search').value = '';
+    document.getElementById('cliente_id').value = '';
 
     document.getElementById('panelDetalle').style.display = 'none';
     document.getElementById('panelReserva').style.display = 'block';
@@ -336,6 +439,12 @@ function turnosAbrirNuevoCliente() {
 
 function turnosGuardarReserva(e) {
     e.preventDefault();
+
+    var clienteId = document.getElementById('cliente_id').value;
+    if (!clienteId) {
+        alert('Debe seleccionar un cliente');
+        return;
+    }
 
     var fecha = document.getElementById('fecha_reserva').value;
     var horaInicio = document.getElementById('hora_inicio').value;
