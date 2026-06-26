@@ -45,7 +45,7 @@ try {
 
 function listar(PDO $pdo): void
 {
-    $stmt = $pdo->query("SELECT * FROM clientes ORDER BY cliente_id");
+    $stmt = $pdo->query("SELECT cliente_id, cliente_nombre, cliente_apellido, cliente_email, cliente_celular, cliente_dni, cliente_estado FROM clientes ORDER BY cliente_id");
     $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode(['ok' => true, 'clientes' => $clientes]);
 }

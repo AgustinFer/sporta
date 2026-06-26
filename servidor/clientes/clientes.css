@@ -1,3 +1,112 @@
 .column-picker-btn {
+  margin-left: 0;
+}
+
+.limit-selector-btn {
+  position: relative;
   margin-left: auto;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  color: var(--text-primary);
+  margin-top: 0;
+  width: auto;
+  box-shadow: none;
+}
+
+.limit-selector-btn:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.limit-selector-btn:active {
+  transform: none !important;
+}
+
+.limit-selector-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 6px;
+  background: var(--bg-elevated);
+  border-radius: 10px;
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-md);
+  padding: 8px;
+  min-width: 170px;
+  display: none;
+  z-index: 100;
+}
+
+.limit-selector-dropdown.open {
+  display: block;
+}
+
+.limit-selector-item {
+  display: block;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  color: var(--text-primary);
+  border-radius: 6px;
+}
+
+.limit-selector-item:hover {
+  background: var(--bg-table-hover);
+}
+
+.paginacion-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.paginacion-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.paginacion-btn:hover:not(:disabled) {
+  background: var(--bg-table-hover);
+  transform: translateY(-1px);
+}
+
+.paginacion-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pag-indicator {
+  font-size: 14px;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: center;
+}
+
+.pag-hidden {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .limit-selector-btn {
+    margin-left: 0;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
 }
