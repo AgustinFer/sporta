@@ -92,6 +92,54 @@
   grid-column: span 2;
 }
 
+.badge {
+  display: inline-block;
+  background: #ef4444;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 10px;
+  border-radius: 12px;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+
+.chart-card canvas {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+}
+
+.reserva-impaga-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.reserva-impaga-item:last-child {
+  border-bottom: none;
+}
+
+.reserva-impaga-item .ri-cliente {
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.reserva-impaga-item .ri-cancha {
+  color: var(--text-secondary);
+  font-size: 14px;
+  min-width: 70px;
+}
+
+.reserva-impaga-item .ri-deuda {
+  color: #ef4444;
+  font-weight: bold;
+  min-width: 80px;
+  text-align: right;
+}
+
 .turno-item {
   display: flex;
   align-items: center;

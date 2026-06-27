@@ -40,6 +40,63 @@ try {
     $stmt->execute();
     $ingresos = (float)$stmt->fetchColumn();
 
+    $stmt = $pdo->prepare("
+        SELECT r.reserva_id, c.cliente_nombre, c.cliente_apellido,
+               ca.cancha_numero, t.tur_fecha, t.tur_hora_inicio,
+               COALESCE(f.factura_total, 0) as factura_total, COALESCE(p.total_pagado, 0) as total_pagado
+        FROM reservas r
+        JOIN clientes c ON r.cliente_id = c.cliente_id
+        JOIN turnos t ON r.tur_id = t.tur_id
+        JOIN canchas ca ON t.id_cancha = ca.cancha_id
+        LEFT JOIN facturacion f ON r.reserva_id = f.reserva_id
+        LEFT JOIN (
+            SELECT factura_id, SUM(pago_monto) as total_pagado
+            FROM pagos GROUP BY factura_id
+        ) p ON f.factura_id = p.factura_id
+        WHERE r.reser_estado != 3
+          AND (f.factura_id IS NULL OR p.total_pagado IS NULL OR p.total_pagado < f.factura_total)
+        ORDER BY t.tur_fecha, t.tur_hora_inicio
+        LIMIT 5
+    ");
+    $stmt->execute();
+    $reservasImpagasLista = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) FROM reservas r
+        LEFT JOIN facturacion f ON r.reserva_id = f.reserva_id
+        LEFT JOIN (
+            SELECT factura_id, SUM(pago_monto) as total_pagado
+            FROM pagos GROUP BY factura_id
+        ) p ON f.factura_id = p.factura_id
+        WHERE r.reser_estado != 3
+          AND (f.factura_id IS NULL OR p.total_pagado IS NULL OR p.total_pagado < f.factura_total)
+    ");
+    $stmt->execute();
+    $reservasImpagasCount = (int)$stmt->fetchColumn();
+
+    $stmt = $pdo->prepare("
+        SELECT p.pago_fecha_pago as fecha, COALESCE(SUM(p.pago_monto), 0) as total
+        FROM pagos p
+        WHERE p.pago_fecha_pago >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+        GROUP BY p.pago_fecha_pago
+        ORDER BY p.pago_fecha_pago
+    ");
+    $stmt->execute();
+    $ingresos7dRaw = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $ingresos7d = [];
+    for ($i = 6; $i >= 0; $i--) {
+        $fecha = date('Y-m-d', strtotime("-$i days"));
+        $total = 0;
+        foreach ($ingresos7dRaw as $row) {
+            if ($row['fecha'] === $fecha) {
+                $total = (float)$row['total'];
+                break;
+            }
+        }
+        $ingresos7d[] = ['fecha' => $fecha, 'total' => $total];
+    }
+
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM canchas WHERE cancha_estado = 1");
     $stmt->execute();
     $canchasActivas = (int)$stmt->fetchColumn();
@@ -54,7 +111,12 @@ try {
         'turnos_hoy' => $turnosHoy,
         'ingresos' => $ingresos,
         'canchas_activas' => $canchasActivas,
-        'clientes' => $clientes
+        'clientes' => $clientes,
+        'reservas_impagas' => [
+            'count' => $reservasImpagasCount,
+            'lista' => $reservasImpagasLista
+        ],
+        'ingresos_7d' => $ingresos7d
     ]);
 
 } catch (Exception $e) {

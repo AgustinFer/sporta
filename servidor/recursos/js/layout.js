@@ -333,9 +333,123 @@ async function cargarDashboard() {
     var clEl = document.getElementById('clientes');
     if (clEl) clEl.textContent = data.clientes;
 
+    var impCount = document.getElementById('impagas-count');
+    if (impCount) impCount.textContent = data.reservas_impagas.count;
+
+    var impList = document.getElementById('reservas-impagas');
+    if (impList) {
+      if (data.reservas_impagas.lista && data.reservas_impagas.lista.length > 0) {
+        impList.innerHTML = data.reservas_impagas.lista.map(function(r) {
+          var hora = r.tur_hora_inicio ? r.tur_hora_inicio.substring(0, 5) : '--:--';
+          var deuda = Number(r.factura_total - r.total_pagado);
+          return '<div class="reserva-impaga-item">' +
+            '<span class="ri-cliente">' + esc(r.cliente_nombre) + ' ' + esc(r.cliente_apellido) + '</span>' +
+            '<span class="ri-cancha">Cancha ' + r.cancha_numero + ' ' + hora + '</span>' +
+            '<span class="ri-deuda">$' + deuda.toLocaleString('es-AR') + '</span>' +
+            '</div>';
+        }).join('');
+      } else {
+        impList.innerHTML = '<p style="opacity:0.6;padding:8px 0">No hay reservas impagas</p>';
+      }
+    }
+
+    if (data.ingresos_7d && data.ingresos_7d.length > 0) {
+      drawMiniChart('chart-ingresos', data.ingresos_7d);
+    }
+
   } catch (err) {
     console.error('Dashboard error:', err);
   }
+}
+
+function drawMiniChart(canvasId, data) {
+  var canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  var rect = canvas.parentElement.getBoundingClientRect();
+  var w = rect.width - 48;
+  var dpr = window.devicePixelRatio || 1;
+  canvas.width = w * dpr;
+  canvas.height = 200 * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = '200px';
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  var pad = { top: 20, right: 20, bottom: 30, left: 50 };
+  var cw = w - pad.left - pad.right;
+  var ch = 200 - pad.top - pad.bottom;
+
+  var maxVal = 0;
+  data.forEach(function(d) { if (d.total > maxVal) maxVal = d.total; });
+  if (maxVal === 0) maxVal = 1;
+  var roundTo = Math.pow(10, Math.floor(Math.log10(maxVal)));
+  var yMax = Math.ceil(maxVal / roundTo) * roundTo;
+  if (yMax === 0) yMax = 1;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  var dias = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (var i = 0; i <= 4; i++) {
+    var y = pad.top + (ch / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + cw, y);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('$' + Math.round(yMax - (yMax / 4) * i).toLocaleString('es-AR'), pad.left - 8, y + 4);
+  }
+
+  var puntos = [];
+  data.forEach(function(d, i) {
+    var x = pad.left + (i / (data.length - 1 || 1)) * cw;
+    var y = pad.top + ch - (d.total / yMax) * ch;
+    puntos.push({ x: x, y: y });
+
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    var dateObj = new Date(d.fecha + 'T12:00:00');
+    var label = dias[dateObj.getDay()];
+    ctx.fillText(label, x, pad.top + ch + 18);
+  });
+
+  if (puntos.length > 1) {
+    var gradient = ctx.createLinearGradient(0, pad.top, 0, pad.top + ch);
+    gradient.addColorStop(0, 'rgba(250, 204, 21, 0.25)');
+    gradient.addColorStop(1, 'rgba(250, 204, 21, 0.01)');
+    ctx.beginPath();
+    ctx.moveTo(puntos[0].x, pad.top + ch);
+    puntos.forEach(function(p) { ctx.lineTo(p.x, p.y); });
+    ctx.lineTo(puntos[puntos.length - 1].x, pad.top + ch);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
+  }
+
+  ctx.strokeStyle = '#facc15';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  puntos.forEach(function(p, i) {
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  });
+  ctx.stroke();
+
+  puntos.forEach(function(p) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#facc15';
+    ctx.fill();
+    ctx.strokeStyle = '#1e1e2e';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
 }
 
 function initRouter() {
