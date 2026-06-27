@@ -6,6 +6,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+loggear('logout');
+
 session_unset();
 session_destroy();
 

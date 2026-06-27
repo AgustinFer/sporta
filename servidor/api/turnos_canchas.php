@@ -46,6 +46,7 @@ try {
             throw new Exception('Acción inválida');
     }
 } catch (Exception $e) {
+    loggear('error_excepcion', ['archivo' => 'turnos_canchas.php', 'mensaje' => $e->getMessage()]);
     echo json_encode([
         'ok' => false,
         'mensaje' => $e->getMessage()
@@ -127,6 +128,7 @@ function crearReserva(PDO $pdo, array $input): void
     $hoy = date('Y-m-d');
 
     if ($fecha < $hoy) {
+        loggear('error_reserva_fecha_pasada', ['fecha' => $fecha]);
         echo json_encode([
             'ok' => false,
             'mensaje' => 'No se puede reservar en una fecha pasada'
@@ -137,6 +139,7 @@ function crearReserva(PDO $pdo, array $input): void
     if ($fecha === $hoy) {
         $inicioTurno = strtotime($fecha . ' ' . $input['hora_inicio']);
         if ($inicioTurno <= time()) {
+            loggear('error_reserva_horario_pasado', ['fecha' => $fecha, 'hora' => $input['hora_inicio']]);
             echo json_encode([
                 'ok' => false,
                 'mensaje' => 'No se puede reservar un horario ya pasado'
@@ -164,6 +167,7 @@ function crearReserva(PDO $pdo, array $input): void
     $ocupado = (int)$stmt->fetchColumn();
 
     if ($ocupado > 0) {
+        loggear('error_reserva_horario_ocupado', ['cancha_id' => $canchaId, 'fecha' => $fecha, 'hora' => $horaInicio]);
         echo json_encode([
             'ok' => false,
             'mensaje' => 'El horario ya está reservado'
@@ -186,6 +190,7 @@ function crearReserva(PDO $pdo, array $input): void
     $clienteOcupado = (int)$stmt->fetchColumn();
 
     if ($clienteOcupado > 0 && empty($input['confirm_same_client'])) {
+        loggear('error_reserva_cliente_ocupado', ['cliente_id' => $clienteId, 'fecha' => $fecha, 'hora' => $horaInicio]);
         echo json_encode([
             'ok' => false,
             'requires_confirmation' => true,
@@ -200,6 +205,7 @@ function crearReserva(PDO $pdo, array $input): void
     $estadoCancha = (int)$stmt->fetchColumn();
 
     if ($estadoCancha === 2) {
+        loggear('error_cancha_mantenimiento', ['cancha_id' => $canchaId]);
         echo json_encode([
             'ok' => false,
             'mensaje' => 'La cancha está en mantenimiento'
@@ -207,6 +213,7 @@ function crearReserva(PDO $pdo, array $input): void
         return;
     }
     if ($estadoCancha === 3) {
+        loggear('error_cancha_inhabilitada', ['cancha_id' => $canchaId]);
         echo json_encode([
             'ok' => false,
             'mensaje' => 'La cancha está inhabilitada'
@@ -226,6 +233,14 @@ function crearReserva(PDO $pdo, array $input): void
         $stmt->execute([$clienteId, $turId, $observaciones]);
 
         $pdo->commit();
+
+        loggear('reserva_creada', [
+            'cancha_id' => $canchaId,
+            'cliente_id' => $clienteId,
+            'fecha' => $fecha,
+            'hora_inicio' => $horaInicio
+        ]);
+
         echo json_encode(['ok' => true, 'mensaje' => 'Reserva creada']);
     } catch (Exception $e) {
         $pdo->rollBack();
@@ -284,6 +299,7 @@ function cambiarEstado(PDO $pdo, array $input): void
         $activos = (int)$stmt->fetchColumn();
 
         if ($activos > 0) {
+            loggear('error_reserva_slot_ocupado', ['reserva_id' => $reservaId]);
             echo json_encode([
                 'ok' => false,
                 'mensaje' => 'No se puede modificar: ya hay una reserva activa en este horario'
@@ -295,6 +311,13 @@ function cambiarEstado(PDO $pdo, array $input): void
     $sql = "UPDATE reservas SET reser_estado = ? WHERE reserva_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$estado, $reservaId]);
+
+    $mapa = [1 => 'pendiente', 2 => 'confirmada', 3 => 'cancelada'];
+    loggear('reserva_estado_cambiado', [
+        'reserva_id' => $reservaId,
+        'estado_anterior' => $mapa[$estadoActual] ?? $estadoActual,
+        'estado_nuevo' => $mapa[$estado] ?? $estado
+    ]);
 
     echo json_encode(['ok' => true, 'mensaje' => 'Estado actualizado']);
 }
@@ -336,12 +359,19 @@ function crearCancha(PDO $pdo, array $input): void
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM canchas WHERE cancha_numero = ?");
     $stmt->execute([$numero]);
     if ($stmt->fetchColumn() > 0) {
+        loggear('error_cancha_numero_duplicado', ['cancha_numero' => $numero]);
         throw new Exception('Ya existe una cancha con ese número');
     }
 
     $sql = "INSERT INTO canchas (cancha_numero, cancha_precio, descripcion, cancha_tipo, cancha_estado) VALUES (?, ?, ?, 1, ?)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$numero, $precio, $descripcion, $estado]);
+
+    loggear('cancha_creada', [
+        'cancha_numero' => $numero,
+        'precio' => $precio,
+        'descripcion' => $descripcion
+    ]);
 
     echo json_encode(['ok' => true, 'mensaje' => 'Cancha creada correctamente']);
 }
@@ -364,12 +394,19 @@ function actualizarCancha(PDO $pdo, array $input): void
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM canchas WHERE cancha_numero = ? AND cancha_id != ?");
     $stmt->execute([$numero, $canchaId]);
     if ($stmt->fetchColumn() > 0) {
+        loggear('error_cancha_numero_duplicado', ['cancha_id' => $canchaId, 'cancha_numero' => $numero]);
         throw new Exception('Ya existe otra cancha con ese número');
     }
 
     $sql = "UPDATE canchas SET cancha_numero = ?, cancha_precio = ?, descripcion = ?, cancha_estado = ? WHERE cancha_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$numero, $precio, $descripcion, $estado, $canchaId]);
+
+    loggear('cancha_actualizada', [
+        'cancha_id' => $canchaId,
+        'cancha_numero' => $numero,
+        'precio' => $precio
+    ]);
 
     echo json_encode(['ok' => true, 'mensaje' => 'Cancha actualizada correctamente']);
 }
@@ -381,6 +418,8 @@ function eliminarCancha(PDO $pdo, array $input): void
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$canchaId]);
 
+    loggear('cancha_inhabilitada', ['cancha_id' => $canchaId]);
+
     echo json_encode(['ok' => true, 'mensaje' => 'Cancha inhabilitada correctamente']);
 }
 
@@ -390,6 +429,8 @@ function habilitarCancha(PDO $pdo, array $input): void
     $sql = "UPDATE canchas SET cancha_estado = 1 WHERE cancha_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$canchaId]);
+
+    loggear('cancha_habilitada', ['cancha_id' => $canchaId]);
 
     echo json_encode(['ok' => true, 'mensaje' => 'Cancha habilitada correctamente']);
 }

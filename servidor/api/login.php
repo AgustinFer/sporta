@@ -45,6 +45,7 @@ $stmt->bindParam(':usuario', $email, PDO::PARAM_STR);
 $stmt->execute();
 
 if ($stmt->rowCount() !== 1) {
+    loggear('login_usuario_no_encontrado', ['usuario_intentado' => $email]);
     echo json_encode(['ok' => false, 'mensaje' => 'Usuario no encontrado', 'campo' => 'usuario']);
     exit;
 }
@@ -52,6 +53,7 @@ if ($stmt->rowCount() !== 1) {
 $datos = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!password_verify($pass, $datos['usu_contrasena'])) {
+    loggear('login_fallido', ['usuario_intentado' => $email]);
     echo json_encode(['ok' => false, 'mensaje' => 'Contraseña incorrecta', 'campo' => 'password']);
     exit;
 }
@@ -73,6 +75,8 @@ $_SESSION['usuario'] = new Usuario(
     $datos['localidad_nombre'],
     $datos['usu_fecha_alta']
 );
+
+loggear('login_exitoso', ['usuario' => $datos['usu_usuario']]);
 
 echo json_encode([
     'ok' => true,

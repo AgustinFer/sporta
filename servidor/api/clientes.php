@@ -40,6 +40,7 @@ try {
     }
 
 } catch (Exception $e) {
+    loggear('error_excepcion', ['archivo' => 'clientes.php', 'mensaje' => $e->getMessage()]);
     echo json_encode(['ok' => false, 'mensaje' => $e->getMessage()]);
 }
 
@@ -54,6 +55,7 @@ function toggleEstado(PDO $pdo, array $input): void
 {
     $id = (int) ($input['cliente_id'] ?? 0);
     if ($id <= 0) {
+        loggear('error_cliente_id_invalido', ['accion' => 'toggle_estado']);
         echo json_encode(['ok' => false, 'mensaje' => 'ID inválido']);
         return;
     }
@@ -66,6 +68,11 @@ function toggleEstado(PDO $pdo, array $input): void
 
     $stmt = $pdo->prepare("UPDATE clientes SET cliente_estado = ? WHERE cliente_id = ?");
     $stmt->execute([$nuevoEstado, $id]);
+
+    loggear('cliente_estado_toggle', [
+        'cliente_id' => $id,
+        'nuevo_estado' => $nuevoEstado === 1 ? 'activo' : 'inactivo'
+    ]);
 
     echo json_encode([
         'ok' => true,
@@ -169,6 +176,7 @@ function crear(PDO $pdo, array $input): void
 
     $erroresDuplicados = verificarDuplicados($pdo, $email, $dni);
     if (!empty($erroresDuplicados)) {
+        loggear('error_cliente_duplicado', ['dni' => $dni, 'email' => $email]);
         echo json_encode(['ok' => false, 'mensaje' => implode('<br>', $erroresDuplicados)]);
         return;
     }
@@ -180,6 +188,13 @@ function crear(PDO $pdo, array $input): void
     $stmt->execute([$nombre, $apellido, $email ?: null, $celular ?: null, $dni ?: null]);
 
     $clienteId = (int) $pdo->lastInsertId();
+
+    loggear('cliente_creado', [
+        'cliente_id' => $clienteId,
+        'nombre' => $nombre,
+        'apellido' => $apellido
+    ]);
+
     echo json_encode(['ok' => true, 'mensaje' => 'Cliente agregado con éxito', 'cliente_id' => $clienteId]);
 }
 
@@ -193,6 +208,7 @@ function editar(PDO $pdo, array $input): void
     $dni = trim($input['dni'] ?? '');
 
     if ($id <= 0 || empty($nombre) || empty($apellido) || empty($celular)) {
+        loggear('error_cliente_datos_invalidos', ['accion' => 'editar', 'cliente_id' => $id]);
         echo json_encode(['ok' => false, 'mensaje' => 'Nombre, apellido y teléfono son obligatorios']);
         return;
     }
@@ -209,6 +225,7 @@ function editar(PDO $pdo, array $input): void
 
     $erroresDuplicados = verificarDuplicados($pdo, $email, $dni, $id);
     if (!empty($erroresDuplicados)) {
+        loggear('error_cliente_duplicado', ['accion' => 'editar', 'cliente_id' => $id, 'dni' => $dni, 'email' => $email]);
         echo json_encode(['ok' => false, 'mensaje' => implode('<br>', $erroresDuplicados)]);
         return;
     }
@@ -219,6 +236,12 @@ function editar(PDO $pdo, array $input): void
         WHERE cliente_id = ?
     ");
     $stmt->execute([$nombre, $apellido, $email ?: null, $celular ?: null, $dni ?: null, $id]);
+
+    loggear('cliente_editado', [
+        'cliente_id' => $id,
+        'nombre' => $nombre,
+        'apellido' => $apellido
+    ]);
 
     echo json_encode(['ok' => true, 'mensaje' => 'Cliente modificado con éxito']);
 }

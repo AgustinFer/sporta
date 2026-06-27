@@ -2,6 +2,7 @@
 .env.local
 .env.*.local
 *.log
+servidor/log/
 *.swp
 *.swo
 *~

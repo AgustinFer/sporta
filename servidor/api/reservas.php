@@ -51,6 +51,7 @@ try {
     }
 
 } catch (Exception $e) {
+    loggear('error_excepcion', ['archivo' => 'reservas.php', 'mensaje' => $e->getMessage()]);
     echo json_encode(['ok' => false, 'mensaje' => $e->getMessage()]);
 }
 
@@ -95,6 +96,7 @@ function listar(PDO $pdo): void
 
         echo json_encode(['ok' => true, 'reservas' => $reservas, 'metodos_pago' => $metodosPago]);
     } catch (Exception $e) {
+        loggear('error_excepcion', ['archivo' => 'reservas.php', 'funcion' => 'listar', 'mensaje' => $e->getMessage()]);
         echo json_encode(['ok' => false, 'mensaje' => 'Error al cargar reservas: ' . $e->getMessage()]);
     }
 }
@@ -121,6 +123,7 @@ function editar(PDO $pdo, array $input): void
     $reserva = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$reserva) {
+        loggear('error_reserva_no_encontrada', ['reserva_id' => $id]);
         echo json_encode(['ok' => false, 'mensaje' => 'Reserva no encontrada']);
         return;
     }
@@ -148,6 +151,7 @@ function editar(PDO $pdo, array $input): void
         $activos = (int)$stmt->fetchColumn();
 
         if ($activos > 0) {
+            loggear('error_reserva_slot_ocupado', ['reserva_id' => $id]);
             echo json_encode([
                 'ok' => false,
                 'mensaje' => 'No se puede modificar: ya hay una reserva activa en este horario'
@@ -162,6 +166,13 @@ function editar(PDO $pdo, array $input): void
         WHERE reserva_id = ?
     ");
     $stmt->execute([$estado, $observaciones ?: null, $id]);
+
+    $mapa = [1 => 'pendiente', 2 => 'confirmada', 3 => 'cancelada'];
+    loggear('reserva_editada', [
+        'reserva_id' => $id,
+        'estado_anterior' => $mapa[$estadoActual] ?? $estadoActual,
+        'estado_nuevo' => $mapa[$estado] ?? $estado
+    ]);
 
     echo json_encode(['ok' => true, 'mensaje' => 'Reserva actualizada con éxito']);
 }
@@ -191,6 +202,7 @@ function togglePago(PDO $pdo, array $input): void
     }
 
     if ((int)$row['reser_estado'] === 3) {
+        loggear('error_pago_reserva_cancelada', ['reserva_id' => $reservaId, 'accion' => 'toggle_pago']);
         echo json_encode(['ok' => false, 'mensaje' => 'No se pueden registrar pagos en una reserva cancelada']);
         return;
     }
@@ -226,9 +238,21 @@ function togglePago(PDO $pdo, array $input): void
         ");
         $stmtPago->execute([$facturaId, $row['cancha_precio']]);
 
+        loggear('pago_toggle', [
+            'reserva_id' => $reservaId,
+            'nuevo_estado' => 'Pagada',
+            'metodo' => 'toggle_completo'
+        ]);
+
         echo json_encode(['ok' => true, 'mensaje' => 'Reserva marcada como Pagada']);
         return;
     }
+
+    loggear('pago_toggle', [
+        'reserva_id' => $reservaId,
+        'nuevo_estado' => $nuevoEstado,
+        'metodo' => 'toggle'
+    ]);
 
     echo json_encode([
         'ok' => true,
@@ -253,6 +277,7 @@ function registrarPago(PDO $pdo, array $input): void
     $stmtCheck->execute([$reservaId]);
     $estado = (int) $stmtCheck->fetchColumn();
     if ($estado === 3) {
+        loggear('error_pago_reserva_cancelada', ['reserva_id' => $reservaId, 'accion' => 'registrar_pago']);
         echo json_encode(['ok' => false, 'mensaje' => 'No se pueden registrar pagos en una reserva cancelada']);
         return;
     }
@@ -323,6 +348,14 @@ function registrarPago(PDO $pdo, array $input): void
 
     $stmtConf = $pdo->prepare("UPDATE reservas SET reser_estado = 2 WHERE reserva_id = ? AND reser_estado = 1");
     $stmtConf->execute([$reservaId]);
+
+    loggear('pago_registrado', [
+        'reserva_id' => $reservaId,
+        'factura_id' => $facturaId,
+        'monto' => $monto,
+        'metodo_pago_id' => $metodoPagoId,
+        'factura_estado' => $nuevoEstado
+    ]);
 
     echo json_encode([
         'ok' => true,
