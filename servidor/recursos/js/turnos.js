@@ -473,7 +473,33 @@ function turnosGuardarReserva(e) {
     })
     .then(function (r) { return r.json(); })
     .then(function (resultado) {
-        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
+        if (!resultado.ok) {
+            if (resultado.requires_confirmation) {
+                showConfirm(resultado.mensaje, '⚠️').then(function (confirma) {
+                    if (!confirma) return;
+                    payload.confirm_same_client = true;
+                    fetch(BASE_URL + '/api/turnos_canchas.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (r2) {
+                        if (!r2.ok) { mostrarToast(r2.mensaje, 'error'); return; }
+                        closeDrawer();
+                        turnosCargarDatos();
+                        mostrarToast('Reserva creada', 'success');
+                    })
+                    .catch(function (err) {
+                        console.error(err);
+                        mostrarToast('Error al guardar', 'error');
+                    });
+                });
+                return;
+            }
+            mostrarToast(resultado.mensaje, 'error');
+            return;
+        }
         closeDrawer();
         turnosCargarDatos();
         mostrarToast('Reserva creada', 'success');

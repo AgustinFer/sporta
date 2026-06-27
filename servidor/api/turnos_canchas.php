@@ -171,6 +171,29 @@ function crearReserva(PDO $pdo, array $input): void
         return;
     }
 
+    $sql = "
+    SELECT COUNT(*) total
+    FROM reservas r
+    INNER JOIN turnos t ON r.tur_id = t.tur_id
+    WHERE r.cliente_id = ?
+      AND t.tur_fecha = ?
+      AND t.tur_hora_inicio = ?
+      AND r.reser_estado IN (1,2)
+      AND t.id_cancha != ?
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$clienteId, $fecha, $horaInicio, $canchaId]);
+    $clienteOcupado = (int)$stmt->fetchColumn();
+
+    if ($clienteOcupado > 0 && empty($input['confirm_same_client'])) {
+        echo json_encode([
+            'ok' => false,
+            'requires_confirmation' => true,
+            'mensaje' => 'Este cliente ya tiene una reserva activa en el mismo horario. ¿Desea continuar?'
+        ]);
+        return;
+    }
+
     $sql = "SELECT cancha_estado FROM canchas WHERE cancha_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$canchaId]);

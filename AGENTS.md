@@ -40,6 +40,13 @@ Vanilla PHP SPA (faculty project). No build step, no tests, no framework.
 - **`#toast-container` must be outside `.main-content`**: Same reason as the drawer — `loadPage()` replaces `.main-content` via `innerHTML`, so toasts placed inside get destroyed on SPA navigation. Always place them after `</main>`.
 - **Toolbar filter elements need CSS**: Checkboxes in `.table-toolbar` (e.g., `.filter-pendientes`, `.filter-fecha`) must have explicit `display: flex; align-items: center; white-space: nowrap` CSS. Without `white-space: nowrap`, the flex container may shrink the label to near-zero width, making it appear invisible. See `reservas/reservas.css` for reference.
 - **`initFiltroHoy()` in reservas**: Called from `renderTablaReservas()` (like `initFiltroPendientes()`). The `#showSoloHoy` checkbox filter is combined with `#showSoloPendientes` in a single `aplicarFiltros()` function that respects both filters simultaneously. Each filter function (`initFiltroPendientes`, `initFiltroHoy`) guards with `chk.dataset.bound` to avoid duplicate event binding.
+- **Paginación en clientes** (`clientes/clientes.js`):
+  - `clientesPaginaActual` (global) + `initPaginacionClientes()`, `aplicarFiltrosClientes()`, `calcularTotalPaginas()`.
+  - `initPaginacionClientes()` se ejecuta una sola vez (`toolbar.dataset.paginacionBound`). Inyecta el limit-selector (10/20/50/Todos) en `.table-toolbar` antes de `.column-picker-btn` (o al final si no existe aún), y los botones ←/→ con indicador en `#paginacionBar`. También bindea `input` en `#tableSearch` y `change` en `#showInactivos` para resetear a página 1 y re-aplicar.
+  - `aplicarFiltrosClientes()`: remueve `.pag-hidden` de todas las filas, cuenta las visibles (`style.display !== "none"`), oculta con `.pag-hidden` (CSS `display: none !important`) las fuera del slice actual. Si limit es 0 (Todos), oculta la barra de paginación.
+  - `.pag-hidden` se usa en vez de `style.display` para no pisar el filtro de `filterRows()` (en `table.js`), que usa `style.display` directamente. El orden de ejecución garantiza que `filterRows()` corre primero (por `initTable()`) y `aplicarFiltrosClientes()` después.
+  - El limit-selector y paginación-bar se vinculan a los datos que YA están en el DOM (no re-fetch). La barra tiene `max-width: 600px` y está centrada.
+  - Para aplicar paginación a otro módulo, copiar el patrón: variable global de página, función init (guard `dataset.paginacionBound`), función aplicar que itera filas visibles y usa clase ocultante, y bindear los eventos de búsqueda/filtro para resetear página.
 
 ## File Layout
 
