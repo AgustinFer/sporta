@@ -34,8 +34,8 @@ try {
     $turnosHoy = (int)$stmt->fetchColumn();
 
     $stmt = $pdo->prepare("
-        SELECT COALESCE(SUM(factura_total), 0) FROM facturacion
-        WHERE DATE(factura_fecha_emision) = CURDATE()
+        SELECT COALESCE(SUM(pago_monto), 0) FROM pagos
+        WHERE pago_fecha_pago = CURDATE()
     ");
     $stmt->execute();
     $ingresos = (float)$stmt->fetchColumn();
