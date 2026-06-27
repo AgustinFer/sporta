@@ -321,6 +321,9 @@ function registrarPago(PDO $pdo, array $input): void
     $stmtUpd = $pdo->prepare("UPDATE facturacion SET factura_estado = ? WHERE factura_id = ?");
     $stmtUpd->execute([$nuevoEstado, $facturaId]);
 
+    $stmtConf = $pdo->prepare("UPDATE reservas SET reser_estado = 2 WHERE reserva_id = ? AND reser_estado = 1");
+    $stmtConf->execute([$reservaId]);
+
     echo json_encode([
         'ok' => true,
         'mensaje' => 'Pago registrado con éxito',
