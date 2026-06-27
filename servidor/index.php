@@ -95,6 +95,16 @@ $BASE = BASE_URL;
     </div>
   </div>
 
+  <div id="messi-overlay" class="messi-overlay">
+    <div class="messi-card">
+      <div class="messi-numero">10</div>
+      <div class="messi-nombre">Lionel Messi</div>
+      <div class="messi-goat">🐐</div>
+      <div class="messi-frase">El mejor del mundo</div>
+      <button id="messi-cerrar" class="messi-btn">Cerrar</button>
+    </div>
+  </div>
+
   <script>
     var BASE_URL = <?= json_encode($BASE) ?>;
 
@@ -199,6 +209,48 @@ $BASE = BASE_URL;
       mj.startGame();
     }
 
+    function lanzarConfeti() {
+      var contenedor = document.getElementById('messi-overlay');
+      var colores = ['#75aadb', '#ffffff', '#facc15', '#1a1a2e', '#10b981', '#f472b6', '#ef4444', '#a855f7', '#06b6d4'];
+
+      // Lluvia desde todo el ancho
+      for (var i = 0; i < 45; i++) {
+        var p = document.createElement('div');
+        p.className = 'confeti confeti-lluvia';
+        p.style.left = (Math.random() * 100) + '%';
+        p.style.background = colores[Math.floor(Math.random() * colores.length)];
+        p.style.width = (5 + Math.random() * 7) + 'px';
+        p.style.height = (5 + Math.random() * 7) + 'px';
+        p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        p.style.animationDuration = (2 + Math.random() * 3) + 's';
+        p.style.animationDelay = (Math.random() * 2) + 's';
+        p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+        contenedor.appendChild(p);
+      }
+
+      // Explosión central
+      for (var i = 0; i < 15; i++) {
+        var p = document.createElement('div');
+        p.className = 'confeti confeti-explosion';
+        p.style.left = (45 + Math.random() * 10) + '%';
+        p.style.background = colores[Math.floor(Math.random() * colores.length)];
+        p.style.width = (8 + Math.random() * 10) + 'px';
+        p.style.height = (8 + Math.random() * 10) + 'px';
+        p.style.borderRadius = Math.random() > 0.3 ? '50%' : '0';
+        p.style.animationDuration = (2 + Math.random() * 2) + 's';
+        p.style.animationDelay = (0.3 + Math.random() * 0.8) + 's';
+        p.style.setProperty('--dx', (Math.random() * 300 - 150) + 'px');
+        p.style.setProperty('--dy', (150 + Math.random() * 300) + 'px');
+        contenedor.appendChild(p);
+      }
+    }
+
+    function mostrarMessi() {
+      var overlay = document.getElementById('messi-overlay');
+      overlay.classList.add('is-open');
+      lanzarConfeti();
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       mj.init();
       var ball = document.getElementById('easter-egg-login');
@@ -268,6 +320,10 @@ $BASE = BASE_URL;
           mostrarMiniJuego();
           btn.disabled = false;
           btn.textContent = "Iniciar Sesión";
+        } else if (data.messi) {
+          mostrarMessi();
+          btn.disabled = false;
+          btn.textContent = "Iniciar Sesión";
         } else {
           error.textContent = data.mensaje;
           error.classList.add("visible");
@@ -300,6 +356,13 @@ $BASE = BASE_URL;
     };
     cerrar.onclick = function() { modal.classList.remove("is-open"); };
     window.onclick = function(e) { if (e.target == modal) modal.classList.remove("is-open"); };
+
+    document.getElementById("messi-cerrar").onclick = function() {
+      document.getElementById("messi-overlay").classList.remove("is-open");
+    };
+    document.getElementById("messi-overlay").onclick = function(e) {
+      if (e.target === this) this.classList.remove("is-open");
+    };
 
     document.getElementById("modalPass").addEventListener("click", function(e) {
       if (e.target.id === "enviarBtn") {

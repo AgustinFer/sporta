@@ -19,6 +19,11 @@ if (empty($email) || empty($pass)) {
     exit;
 }
 
+if (strtolower($email) === 'lionelmessi') {
+    echo json_encode(['ok' => false, 'messi' => true]);
+    exit;
+}
+
 $con = conexion();
 
 $sql = "
