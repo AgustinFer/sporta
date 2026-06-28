@@ -214,6 +214,7 @@ async function loadPage(route) {
       await cargarReservas();
     }
     if (typeof cargarPagos === 'function' && cleanRoute === 'pagos') await cargarPagos();
+    if (typeof cargarLogs === 'function' && cleanRoute === 'logs') await cargarLogs();
     if (cleanRoute === 'inicio') initInicio();
 
     /* 10. RESET VISUAL */
@@ -1033,17 +1034,18 @@ async function initLayout() {
     }
     window.currentUserId = data.usuario.id;
     window.currentUser = data.usuario;
-    if (!data.usuario.isAdmin) {
-      document.querySelectorAll('.menu-admin').forEach(function(el) {
-        el.style.display = 'none';
-      });
-    }
   } catch (e) {
     window.location.href = BASE_URL + '/';
     return false;
   }
 
   await loadComponent('sidebar-container', BASE_URL + '/componentes/sidebar.html');
+
+  if (!window.currentUser.isAdmin) {
+    document.querySelectorAll('.menu-admin').forEach(function(el) {
+      el.style.display = 'none';
+    });
+  }
   initThemeToggle();
   await loadComponent('header-container', BASE_URL + '/componentes/header.html');
 
