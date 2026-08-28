@@ -121,6 +121,12 @@ servidor/
 - **API fetch URLs**: ALL `fetch` calls to backend endpoints MUST use `BASE_URL + "/api/..."` (absolute) — never relative paths like `"../api/..."`. Relative paths break after F5 refresh because the page URL context changes (direct page load vs SPA navigation). This was fixed in clientes, empleados, and reservas modules.
 - **Deploy**: `deploy.sh` — cron copies `servidor/` to `/var/www/html/` via `rsync --delete`, excludes `.git`. Backups kept in `/var/www/backups/`.
 
+## Git y branches
+
+- **`main` es la única fuente de verdad** (2026-08-28: su contenido pasó a ser la branch `sportaV0.8.9` de Sebas, absorbida vía merge `-s ours`).
+- **`sportaV0.8.9` quedó congelada**: ruleset de GitHub "sportaV0.8.9 solo lectura" bloquea push, force-push, borrado y recreación (sin bypass). **No pushear nada más ahí**.
+- Todo desarrollo nuevo va directo a `main` (idealmente vía PR).
+
 ## DB
 
 - Schema: `sporta.sql` (DDL). Seed data: `datos_iniciales.sql`.
