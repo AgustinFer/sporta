@@ -36,16 +36,16 @@ $BASE = BASE_URL;
 
         <h2>Iniciar Sesión</h2>
 
-        <form id="loginForm">
+        <form id="loginForm" autocomplete="off">
 
           <div class="field">
             <label>Correo Electrónico o Usuario</label>
-            <input type="text" id="usuario" placeholder="Correo o nombre de usuario" autocomplete="off" required>
+            <input type="text" id="usuario" placeholder="Correo o nombre de usuario" autocomplete="chrome-off" required>
           </div>
 
           <div class="field">
             <label>Contraseña</label>
-            <input type="password" id="password" placeholder="Ingresa tu contraseña" autocomplete="off" required>
+            <input type="password" id="password" placeholder="Ingresa tu contraseña" autocomplete="new-password" required>
           </div>
 
           <div id="loginError" class="field-error" style="text-align:center;margin-bottom:12px"></div>
