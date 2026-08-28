@@ -162,8 +162,11 @@ function initPaginacionClientes() {
     e.stopPropagation();
   });
 
-  var pagBar = document.getElementById("paginacionBar");
-  if (!pagBar) return;
+  var showWrapper = document.getElementById("showInactivos");
+  if (!showWrapper) return;
+
+  var pagBar = document.createElement("div");
+  pagBar.className = "paginacion-bar";
 
   var prevBtn = document.createElement("button");
   prevBtn.type = "button";
@@ -182,6 +185,9 @@ function initPaginacionClientes() {
   nextBtn.className = "paginacion-btn next-btn";
   nextBtn.innerHTML = "Siguiente \u2192";
   pagBar.appendChild(nextBtn);
+
+  var container = showWrapper.parentNode.parentNode;
+  container.insertBefore(pagBar, showWrapper.parentNode.nextSibling);
 
   prevBtn.addEventListener("click", function() {
     if (clientesPaginaActual > 1) {
@@ -230,7 +236,7 @@ function calcularTotalPaginas() {
 function aplicarFiltrosClientes() {
   var rows = document.querySelectorAll("#clientesTableBody tr");
   var limit = parseInt(document.querySelector(".limit-selector-btn").dataset.limitValue);
-  var pagBar = document.getElementById("paginacionBar");
+  var pagBar = document.querySelector(".paginacion-bar");
 
   rows.forEach(function(r) { r.classList.remove("pag-hidden"); });
 
