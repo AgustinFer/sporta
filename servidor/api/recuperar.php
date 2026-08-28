@@ -26,12 +26,10 @@ try {
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$usuario) {
-        loggear('recuperar_email_no_encontrado', ['email' => $email]);
         echo json_encode(['ok' => false, 'mensaje' => 'El correo no está registrado en el sistema']);
         exit;
     }
 
-    loggear('recuperar_solicitado', ['email' => $email, 'usu_id' => (int)$usuario['usu_id']]);
     echo json_encode(['ok' => true, 'mensaje' => 'Se ha enviado un correo con las instrucciones para recuperar tu contraseña']);
 
 } catch (Exception $e) {

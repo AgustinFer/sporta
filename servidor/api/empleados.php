@@ -40,7 +40,6 @@ try {
     }
 
 } catch (Exception $e) {
-    loggear('error_excepcion', ['archivo' => 'empleados.php', 'mensaje' => $e->getMessage()]);
     echo json_encode(['ok' => false, 'mensaje' => $e->getMessage()]);
 }
 
@@ -56,13 +55,11 @@ function toggleEstado(PDO $pdo, array $input): void
     $id = (int) ($input['empleado_id'] ?? 0);
 
     if ($id <= 0) {
-        loggear('error_empleado_id_invalido', ['accion' => 'toggle_estado']);
         echo json_encode(['ok' => false, 'mensaje' => 'ID inválido']);
         return;
     }
 
     if ($id === $_SESSION['usuario']->getId()) {
-        loggear('error_empleado_auto_inactivacion');
         echo json_encode(['ok' => false, 'mensaje' => 'No puedes inactivar tu propio usuario']);
         return;
     }
@@ -76,10 +73,6 @@ function toggleEstado(PDO $pdo, array $input): void
     $stmt = $pdo->prepare("UPDATE usuarios SET usu_estado = ? WHERE usu_id = ?");
     $stmt->execute([$nuevoEstado, $id]);
 
-    loggear('empleado_estado_toggle', [
-        'empleado_id' => $id,
-        'nuevo_estado' => $nuevoEstado === 1 ? 'activo' : 'inactivo'
-    ]);
 
     echo json_encode([
         'ok' => true,
@@ -190,7 +183,6 @@ function crear(PDO $pdo, array $input): void
     if (empty($errores)) {
         $erroresDuplicados = verificarDuplicados($pdo, $usuario, $email, $dni);
         if (!empty($erroresDuplicados)) {
-            loggear('error_empleado_duplicado', ['usuario' => $usuario, 'dni' => $dni, 'email' => $email]);
             echo json_encode(['ok' => false, 'mensaje' => implode('<br>', $erroresDuplicados), 'form_data' => $input]);
             return;
         }
@@ -201,11 +193,6 @@ function crear(PDO $pdo, array $input): void
         ");
         $stmt->execute([$nombre, $apellido, $email ?: null, $celular ?: null, $dni ?: null, $usuario, $direccion ?: null, $rol, password_hash("1234", PASSWORD_DEFAULT)]);
 
-        loggear('empleado_creado', [
-            'nombre' => $nombre,
-            'apellido' => $apellido,
-            'usuario' => $usuario
-        ]);
 
         echo json_encode(['ok' => true, 'mensaje' => 'Empleado agregado con éxito']);
     } else {
@@ -235,7 +222,6 @@ function editar(PDO $pdo, array $input): void
         $stmt->execute([$id]);
         $rolActual = (int) $stmt->fetchColumn();
         if ($rol !== $rolActual) {
-            loggear('error_empleado_auto_rol', ['intento_rol' => $rol]);
             echo json_encode(['ok' => false, 'mensaje' => 'No puedes modificar tu propio rol']);
             return;
         }
@@ -246,7 +232,6 @@ function editar(PDO $pdo, array $input): void
     if (empty($errores)) {
         $erroresDuplicados = verificarDuplicados($pdo, $usuario, $email, $dni, $id);
         if (!empty($erroresDuplicados)) {
-            loggear('error_empleado_duplicado', ['accion' => 'editar', 'empleado_id' => $id, 'usuario' => $usuario, 'dni' => $dni, 'email' => $email]);
             echo json_encode(['ok' => false, 'mensaje' => implode('<br>', $erroresDuplicados)]);
             return;
         }
@@ -267,12 +252,6 @@ function editar(PDO $pdo, array $input): void
             $_SESSION['usuario']->setDireccion($direccion ?: null);
         }
 
-        loggear('empleado_editado', [
-            'empleado_id' => $id,
-            'nombre' => $nombre,
-            'apellido' => $apellido,
-            'usuario' => $usuario
-        ]);
 
         echo json_encode(['ok' => true, 'mensaje' => 'Empleado modificado con éxito']);
     } else {

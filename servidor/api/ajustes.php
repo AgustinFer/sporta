@@ -43,7 +43,6 @@ try {
             $stmt->execute([':usuario' => $nuevoUsuario, ':id' => $userId]);
 
             if ($stmt->fetchColumn() > 0) {
-                loggear('error_usuario_duplicado', ['usuario_intentado' => $nuevoUsuario]);
                 echo json_encode(['ok' => false, 'mensaje' => 'El nombre de usuario ya está en uso']);
                 exit;
             }
@@ -53,7 +52,6 @@ try {
 
             $_SESSION['usuario']->setUsuario($nuevoUsuario);
 
-            loggear('usuario_cambiado', ['nuevo_usuario' => $nuevoUsuario]);
 
             echo json_encode(['ok' => true, 'mensaje' => 'Nombre de usuario actualizado']);
             break;
@@ -68,7 +66,6 @@ try {
             $hashActual = $stmt->fetchColumn();
 
             if (!password_verify($passActual, $hashActual)) {
-                loggear('error_contrasena_actual_incorrecta');
                 echo json_encode(['ok' => false, 'mensaje' => 'La contraseña actual no es correcta']);
                 exit;
             }
@@ -97,7 +94,6 @@ try {
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_contrasena = :hash WHERE usu_id = :id");
             $stmt->execute([':hash' => $hash, ':id' => $userId]);
 
-            loggear('contrasena_cambiada');
 
             echo json_encode(['ok' => true, 'mensaje' => 'Contraseña actualizada correctamente']);
             break;
@@ -106,7 +102,6 @@ try {
             $hash = password_hash("1234", PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_contrasena = :hash WHERE usu_id = :id");
             $stmt->execute([':hash' => $hash, ':id' => $userId]);
-            loggear('contrasena_reseteada');
             echo json_encode(['ok' => true, 'mensaje' => 'Contraseña restablecida a 1234']);
             break;
 
@@ -121,7 +116,6 @@ try {
             $stmt->execute([':nombre' => $nombre, ':apellido' => $apellido, ':id' => $userId]);
             $_SESSION['usuario']->setNombre($nombre);
             $_SESSION['usuario']->setApellido($apellido);
-            loggear('nombre_cambiado', ['nombre' => $nombre, 'apellido' => $apellido]);
             echo json_encode(['ok' => true, 'mensaje' => 'Nombre y apellido actualizados']);
             break;
 
@@ -134,7 +128,6 @@ try {
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_direccion = :direccion WHERE usu_id = :id");
             $stmt->execute([':direccion' => $direccion, ':id' => $userId]);
             $_SESSION['usuario']->setDireccion($direccion);
-            loggear('direccion_cambiada');
             echo json_encode(['ok' => true, 'mensaje' => 'Dirección actualizada']);
             break;
 
@@ -147,14 +140,12 @@ try {
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE usu_email = :email AND usu_id != :id");
             $stmt->execute([':email' => $email, ':id' => $userId]);
             if ($stmt->fetchColumn() > 0) {
-                loggear('error_email_duplicado', ['email_intentado' => $email]);
                 echo json_encode(['ok' => false, 'mensaje' => 'El email ya está en uso']);
                 exit;
             }
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_email = :email WHERE usu_id = :id");
             $stmt->execute([':email' => $email, ':id' => $userId]);
             $_SESSION['usuario']->setEmail($email);
-            loggear('email_cambiado', ['nuevo_email' => $email]);
             echo json_encode(['ok' => true, 'mensaje' => 'Email actualizado']);
             break;
 
@@ -175,7 +166,6 @@ try {
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_celular = :celular WHERE usu_id = :id");
             $stmt->execute([':celular' => $celular, ':id' => $userId]);
             $_SESSION['usuario']->setCelular($celular);
-            loggear('celular_cambiado');
             echo json_encode(['ok' => true, 'mensaje' => 'Celular actualizado']);
             break;
 
@@ -192,7 +182,6 @@ try {
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_dni = :dni WHERE usu_id = :id");
             $stmt->execute([':dni' => $dni, ':id' => $userId]);
             $_SESSION['usuario']->setDni($dni);
-            loggear('dni_cambiado');
             echo json_encode(['ok' => true, 'mensaje' => 'DNI actualizado']);
             break;
 
@@ -202,6 +191,5 @@ try {
     }
 
 } catch (Exception $e) {
-    loggear('error_excepcion', ['archivo' => 'ajustes.php', 'mensaje' => $e->getMessage()]);
     echo json_encode(['ok' => false, 'mensaje' => $e->getMessage()]);
 }

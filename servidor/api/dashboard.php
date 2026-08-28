@@ -120,6 +120,5 @@ try {
     ]);
 
 } catch (Exception $e) {
-    loggear('error_excepcion', ['archivo' => 'dashboard.php', 'mensaje' => $e->getMessage()]);
     echo json_encode(['ok' => false, 'mensaje' => 'Error al obtener datos del dashboard']);
 }

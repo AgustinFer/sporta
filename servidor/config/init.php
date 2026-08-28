@@ -40,8 +40,6 @@ require_once __DIR__ . '/clases.php';
 /* 🔐 SESSION */
 /* ========================= */
 
-require_once __DIR__ . '/log.php';
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

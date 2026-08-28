@@ -30,7 +30,7 @@ function conexion(){
         if (!headers_sent()) {
             header('Content-Type: application/json; charset=utf-8');
         }
-        die(json_encode(['ok' => false, 'mensaje' => 'Error de conexión a la base de datos', 'minijuego' => true]));
+        die(json_encode(['ok' => false, 'mensaje' => 'Error de conexión a la base de datos']));
 
     }
 }

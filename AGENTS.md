@@ -189,3 +189,13 @@ Issues identificados en el audit de clientes, pendientes de corregir:
 **File:** `api/clientes.php:48`
 **Bug:** `$stmt = $pdo->query("SELECT * FROM clientes ...")` devuelve 15+ columnas que el frontend jamás usa (ej: `cliente_localidad_id`, `cliente_provincia_id`, `cliente_pais_id`, `cliente_fecha_alta`).
 **Fix:** Especificar solo las columnas necesarias en la consulta.
+
+## Código extra eliminado
+
+Código que no pedía el PO, agregado por Sebas en `sportaV0.8.9`, **eliminado por completo** en `main` (2026-08-28). NO reintroducir sin pedido explícito.
+
+- **Logs**: `servidor/logs/` (módulo SPA), `api/logs.php`, `config/log.php`, función `loggear()` (62 llamadas en API files), ítem Logs del sidebar y dispatch en `layout.js`. Eliminado; además se removió `servidor/log/` de `.gitignore` (solo queda `*.log`).
+- **Minijuego "Sporta Memory"**: bloque completo en `recursos/js/layout.js`, CSS en `recursos/css/global.css`, `recursos/css/minijuego.css`, overlay + JS en `index.php`, y la rama `'minijuego' => true` en `config/conexion.php`.
+- **Easter egg Messi**: login `lionelmessi` en `api/login.php`, overlay + confeti en `index.php` y `recursos/css/layout-login.css`.
+
+Verificación: en los catch de `index.php` ahora se muestra `#loginError` / `#recoverMsg` en vez de lanzar el minijuego.
