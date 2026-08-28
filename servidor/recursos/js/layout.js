@@ -881,9 +881,6 @@ function initAjustes() {
 
       var userEl = document.getElementById('profileUsuario');
       if (userEl) userEl.textContent = u.usuario || '—';
-
-      var fechaEl = document.getElementById('profileFechaAlta');
-      if (fechaEl && u.fecha_alta) fechaEl.textContent = u.fecha_alta;
     })
     .catch(function(err) { console.error('Error cargando datos de usuario:', err); });
 }
