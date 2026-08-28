@@ -305,6 +305,11 @@
   border-bottom: 1px solid var(--border-light);
 }
 
+.drawer-panel > .detalle-item {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
 .drawer.open .detalle-item {
   animation: drawerFadeInItem 0.5s ease both;
 }
