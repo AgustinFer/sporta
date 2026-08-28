@@ -36,6 +36,26 @@ function turnosReiniciarBotones() {
     }
 }
 
+function turnosFormatearFecha(iso) {
+    try {
+        var partes = iso.split('-');
+        var fecha = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
+        var texto = new Intl.DateTimeFormat('es-AR', {
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+        }).format(fecha);
+        return texto.charAt(0).toUpperCase() + texto.slice(1);
+    } catch (e) {
+        return iso;
+    }
+}
+
+function turnosActualizarTitulo() {
+    var titulo = document.getElementById('tituloFecha');
+    var fechaInput = document.getElementById('fechaSeleccionada');
+    if (!titulo || !fechaInput || !fechaInput.value) return;
+    titulo.textContent = turnosFormatearFecha(fechaInput.value);
+}
+
 function initTurnosPage() {
     var fechaInput = document.getElementById('fechaSeleccionada');
     var btnRecargar = document.getElementById('btnRecargar');
@@ -49,6 +69,15 @@ function initTurnosPage() {
         btnRecargar.addEventListener('click', turnosCargarDatos);
     }
 
+    if (fechaInput && !fechaInput.dataset.tituloBound) {
+        fechaInput.dataset.tituloBound = 'true';
+        fechaInput.addEventListener('change', function () {
+            turnosActualizarTitulo();
+            turnosCargarDatos();
+        });
+    }
+
+    turnosActualizarTitulo();
     turnosReiniciarBotones();
     turnosCargarDatos();
 }
