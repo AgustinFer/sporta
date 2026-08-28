@@ -388,21 +388,21 @@ function initLimitSelector() {
   btn.type = "button";
   btn.className = "limit-selector-btn";
   btn.style.position = "relative";
-  btn.dataset.limitValue = "0";
+  btn.dataset.limitValue = "10";
 
   var labelSpan = document.createElement("span");
-  labelSpan.textContent = "Mostrar: Todos \u25BC";
+  labelSpan.textContent = "Mostrar: \u00DAltimos 10 \u25BC";
   btn.appendChild(labelSpan);
 
   var dropdown = document.createElement("div");
   dropdown.className = "limit-selector-dropdown";
 
   var options = [
-    { value: 0, label: "Todos" },
-    { value: 100, label: "\u00DAltimos 100" },
-    { value: 50, label: "\u00DAltimos 50" },
+    { value: 10, label: "\u00DAltimos 10" },
     { value: 20, label: "\u00DAltimos 20" },
-    { value: 10, label: "\u00DAltimos 10" }
+    { value: 50, label: "\u00DAltimos 50" },
+    { value: 100, label: "\u00DAltimos 100" },
+    { value: 0, label: "Todos" }
   ];
 
   options.forEach(function(opt) {
