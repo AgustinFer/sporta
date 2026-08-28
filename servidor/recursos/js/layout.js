@@ -116,6 +116,12 @@ async function loadPage(route) {
     var cleanRoute = normalizeRoute(route);
     if (!cleanRoute) cleanRoute = 'inicio';
 
+    if (cleanRoute === 'canchas' && window.currentUser && !window.currentUser.isAdmin) {
+      window.history.pushState({}, '', BASE_URL + '/inicio/');
+      loadPage('inicio');
+      return;
+    }
+
     var res = await fetch(BASE_URL + '/' + cleanRoute + '/index.html?v=' + Date.now());
     if (!res.ok) {
       throw new Error('No existe /' + cleanRoute + '/index.html');
