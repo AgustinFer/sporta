@@ -58,16 +58,10 @@ function turnosActualizarTitulo() {
 
 function initTurnosPage() {
     var fechaInput = document.getElementById('fechaSeleccionada');
-    var btnRecargar = document.getElementById('btnRecargar');
 
     if (!fechaInput) return;
 
     fechaInput.value = new Date().toLocaleDateString('en-CA');
-
-    if (btnRecargar && !btnRecargar.dataset.bound) {
-        btnRecargar.dataset.bound = 'true';
-        btnRecargar.addEventListener('click', turnosCargarDatos);
-    }
 
     if (fechaInput && !fechaInput.dataset.tituloBound) {
         fechaInput.dataset.tituloBound = 'true';
