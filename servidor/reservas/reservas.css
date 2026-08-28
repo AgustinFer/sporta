@@ -12,31 +12,11 @@
 }
 
 .filter-pendientes input,
-.filter-fecha input {
+.filter-fecha input,
+.filter-canceladas input {
   width: 18px;
   height: 18px;
   cursor: pointer;
-}
-
-.filter-canceladas {
-  cursor: pointer;
-  user-select: none;
-  touch-action: manipulation;
-}
-
-.filter-canceladas .canceladas-indicator {
-  font-size: 20px;
-  line-height: 1;
-}
-
-.filter-canceladas[data-state="1"] {
-  opacity: 1;
-  color: var(--accent-yellow, #facc15);
-}
-
-.filter-canceladas[data-state="2"] {
-  opacity: 1;
-  color: #ef4444;
 }
 
 .filter-date input[type="date"] {
@@ -220,7 +200,8 @@
   }
 
   .filter-pendientes input,
-  .filter-fecha input {
+  .filter-fecha input,
+  .filter-canceladas input {
     width: 16px;
     height: 16px;
   }
