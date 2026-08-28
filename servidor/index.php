@@ -40,12 +40,12 @@ $BASE = BASE_URL;
 
           <div class="field">
             <label>Correo Electrónico o Usuario</label>
-            <input type="text" id="usuario" placeholder="Correo o nombre de usuario" required>
+            <input type="text" id="usuario" placeholder="Correo o nombre de usuario" autocomplete="off" required>
           </div>
 
           <div class="field">
             <label>Contraseña</label>
-            <input type="password" id="password" placeholder="Ingresa tu contraseña" required>
+            <input type="password" id="password" placeholder="Ingresa tu contraseña" autocomplete="off" required>
           </div>
 
           <div id="loginError" class="field-error" style="text-align:center;margin-bottom:12px"></div>
@@ -67,7 +67,7 @@ $BASE = BASE_URL;
       <span id="cerrarModal">&times;</span>
       <h2>Recuperar contraseña</h2>
       <div id="recoverForm">
-        <input type="email" id="email" placeholder="Ingresa tu email">
+<input type="email" id="email" placeholder="Ingresa tu email" autocomplete="off">
         <div id="recoverMsg" class="field-error" style="text-align:center;margin-bottom:12px"></div>
         <button id="enviarBtn">Enviar</button>
       </div>
@@ -149,7 +149,7 @@ $BASE = BASE_URL;
       modal.classList.add("is-open");
       var recoverForm = document.getElementById("recoverForm");
       if (!recoverForm.querySelector("input")) {
-        recoverForm.innerHTML = '<input type="email" id="email" placeholder="Ingresa tu email"><div id="recoverMsg" class="field-error" style="text-align:center;margin-bottom:12px"></div><button id="enviarBtn">Enviar</button>';
+        recoverForm.innerHTML = '<input type="email" id="email" placeholder="Ingresa tu email" autocomplete="off"><div id="recoverMsg" class="field-error" style="text-align:center;margin-bottom:12px"></div><button id="enviarBtn">Enviar</button>';
       }
       var msg = document.getElementById("recoverMsg");
       if (msg) { msg.textContent = ""; msg.classList.remove("visible"); }
