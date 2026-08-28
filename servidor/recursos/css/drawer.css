@@ -310,6 +310,12 @@
   padding-right: 24px;
 }
 
+.drawer-historial {
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 24px;
+}
+
 .drawer.open .detalle-item {
   animation: drawerFadeInItem 0.5s ease both;
 }
