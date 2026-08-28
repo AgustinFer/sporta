@@ -64,6 +64,7 @@ async function cargarCanchas() {
         generarBurbujas();
     } catch (error) {
         console.error(error);
+        mostrarToast('Error de conexión', 'error');
     }
 }
 

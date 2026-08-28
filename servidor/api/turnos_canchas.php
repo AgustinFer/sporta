@@ -36,7 +36,7 @@ try {
                 echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
                 exit;
             }
-            switch ($accion) {
+            switch ($input['accion']) {
                 case 'obtener_canchas':
                     obtenerCanchas($pdo, $input);
                     break;
