@@ -336,6 +336,9 @@ function crearCancha(PDO $pdo, array $input): void
     if ($precio < 0) {
         throw new Exception('El precio no puede ser negativo');
     }
+    if ($precio > 99999999.99) {
+        throw new Exception('El precio no puede superar $99.999.999,99');
+    }
 
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM canchas WHERE cancha_numero = ?");
     $stmt->execute([$numero]);
@@ -364,6 +367,9 @@ function actualizarCancha(PDO $pdo, array $input): void
     }
     if ($precio < 0) {
         throw new Exception('El precio no puede ser negativo');
+    }
+    if ($precio > 99999999.99) {
+        throw new Exception('El precio no puede superar $99.999.999,99');
     }
 
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM canchas WHERE cancha_numero = ? AND cancha_id != ?");

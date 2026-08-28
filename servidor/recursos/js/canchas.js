@@ -158,6 +158,12 @@ async function guardarCancha(e) {
     var canchaId = document.getElementById('edit_cancha_id').value;
     var numeroIngresado = document.getElementById('cancha_numero').value;
 
+    var precioIngresado = parseFloat(document.getElementById('cancha_precio').value);
+    if (isNaN(precioIngresado) || precioIngresado > 99999999.99) {
+        mostrarToast('El precio no puede superar $99.999.999,99', 'error');
+        return;
+    }
+
     var duplicado = canchasLista.some(function(c) {
         return String(c.cancha_numero) === numeroIngresado && String(c.cancha_id) !== canchaId;
     });
