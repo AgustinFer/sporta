@@ -78,7 +78,8 @@
       <form class="drawer-form" id="formRegistrarPago" style="margin-top:20px">
         <div>
           <label>Monto <span class="required">*</span></label>
-          <input type="number" name="pago_monto" id="pago_monto" step="0.01" min="0.01" required>
+          <input type="text" name="pago_monto" id="pago_monto" inputmode="decimal" data-validate="monto" placeholder="0.00" required>
+          <span id="error_pago_monto" class="field-error"></span>
         </div>
 
         <div>

@@ -191,7 +191,6 @@ if (!document.body.dataset.reservasFormBound) {
       document.getElementById("pago_pagado").textContent = "$" + pagado.toLocaleString('es-AR', {minimumFractionDigits:2});
       document.getElementById("pago_saldo").textContent = "$" + saldo.toLocaleString('es-AR', {minimumFractionDigits:2});
       document.getElementById("pago_monto").value = saldo > 0 ? saldo.toFixed(2) : "";
-      document.getElementById("pago_monto").max = saldo.toFixed(2);
       document.getElementById("pago_fecha").value = new Date().toLocaleDateString('en-CA');
 
       document.getElementById("panelEditar").style.display = "none";
