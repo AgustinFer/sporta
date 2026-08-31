@@ -36,7 +36,7 @@ INNER JOIN roles r ON u.usu_rol = r.rol_id
 LEFT JOIN localidades l ON u.usu_localidad_id = l.localidad_id
 LEFT JOIN provincias p ON u.usu_provincia_id = p.provincia_id
 LEFT JOIN paises pa ON u.usu_pais_id = pa.pais_id
-WHERE (u.usu_email = :usuario OR BINARY u.usu_usuario = :usuario)
+WHERE (u.usu_email = :usuario OR u.usu_usuario = :usuario)
 AND u.usu_estado = 1
 ";
 
