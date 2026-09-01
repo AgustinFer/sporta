@@ -222,12 +222,14 @@ button {
 
 /* VERSIÓN */
 .version {
+  position: absolute;
   text-align: left;
   font-size: 0.75rem;
   color: var(--text-secondary);
   opacity: 0.5;
-  margin-top: 100px;
-  margin-left: -25px;
+  bottom: 12px;
+  left: 12px;
+  margin: 0;
   user-select: none;
 }
 
