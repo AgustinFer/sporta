@@ -115,6 +115,13 @@ servidor/
   </div>
   ```
   Required CSS: `.accordion-body { display: none; } .accordion.open .accordion-body { display: block; }` plus arrow rotation (see `ajustes/ajustes.css`). JS logic (validation, submit) goes in `initAjustes()` in `recursos/js/layout.js` — elements are found by `getElementById` and work inside hidden containers.
+- **Ajustes: validación de datos editables** (`api/ajustes.php` + `initAjustes()` en `layout.js`): Los handlers `cambio_dni`, `cambio_email`, `cambio_celular`, `cambio_nombre` y `cambio_usuario` deben validar formato y unicidad para que coincidan con la validación de empleados (`api/empleados.php` `validarDatos()` + `verificarDuplicados()`). Reglas actuales:
+  - **DNI**: formato `\d{7,8}` + unicidad contra `usuarios` (excluyendo el propio `usu_id`) y `clientes`.
+  - **Email**: formato válido + unicidad contra `usuarios` (excluyendo el propio) y `clientes`.
+  - **Celular**: solo dígitos y entre 7 y 10 caracteres.
+  - **Nombre/apellido**: solo letras (incluyendo acentos y ñ) y al menos 2 caracteres.
+  - **Usuario**: alfanumérico (letras, números, `_`) de 3 a 20 caracteres.
+  Para cambios futuros: si se agrega una validación de formato/unicidad en empleados, replicarla en ajustes (y viceversa). El frontend (patrones `pattern`/`maxlength` HTML + checks JS en `layout.js`) debe ir alineado con el backend. Los mensajes de error del backend ya se muestran al usuario vía `mostrarToast`.
 - **`declare(strict_types=1)`** in `config/init.php` — prevents automatic type coercion.
 - **Output escaping**: `htmlspecialchars()` on all dynamic output. Prepared statements via PDO for all queries.
 - **BASE_URL**: computed automatically in `layout.js` from the script's `src` attribute. No hardcoding needed across environments.
