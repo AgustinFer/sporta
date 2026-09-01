@@ -729,6 +729,10 @@ function initAjustes() {
       var apellido = inputApellido.value.trim();
       if (!nombre) { errorNombre.textContent = 'El nombre no puede estar vacío'; errorNombre.classList.add('visible'); inputNombre.focus(); return; }
       if (!apellido) { errorApellido.textContent = 'El apellido no puede estar vacío'; errorApellido.classList.add('visible'); inputApellido.focus(); return; }
+      if (!/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(nombre)) { errorNombre.textContent = 'El nombre contiene caracteres inválidos'; errorNombre.classList.add('visible'); inputNombre.focus(); return; }
+      if (nombre.length < 2) { errorNombre.textContent = 'El nombre debe tener al menos 2 caracteres'; errorNombre.classList.add('visible'); inputNombre.focus(); return; }
+      if (!/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(apellido)) { errorApellido.textContent = 'El apellido contiene caracteres inválidos'; errorApellido.classList.add('visible'); inputApellido.focus(); return; }
+      if (apellido.length < 2) { errorApellido.textContent = 'El apellido debe tener al menos 2 caracteres'; errorApellido.classList.add('visible'); inputApellido.focus(); return; }
       fetch(BASE_URL + '/api/ajustes.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -812,6 +816,7 @@ function initAjustes() {
       var celular = inputCelular.value.trim();
       if (!celular) { errorCelular.textContent = 'El celular no puede estar vacío'; errorCelular.classList.add('visible'); inputCelular.focus(); return; }
       if (!/^\d+$/.test(celular)) { errorCelular.textContent = 'Solo se permiten números'; errorCelular.classList.add('visible'); inputCelular.focus(); return; }
+      if (celular.length < 7) { errorCelular.textContent = 'El celular debe tener al menos 7 dígitos'; errorCelular.classList.add('visible'); inputCelular.focus(); return; }
       if (celular.length > 10) { errorCelular.textContent = 'Máximo 10 dígitos'; errorCelular.classList.add('visible'); inputCelular.focus(); return; }
       fetch(BASE_URL + '/api/ajustes.php', {
         method: 'POST',
@@ -840,7 +845,7 @@ function initAjustes() {
       e.preventDefault();
       var dni = inputDni.value.trim();
       if (!dni) { errorDni.textContent = 'El DNI no puede estar vacío'; errorDni.classList.add('visible'); inputDni.focus(); return; }
-      if (!/^\d+$/.test(dni)) { errorDni.textContent = 'Solo se permiten números'; errorDni.classList.add('visible'); inputDni.focus(); return; }
+      if (!/^\d{7,8}$/.test(dni)) { errorDni.textContent = 'El DNI debe tener entre 7 y 8 dígitos numéricos'; errorDni.classList.add('visible'); inputDni.focus(); return; }
       fetch(BASE_URL + '/api/ajustes.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

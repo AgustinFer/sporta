@@ -133,7 +133,7 @@
           <form id="formCelular" novalidate>
             <div class="field">
               <label for="edit_celular">Celular</label>
-              <input type="text" name="celular" id="edit_celular" pattern="\d{1,10}" title="Solo se permiten números, máximo 10 dígitos" maxlength="10" inputmode="numeric" required>
+              <input type="text" name="celular" id="edit_celular" pattern="\d{7,10}" title="Solo números, entre 7 y 10 dígitos" maxlength="10" inputmode="numeric" required>
               <span class="field-error" id="error_celular"></span>
             </div>
             <button type="submit" class="btn-settings">Guardar celular</button>
@@ -150,7 +150,7 @@
           <form id="formDni" novalidate>
             <div class="field">
               <label for="edit_dni">Documento</label>
-              <input type="text" name="dni" id="edit_dni" pattern="\d{1,10}" title="Solo números" maxlength="10" inputmode="numeric" required>
+              <input type="text" name="dni" id="edit_dni" pattern="\d{7,8}" title="Solo números, entre 7 y 8 dígitos" maxlength="8" inputmode="numeric" required>
               <span class="field-error" id="error_dni"></span>
             </div>
             <button type="submit" class="btn-settings">Guardar DNI</button>

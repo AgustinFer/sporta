@@ -38,6 +38,10 @@ try {
                 echo json_encode(['ok' => false, 'mensaje' => 'El nombre de usuario no puede estar vacío']);
                 exit;
             }
+            if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $nuevoUsuario)) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El usuario debe tener entre 3 y 20 caracteres alfanuméricos']);
+                exit;
+            }
 
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE usu_usuario = :usuario AND usu_id != :id");
             $stmt->execute([':usuario' => $nuevoUsuario, ':id' => $userId]);
@@ -112,6 +116,22 @@ try {
                 echo json_encode(['ok' => false, 'mensaje' => 'Nombre y apellido no pueden estar vacíos']);
                 exit;
             }
+            if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $nombre)) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El nombre contiene caracteres inválidos']);
+                exit;
+            }
+            if (strlen($nombre) < 2) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El nombre debe tener al menos 2 caracteres']);
+                exit;
+            }
+            if (!preg_match('/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/', $apellido)) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El apellido contiene caracteres inválidos']);
+                exit;
+            }
+            if (strlen($apellido) < 2) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El apellido debe tener al menos 2 caracteres']);
+                exit;
+            }
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_nombre = :nombre, usu_apellido = :apellido WHERE usu_id = :id");
             $stmt->execute([':nombre' => $nombre, ':apellido' => $apellido, ':id' => $userId]);
             $_SESSION['usuario']->setNombre($nombre);
@@ -143,6 +163,12 @@ try {
                 echo json_encode(['ok' => false, 'mensaje' => 'El email ya está en uso']);
                 exit;
             }
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM clientes WHERE cliente_email = :email");
+            $stmt->execute([':email' => $email]);
+            if ($stmt->fetchColumn() > 0) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El email ya pertenece a un cliente']);
+                exit;
+            }
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_email = :email WHERE usu_id = :id");
             $stmt->execute([':email' => $email, ':id' => $userId]);
             $_SESSION['usuario']->setEmail($email);
@@ -157,6 +183,10 @@ try {
             }
             if (!preg_match('/^\d+$/', $celular)) {
                 echo json_encode(['ok' => false, 'mensaje' => 'El celular solo debe contener números']);
+                exit;
+            }
+            if (strlen($celular) < 7) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El celular debe tener al menos 7 dígitos']);
                 exit;
             }
             if (strlen($celular) > 10) {
@@ -175,8 +205,20 @@ try {
                 echo json_encode(['ok' => false, 'mensaje' => 'El DNI no puede estar vacío']);
                 exit;
             }
-            if (!preg_match('/^\d+$/', $dni)) {
-                echo json_encode(['ok' => false, 'mensaje' => 'El DNI solo debe contener números']);
+            if (!preg_match('/^\d{7,8}$/', $dni)) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El DNI debe tener entre 7 y 8 dígitos numéricos']);
+                exit;
+            }
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE usu_dni = :dni AND usu_id != :id");
+            $stmt->execute([':dni' => $dni, ':id' => $userId]);
+            if ($stmt->fetchColumn() > 0) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El DNI ya pertenece a otro empleado']);
+                exit;
+            }
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM clientes WHERE cliente_dni = :dni");
+            $stmt->execute([':dni' => $dni]);
+            if ($stmt->fetchColumn() > 0) {
+                echo json_encode(['ok' => false, 'mensaje' => 'El DNI ya pertenece a un cliente']);
                 exit;
             }
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_dni = :dni WHERE usu_id = :id");
