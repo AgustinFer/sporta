@@ -220,6 +220,16 @@ button {
   }
 }
 
+/* VERSIÓN */
+.version {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  margin-top: 18px;
+  user-select: none;
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: 36px 18px 24px;
