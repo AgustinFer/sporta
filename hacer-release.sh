@@ -122,6 +122,15 @@ EXCLUDES+=("-x" "sporta/index(legacy-NotWorking).html")
 # auth/ está vacía (para reemplazos futuros); se excluye para no incluir carpetas vacías
 EXCLUDES+=("-x" "sporta/auth/*")
 
+# Cuando la recuperación está desactivada, PHPMailer/webarte no se necesitan:
+# api/recuperar.php queda como stub que no llama a mailer.php ni a
+# vendor/autoload.php. Se excluye todo lo de composer para aligerar el zip.
+if [[ "$SIN_RECUPERAR" == "1" ]]; then
+  EXCLUDES+=("-x" "sporta/vendor/*")
+  EXCLUDES+=("-x" "sporta/composer.json")
+  EXCLUDES+=("-x" "sporta/composer.lock")
+fi
+
 # Eliminar carpetas vacías de la copia antes de zipear (auth/)
 find "$BUILD_DIR" -type d -empty -delete 2>/dev/null || true
 
@@ -163,6 +172,16 @@ fi
 
 if [[ "$SIN_RECUPERAR" == "1" ]] && grep -qE "modalPass|var modal|recoverForm" <<< "$LOGIN_PHP"; then
   echo "ERROR: quedó código huérfano de recuperación en index.php del zip" >&2
+  exit 1
+fi
+
+if [[ "$SIN_RECUPERAR" == "1" ]] && grep -qE "sporta/vendor/|sporta/composer\.(json|lock)" <<< "$ZIPLIST"; then
+  echo "ERROR: el zip contiene archivos de composer/vendor (recuperación desactivada)" >&2
+  exit 1
+fi
+
+if [[ "$SIN_RECUPERAR" == "0" ]] && ! grep -q "sporta/vendor/autoload.php" <<< "$ZIPLIST"; then
+  echo "ERROR: con --con-recuperar el zip debe incluir vendor/ (PHPMailer)" >&2
   exit 1
 fi
 

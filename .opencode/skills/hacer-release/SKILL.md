@@ -50,12 +50,21 @@ verifica el contenido del zip.
   - `/api/recuperar.php` se reemplaza por un stub que responde
     `'La recuperación de contraseña no está disponible.'` (no envía mail ni
     resetea passwords).
-  - Se conservan `config/mailer.php` y `vendor/` (PHPMailer) intactos.
+  - Como la recuperación queda inactiva, `config/mailer.php` y `vendor/`
+    (PHPMailer) ya no se usan en preproducción: se **excluyen del zip** (ver
+    sección 3). Con `--con-recuperar` sí se mantienen.
 
 ### 3. Exclusiones del zip
 
 El zip NO debe incluir: `.git`, `.env*`, `*.log`, `index(legacy-NotWorking).html`,
-carpetas vacías. Sí debe incluir `vendor/` (PHPMailer) y los SQL si aplican.
+carpetas vacías.
+
+- Con `--sin-recuperar` (default): tampoco incluye `vendor/`, `composer.json` ni
+  `composer.lock` (PHPMailer no se usa con la recuperación desactivada).
+- Con `--con-recuperar`: sí incluye `vendor/` (PHPMailer) y los composer files,
+  porque la recuperación los necesita (y requiere correr `composer install` en
+  el destino).
+- Los SQL se incluyen si aplican.
 
 ### 4. Verificación
 
