@@ -227,8 +227,8 @@ button {
   font-size: 0.75rem;
   color: var(--text-secondary);
   opacity: 0.5;
-  bottom: 12px;
-  left: 12px;
+  bottom: -65px;
+  left: -25px;
   margin: 0;
   user-select: none;
 }
