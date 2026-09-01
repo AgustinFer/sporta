@@ -222,7 +222,7 @@ button {
 
 /* VERSIÓN */
 .version {
-  text-align: center;
+  text-align: left;
   font-size: 0.75rem;
   color: var(--text-secondary);
   opacity: 0.5;
