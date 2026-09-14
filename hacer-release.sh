@@ -78,7 +78,11 @@ cp -r "$SOURCE_DIR/." "$BUILD_DIR/"
 # Aplicar ajustes de preproducción sobre la copia
 # ---------------------------------------------------------------------------
 
-# 1) BASE_URL en config/init.php
+# 1) Versión visible en index.php
+sed -i "s|<p class=\"version\">Versión: [^<]*</p>|<p class=\"version\">Versión: $VERSION</p>|" "$BUILD_DIR/index.php"
+echo "Versión -> $VERSION"
+
+# 2) BASE_URL en config/init.php
 if [[ "$BASE_URL" != "" ]]; then
   sed -i "s|^define('BASE_URL', '.*');|define('BASE_URL', '$BASE_URL');|" "$BUILD_DIR/config/init.php"
   echo "BASE_URL -> $BASE_URL"
@@ -87,7 +91,7 @@ else
   echo "BASE_URL -> '' (raíz)"
 fi
 
-# 2) Recuperación de contraseña: quitar botón/modal del login y neutralizar endpoint
+# 3) Recuperación de contraseña: quitar botón/modal del login y neutralizar endpoint
 if [[ "$SIN_RECUPERAR" == "1" ]]; then
   # Quitar botón "¿Olvidaste la contraseña?" del login
   sed -i '/btnCambiarPass/d' "$BUILD_DIR/index.php"
@@ -157,6 +161,11 @@ fi
 
 if ! grep -q "define('BASE_URL', '$BASE_URL')" <<< "$INIT_PHP"; then
   echo "ERROR: BASE_URL incorrecto en el zip" >&2
+  exit 1
+fi
+
+if ! grep -q "Versión: $VERSION" <<< "$LOGIN_PHP"; then
+  echo "ERROR: versión incorrecta en index.php del zip (esperado $VERSION)" >&2
   exit 1
 fi
 
