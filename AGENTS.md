@@ -127,6 +127,7 @@ servidor/
 - **BASE_URL**: computed automatically in `layout.js` from the script's `src` attribute. No hardcoding needed across environments.
 - **API fetch URLs**: ALL `fetch` calls to backend endpoints MUST use `BASE_URL + "/api/..."` (absolute) — never relative paths like `"../api/..."`. Relative paths break after F5 refresh because the page URL context changes (direct page load vs SPA navigation). This was fixed in clientes, empleados, and reservas modules.
 - **Deploy**: `deploy.sh` — cron copies `servidor/` to `/var/www/html/` via `rsync --delete`, excludes `.git`. Backups kept in `/var/www/backups/`.
+- **Release**: `./hacer-release.sh <VERSION>` siempre usa `BASE_URL=/sporta` (default). No pasar `--base-url=/` salvo pedido explícito del profesor para despliegue en raíz. Usar `--con-recuperar` cuando el release deba incluir recuperación de contraseña. El script actualiza `Versión: X.Y.Z` en la copia temporal y lo verifica.
 
 ## Git y branches
 

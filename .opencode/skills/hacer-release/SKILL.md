@@ -22,14 +22,14 @@ repo es el zip final. No commitear código modificado.
 Si no hay decisiones fuera de lo común, usar el script directamente:
 
 ```bash
-./hacer-release.sh <VERSION>              # ej: ./hacer-release.sh 0.9.2
-./hacer-release.sh <VERSION> --base-url=/ # pre en la raíz
+./hacer-release.sh <VERSION>              # ej: ./hacer-release.sh 0.9.2 (usa BASE_URL=/sporta)
 ./hacer-release.sh <VERSION> --con-recuperar
+./hacer-release.sh <VERSION> --base-url=/ # solo si el profesor pide pre en la raíz
 ```
 
 Argumentos:
-- `VERSION` (requerido): formato `X.Y.Z` (ej `0.9.2`).
-- `--base-url=URL` (default `/sporta`): prefijo de URL de la app.
+- `VERSION` (requerido): formato `X.Y.Z` (ej `0.9.2`). El script actualiza `Versión: X.Y.Z` en `index.php` de la copia temporal.
+- `--base-url=URL` (default `/sporta`): prefijo de URL de la app. Siempre usar el default `/sporta` salvo pedido explícito del profesor para despliegue en raíz.
 - `--sin-recuperar` (default ON): desactiva la recuperación de contraseña.
 - `--con-recuperar`: la mantiene activa (anula `--sin-recuperar`).
 
