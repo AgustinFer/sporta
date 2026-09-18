@@ -591,15 +591,39 @@ function turnosPostReservaExito(fecha, horaInicio, resultado) {
     }
     var esHoraEnCurso = resultado.hora_en_curso || resultado.requiere_pago_total || turnosHoraEnCurso(fecha, horaInicio);
     var msg = esHoraEnCurso
-        ? 'Reserva creada — hora en curso: se requiere pago total'
-        : 'Reserva creada — hoy: se requiere seña (cualquier monto > 0)';
+        ? '⚠️ Reserva creada — hora en curso: se requiere pago total'
+        : '⚠️ Reserva creada — hoy: se requiere seña';
     closeDrawer();
     turnosCargarDatos();
-    mostrarToast(msg, 'success');
+    mostrarToast(msg, 'warning', 5000);
     var reservaId = resultado.reserva_id;
     var facturaTotal = resultado.factura_total;
+    // Fallback si BE viejo no retornó ids (cache): buscar última reserva creada del cliente/hora
+    if (!reservaId) {
+        for (var k = turnosReservas.length - 1; k >= 0; k--) {
+            var rr = turnosReservas[k];
+            if (String(rr.cliente_id) === String(document.getElementById('cliente_id').value) && rr.tur_fecha === fecha && rr.tur_hora_inicio === (horaInicio.length === 8 ? horaInicio : horaInicio + ':00')) {
+                reservaId = rr.reserva_id; break;
+            }
+        }
+        if (!reservaId && turnosReservas.length) reservaId = turnosReservas[turnosReservas.length - 1].reserva_id;
+    }
     if (reservaId) {
-        setTimeout(function () { turnosAbrirPagoPostReserva(reservaId, fecha, horaInicio, facturaTotal); }, 300);
+        setTimeout(function () { turnosAbrirPagoPostReserva(reservaId, fecha, horaInicio, facturaTotal); }, 600);
+    } else {
+        // Si aún no hay id, recargar y reintentar
+        setTimeout(function () {
+            turnosCargarDatos();
+            setTimeout(function () {
+                var fallbackId = null;
+                for (var kk = turnosReservas.length - 1; kk >= 0; kk--) {
+                    var rrr = turnosReservas[kk];
+                    if (rrr.tur_fecha === fecha && rrr.tur_hora_inicio === (horaInicio.length === 8 ? horaInicio : horaInicio + ':00')) { fallbackId = rrr.reserva_id; break; }
+                }
+                if (fallbackId) turnosAbrirPagoPostReserva(fallbackId, fecha, horaInicio, facturaTotal);
+                else mostrarToast('Reserva creada — abra "Señas y reservas" para pagar', 'warning', 5000);
+            }, 400);
+        }, 400);
     }
 }
 
