@@ -11,6 +11,7 @@ var turnosReservas = [];
 var turnosNuevoClienteActivo = false;
 var turnosNuevoClienteReserva = null;
 var turnosOnCancel = null;
+var turnosPagoPendiente = null;
 
 function turnosMostrarErrorCliente(msg) {
     var input = document.getElementById('cliente_search');
@@ -477,6 +478,131 @@ function turnosAbrirNuevoCliente() {
     });
 }
 
+function turnosEsHoy(fecha) {
+    return fecha === new Date().toLocaleDateString('en-CA');
+}
+
+function turnosHoraEnCurso(fecha, horaInicio) {
+    if (!turnosEsHoy(fecha)) return false;
+    var inicio = new Date(fecha + 'T' + horaInicio).getTime();
+    var fin = inicio + 3600 * 1000;
+    var ahora = Date.now();
+    return inicio <= ahora && ahora < fin;
+}
+
+function turnosAsegurarReservasHelpers() {
+    if (typeof llenarSelectMetodosPago === 'function' && typeof cargarHistorialPagos === 'function') {
+        return Promise.resolve();
+    }
+    return new Promise(function (resolve) {
+        var src = BASE_URL + '/recursos/js/reservas.js?v=' + Date.now();
+        if (document.querySelector('script[src*="reservas.js"]')) {
+            var check = setInterval(function () {
+                if (typeof llenarSelectMetodosPago === 'function') { clearInterval(check); resolve(); }
+            }, 50);
+            setTimeout(function () { clearInterval(check); resolve(); }, 1000);
+            return;
+        }
+        var s = document.createElement('script');
+        s.src = src;
+        s.onload = function () { resolve(); };
+        s.onerror = function () { resolve(); };
+        document.head.appendChild(s);
+    });
+}
+
+async function turnosAbrirPagoPostReserva(reservaId, fecha, horaInicio, facturaTotal) {
+    var clienteId = document.getElementById('cliente_id') ? document.getElementById('cliente_id').value : '';
+    var clienteNombre = '';
+    for (var i = 0; i < turnosClientes.length; i++) {
+        if (String(turnosClientes[i].cliente_id) === String(clienteId)) {
+            clienteNombre = turnosClientes[i].cliente_apellido + ', ' + turnosClientes[i].cliente_nombre;
+            break;
+        }
+    }
+    var canchaTexto = document.getElementById('canchaTexto') ? document.getElementById('canchaTexto').value : '';
+    var horaTexto = horaInicio ? horaInicio.substring(0,5) : (document.getElementById('horaTexto') ? document.getElementById('horaTexto').value : '');
+    var fechaTexto = fecha;
+    var precio = parseFloat(facturaTotal);
+    if (isNaN(precio) || precio <= 0) {
+        for (var j = 0; j < turnosCanchas.length; j++) {
+            if (String(turnosCanchas[j].cancha_id) === String(document.getElementById('cancha_id').value) && turnosCanchas[j].cancha_precio) {
+                precio = parseFloat(turnosCanchas[j].cancha_precio);
+                break;
+            }
+        }
+    }
+    if (isNaN(precio)) precio = 0;
+    var esHoraEnCurso = turnosHoraEnCurso(fecha, horaInicio);
+
+    document.body.dataset.drawer = 'reservas';
+    await loadDrawer();
+    await turnosAsegurarReservasHelpers();
+
+    var elReservaId = document.getElementById('pago_reserva_id');
+    var elCliente = document.getElementById('pago_cliente');
+    var elCancha = document.getElementById('pago_cancha');
+    var elHorario = document.getElementById('pago_horario');
+    var elTotal = document.getElementById('pago_total');
+    var elPagado = document.getElementById('pago_pagado');
+    var elSaldo = document.getElementById('pago_saldo');
+    var elMonto = document.getElementById('pago_monto');
+    var elFecha = document.getElementById('pago_fecha');
+    var panelPago = document.getElementById('panelPago');
+    var panelEditar = document.getElementById('panelEditar');
+    var title = document.getElementById('drawer-title');
+
+    if (!elReservaId || !panelPago) {
+        mostrarToast('Reserva creada — abra "Señas y reservas" para señar (drawer no disponible)', 'error');
+        return;
+    }
+
+    elReservaId.value = reservaId;
+    if (elCliente) elCliente.textContent = clienteNombre || '';
+    if (elCancha) elCancha.textContent = canchaTexto || '';
+    if (elHorario) elHorario.textContent = fechaTexto + ' ' + horaTexto;
+    if (elTotal) elTotal.textContent = '$' + precio.toLocaleString('es-AR', {minimumFractionDigits:2});
+    if (elPagado) elPagado.textContent = '$0,00';
+    if (elSaldo) elSaldo.textContent = '$' + precio.toLocaleString('es-AR', {minimumFractionDigits:2});
+    if (elMonto) {
+        elMonto.value = esHoraEnCurso && precio > 0 ? precio.toFixed(2) : '';
+        elMonto.placeholder = esHoraEnCurso ? precio.toFixed(2) + ' (pago total requerido)' : '0.00';
+    }
+    if (elFecha) elFecha.value = new Date().toLocaleDateString('en-CA');
+
+    if (panelEditar) panelEditar.style.display = 'none';
+    panelPago.style.display = 'block';
+    if (title) title.textContent = esHoraEnCurso ? 'Registrar pago total — hora en curso' : 'Registrar seña — reserva de hoy';
+
+    if (typeof llenarSelectMetodosPago === 'function') llenarSelectMetodosPago();
+    if (typeof cargarHistorialPagos === 'function') cargarHistorialPagos(reservaId);
+
+    turnosPagoPendiente = { reservaId: reservaId, esHoraEnCurso: esHoraEnCurso, fecha: fecha, horaInicio: horaInicio };
+    openDrawer();
+}
+
+function turnosPostReservaExito(fecha, horaInicio, resultado) {
+    var hoy = new Date().toLocaleDateString('en-CA');
+    if (fecha !== hoy) {
+        closeDrawer();
+        turnosCargarDatos();
+        mostrarToast('Reserva creada', 'success');
+        return;
+    }
+    var esHoraEnCurso = resultado.hora_en_curso || resultado.requiere_pago_total || turnosHoraEnCurso(fecha, horaInicio);
+    var msg = esHoraEnCurso
+        ? 'Reserva creada — hora en curso: se requiere pago total'
+        : 'Reserva creada — hoy: se requiere seña (cualquier monto > 0)';
+    closeDrawer();
+    turnosCargarDatos();
+    mostrarToast(msg, 'success');
+    var reservaId = resultado.reserva_id;
+    var facturaTotal = resultado.factura_total;
+    if (reservaId) {
+        setTimeout(function () { turnosAbrirPagoPostReserva(reservaId, fecha, horaInicio, facturaTotal); }, 300);
+    }
+}
+
 function turnosGuardarReserva(e) {
     e.preventDefault();
 
@@ -494,8 +620,9 @@ function turnosGuardarReserva(e) {
     var hoy = new Date().toLocaleDateString('en-CA');
     if (fecha === hoy) {
         var inicioTurno = new Date(fecha + 'T' + horaInicio).getTime();
-        if (inicioTurno <= Date.now()) {
-            mostrarToast('No se puede reservar un horario ya pasado', 'error');
+        var finTurno = inicioTurno + 3600 * 1000;
+        if (finTurno <= Date.now()) {
+            mostrarToast('No se puede reservar un horario ya finalizado', 'error');
             return;
         }
     }
@@ -529,9 +656,7 @@ function turnosGuardarReserva(e) {
                     .then(function (r) { return r.json(); })
                     .then(function (r2) {
                         if (!r2.ok) { mostrarToast(r2.mensaje, 'error'); return; }
-                        closeDrawer();
-                        turnosCargarDatos();
-                        mostrarToast('Reserva creada', 'success');
+                        turnosPostReservaExito(fecha, horaInicio, r2);
                     })
                     .catch(function (err) {
                         console.error(err);
@@ -543,9 +668,7 @@ function turnosGuardarReserva(e) {
             mostrarToast(resultado.mensaje, 'error');
             return;
         }
-        closeDrawer();
-        turnosCargarDatos();
-        mostrarToast('Reserva creada', 'success');
+        turnosPostReservaExito(fecha, horaInicio, resultado);
     })
     .catch(function (error) {
         console.error(error);
@@ -599,6 +722,87 @@ function turnosCambiarEstado(estado) {
     });
 }
 
+
+/* Soft-assist: aviso al cerrar drawer de pago sin señar/pagar (deja pendiente) */
+if (!window._turnosPagoCloseBound) {
+    window._turnosPagoCloseBound = true;
+    document.addEventListener('click', function (e) {
+        if (!turnosPagoPendiente) return;
+        if (!e.target.closest('.drawer-close') && !e.target.classList.contains('drawer-overlay')) return;
+        // Solo si el drawer actual es el de reservas abierto desde turnos
+        if (document.body.dataset.drawer !== 'reservas') return;
+        var pendiente = turnosPagoPendiente;
+        turnosPagoPendiente = null;
+        setTimeout(function () {
+            var esTotal = pendiente.esHoraEnCurso;
+            var msg = esTotal
+                ? 'Reserva queda pendiente — recuerde abonar el total (hora en curso)'
+                : 'Reserva queda pendiente — recuerde señarla (cualquier monto > 0)';
+            mostrarToast(msg, 'error');
+            // Volver a drawer turnos para que el usuario quede en la grilla
+            document.body.dataset.drawer = 'turnos';
+            loadDrawer().then(function () { turnosReiniciarBotones(); turnosCargarClientes(); });
+        }, 150);
+    });
+}
+
+/* Pago submit cuando el drawer reservas está abierto desde Turnos (reservas.js filtra por page) */
+if (!window._turnosPagoSubmitBound) {
+    window._turnosPagoSubmitBound = true;
+    document.addEventListener('submit', function (e) {
+        var formPago = e.target.closest('#formRegistrarPago');
+        if (!formPago) return;
+        // Si reservas.js ya va a manejar (page = señas y reservas), no duplicar
+        var page = document.body.dataset.page || '';
+        if (page.toLowerCase() === 'se\u00f1as y reservas') return;
+        if (!turnosPagoPendiente) return;
+        e.preventDefault();
+        e.stopPropagation();
+        var reservaId = document.getElementById('pago_reserva_id').value;
+        var montoEl = document.getElementById('pago_monto');
+        var metodoEl = document.getElementById('metodo_pago_id');
+        var fechaEl = document.getElementById('pago_fecha');
+        var monto = parseFloat(montoEl ? montoEl.value : '');
+        var metodoId = metodoEl ? parseInt(metodoEl.value) : 0;
+        if (!monto || monto <= 0) { mostrarToast('Ingrese un monto v\u00e1lido (> 0)', 'error'); if (montoEl) montoEl.focus(); return; }
+        if (!metodoId) { mostrarToast('Seleccione m\u00e9todo de pago', 'error'); return; }
+        // Soft-assist hint: si es hora en curso sugerir total, pero no bloquea
+        if (turnosPagoPendiente.esHoraEnCurso) {
+            var saldoTxt = document.getElementById('pago_saldo');
+            var saldoNum = saldoTxt ? parseFloat(saldoTxt.textContent.replace(/[^0-9,.-]/g,'').replace('.','').replace(',','.')) : NaN;
+            // No bloquear, solo avisar si es parcial
+            if (!isNaN(saldoNum) && monto + 0.01 < saldoNum) {
+                mostrarToast('Hora en curso: se recomienda abonar el total', 'error');
+            }
+        }
+        var data = {
+            accion: 'registrar_pago',
+            reserva_id: parseInt(reservaId),
+            monto: monto,
+            metodo_pago_id: metodoId,
+            fecha_pago: fechaEl && fechaEl.value ? fechaEl.value : new Date().toLocaleDateString('en-CA')
+        };
+        fetch(BASE_URL + '/api/reservas.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (result) {
+            if (result.ok) {
+                turnosPagoPendiente = null;
+                closeDrawer();
+                mostrarToast(result.mensaje || 'Pago registrado', 'success');
+                turnosCargarDatos();
+                document.body.dataset.drawer = 'turnos';
+                loadDrawer().then(function () { turnosReiniciarBotones(); turnosCargarClientes(); });
+            } else {
+                mostrarToast(result.mensaje || 'Error al registrar pago', 'error');
+            }
+        })
+        .catch(function (err) { console.error(err); mostrarToast('Error de conexi\u00f3n', 'error'); });
+    });
+}
 
 function mostrarToast(mensaje, tipo) {
     var contenedor = document.getElementById('toast-container');

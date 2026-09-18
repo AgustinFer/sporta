@@ -147,14 +147,17 @@ function crearReserva(PDO $pdo, array $input): void
     }
 
     if ($fecha === $hoy) {
-        $inicioTurno = strtotime($fecha . ' ' . $input['hora_inicio']);
-        if ($inicioTurno <= time()) {
+        $horaInicioRaw = trim($input['hora_inicio']);
+        $inicioTurno = strtotime($fecha . ' ' . $horaInicioRaw);
+        $finTurno = $inicioTurno + 3600;
+        if ($finTurno <= time()) {
             echo json_encode([
                 'ok' => false,
-                'mensaje' => 'No se puede reservar un horario ya pasado'
+                'mensaje' => 'No se puede reservar un horario ya finalizado'
             ]);
             return;
         }
+        // Si inicioTurno <= now < finTurno => hora en curso: se permite (soft-assist pago total en FE)
     }
 
     $horaInicio = trim($input['hora_inicio']);
@@ -239,8 +242,25 @@ function crearReserva(PDO $pdo, array $input): void
 
         $pdo->commit();
 
+        $reservaId = (int)$pdo->lastInsertId();
+        // Obtener precio de la cancha para asistencia de pago
+        $stmtPrecio = $pdo->prepare("SELECT cancha_precio FROM canchas WHERE cancha_id = ?");
+        $stmtPrecio->execute([$canchaId]);
+        $precioCancha = $stmtPrecio->fetchColumn();
+        $horaInicioTs = strtotime($fecha . ' ' . $horaInicio);
+        $horaFinTs = $horaInicioTs + 3600;
+        $esHoy = ($fecha === date('Y-m-d'));
+        $esHoraEnCurso = $esHoy && $horaInicioTs <= time() && time() < $horaFinTs;
 
-        echo json_encode(['ok' => true, 'mensaje' => 'Reserva creada']);
+        echo json_encode([
+            'ok' => true,
+            'mensaje' => 'Reserva creada',
+            'reserva_id' => $reservaId,
+            'factura_total' => $precioCancha !== false ? (float)$precioCancha : null,
+            'requiere_sena' => $esHoy,
+            'requiere_pago_total' => $esHoraEnCurso,
+            'hora_en_curso' => $esHoraEnCurso
+        ]);
     } catch (Exception $e) {
         $pdo->rollBack();
         throw $e;
