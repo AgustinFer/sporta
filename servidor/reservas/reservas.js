@@ -34,6 +34,8 @@ function renderTablaReservas() {
     var pagoHtml = badgePago(r.factura_estado, r.total_pagado, r.factura_total);
     var total = parseFloat(r.factura_total || r.cancha_precio || 0);
     var saldo = (total - parseFloat(r.total_pagado || 0)).toFixed(2);
+    var saldoNum = parseFloat(saldo) || 0;
+    var pagoDeshabilitado = Number(r.reser_estado) === 3 || (total > 0 && saldoNum <= 0.01);
     var saldoHtml = saldo > 0
       ? '<span class="saldo-positivo">$' + Number(saldo).toLocaleString('es-AR', {minimumFractionDigits:2}) + '</span>'
       : '<span class="saldo-cero">$0,00</span>';
@@ -50,7 +52,7 @@ function renderTablaReservas() {
       '<td data-column="acciones">' +
         '<div class="table-actions">' +
           '<button type="button" class="edit-btn" data-id="' + r.reserva_id + '" data-estado="' + r.reser_estado + '" data-observaciones="' + escAttr(r.reser_observaciones || '') + '" data-cliente="' + escAttr(clienteNombre.trim()) + '" data-cancha="Cancha ' + r.cancha_numero + '" data-horario="' + escAttr(r.tur_fecha + ' ' + horario) + '">Modificar</button>' +
-          '<button type="button" class="btn-pago"' + (Number(r.reser_estado) === 3 ? ' disabled' : '') + ' data-id="' + r.reserva_id + '" data-cliente="' + escAttr(clienteNombre.trim()) + '" data-cancha="Cancha ' + r.cancha_numero + '" data-horario="' + escAttr(r.tur_fecha + ' ' + horario) + '" data-precio="' + (r.cancha_precio || '') + '" data-total="' + (r.factura_total || '') + '" data-pagado="' + (r.total_pagado || 0) + '">Pago</button>' +
+          '<button type="button" class="btn-pago"' + (pagoDeshabilitado ? ' disabled title="Sin saldo pendiente"' : '') + ' data-id="' + r.reserva_id + '" data-cliente="' + escAttr(clienteNombre.trim()) + '" data-cancha="Cancha ' + r.cancha_numero + '" data-horario="' + escAttr(r.tur_fecha + ' ' + horario) + '" data-precio="' + (r.cancha_precio || '') + '" data-total="' + (r.factura_total || '') + '" data-pagado="' + (r.total_pagado || 0) + '">Pago</button>' +
         '</div>' +
       '</td>' +
     '</tr>';
@@ -173,6 +175,7 @@ if (!document.body.dataset.reservasFormBound) {
     /* Botón Pago */
     var pagoBtn = e.target.closest(".btn-pago");
     if (pagoBtn) {
+      if (pagoBtn.disabled) return;
       e.preventDefault();
       e.stopPropagation();
 
