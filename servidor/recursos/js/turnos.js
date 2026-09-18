@@ -12,6 +12,20 @@ var turnosNuevoClienteActivo = false;
 var turnosNuevoClienteReserva = null;
 var turnosOnCancel = null;
 
+function turnosMostrarErrorCliente(msg) {
+    var input = document.getElementById('cliente_search');
+    var err = document.getElementById('error_cliente_search');
+    if (input) input.classList.add('input-error');
+    if (err) { err.textContent = msg; err.classList.add('visible'); }
+}
+
+function turnosLimpiarErrorCliente() {
+    var input = document.getElementById('cliente_search');
+    var err = document.getElementById('error_cliente_search');
+    if (input) input.classList.remove('input-error');
+    if (err) { err.textContent = ''; err.classList.remove('visible'); }
+}
+
 function turnosReiniciarBotones() {
     var formReserva = document.getElementById('formReserva');
     var btnPendiente = document.getElementById('btnPendiente');
@@ -128,6 +142,7 @@ function turnosCargarClientes() {
 
         searchInput.addEventListener('input', function () {
             hiddenInput.value = '';
+            turnosLimpiarErrorCliente();
             renderTurnosDropdown();
             posicionarDropdownCliente(this);
         });
@@ -218,6 +233,7 @@ function renderTurnosDropdown() {
                 if (Number(clientes[k].cliente_id) === Number(id)) {
                     searchInput.value = clientes[k].cliente_apellido + ', ' + clientes[k].cliente_nombre;
                     hiddenInput.value = id;
+                    turnosLimpiarErrorCliente();
                     break;
                 }
             }
@@ -320,6 +336,7 @@ function turnosAbrirNuevaReserva(canchaId, canchaNumero, hora) {
     document.getElementById('observaciones').value = '';
     document.getElementById('cliente_search').value = '';
     document.getElementById('cliente_id').value = '';
+    turnosLimpiarErrorCliente();
 
     document.getElementById('panelDetalle').style.display = 'none';
     document.getElementById('panelReserva').style.display = 'block';
@@ -465,6 +482,9 @@ function turnosGuardarReserva(e) {
 
     var clienteId = document.getElementById('cliente_id').value;
     if (!clienteId) {
+        turnosMostrarErrorCliente('Debe seleccionar un cliente');
+        var csInput = document.getElementById('cliente_search');
+        if (csInput) csInput.focus();
         mostrarToast('Debe seleccionar un cliente', 'error');
         return;
     }
