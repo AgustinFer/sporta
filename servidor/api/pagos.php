@@ -53,6 +53,7 @@ function listar(PDO $pdo): void
             f.factura_id,
             f.factura_total,
             f.factura_estado,
+            COALESCE(pg.total_pagado, 0) AS total_pagado,
             CONCAT(c.cliente_nombre, ' ', c.cliente_apellido) AS cliente_nombre,
             ca.cancha_numero,
             t.tur_fecha,
@@ -64,6 +65,11 @@ function listar(PDO $pdo): void
         JOIN canchas ca ON t.id_cancha = ca.cancha_id
         LEFT JOIN clientes c ON r.cliente_id = c.cliente_id
         LEFT JOIN metodo_pago mp ON p.metodo_pago_id = mp.metodo_pago_id
+        LEFT JOIN (
+            SELECT factura_id, SUM(pago_monto) AS total_pagado
+            FROM pagos
+            GROUP BY factura_id
+        ) pg ON f.factura_id = pg.factura_id
         ORDER BY p.pago_fecha_pago DESC, p.pago_id DESC
     ");
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);

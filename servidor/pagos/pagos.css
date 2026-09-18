@@ -75,6 +75,63 @@
   background: var(--bg-table-hover);
 }
 
+.btn-imprimir {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #facc15;
+  background: rgba(250, 204, 21, 0.12);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: auto;
+  margin-top: 0;
+  box-shadow: none;
+  white-space: nowrap;
+}
+
+.btn-imprimir:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(250, 204, 21, 0.22);
+}
+
+.btn-imprimir:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  background: var(--bg-input);
+  border-color: var(--border-medium);
+}
+
+.btn-imprimir-drawer {
+  margin: 16px 24px 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #1a1a2e;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: calc(100% - 48px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-imprimir-drawer:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-imprimir-drawer:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  background: rgba(200,200,200,0.3);
+  color: var(--text-muted);
+}
+
 .pago-historial-item {
   padding: 10px 0;
   border-bottom: 1px solid var(--border-light);
@@ -165,4 +222,62 @@
 
 .limit-selector-item:hover {
   background: var(--bg-table-hover);
+}
+
+.print-leyenda {
+  display: none;
+}
+
+@media print {
+  #sidebar-container,
+  .sidebar,
+  .menu-toggle,
+  .app-content,
+  #header-container,
+  .background,
+  #toast-container,
+  .drawer-overlay,
+  #btnImprimirFactura,
+  #imprimirHint,
+  .drawer-close {
+    display: none !important;
+  }
+  #drawer-container {
+    display: block !important;
+  }
+  .drawer {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 780px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .drawer-header {
+    border-bottom: 2px solid #facc15 !important;
+  }
+  .print-leyenda {
+    display: block !important;
+    text-align: center;
+    font-size: 11px;
+    color: #6b7280;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 12px;
+    margin: 16px 24px 0;
+  }
+  html, body {
+    background: #fff !important;
+  }
+  @page {
+    margin: 12mm;
+    size: A4 portrait;
+  }
 }
