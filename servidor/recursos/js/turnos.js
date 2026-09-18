@@ -495,7 +495,7 @@ function turnosAsegurarReservasHelpers() {
         return Promise.resolve();
     }
     return new Promise(function (resolve) {
-        var src = BASE_URL + '/recursos/js/reservas.js?v=' + Date.now();
+        var src = BASE_URL + '/reservas/reservas.js?v=' + Date.now();
         if (document.querySelector('script[src*="reservas.js"]')) {
             var check = setInterval(function () {
                 if (typeof llenarSelectMetodosPago === 'function') { clearInterval(check); resolve(); }
