@@ -565,6 +565,15 @@ button:active {
   background: #ef4444;
 }
 
+.toast-warning {
+  background: #facc15;
+  color: #1a1a2e;
+}
+
+.toast-warning .toast-close {
+  color: #1a1a2e;
+}
+
 .toast-hiding {
   animation: toastOut 0.3s ease forwards;
 }

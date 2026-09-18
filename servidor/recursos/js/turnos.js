@@ -736,9 +736,9 @@ if (!window._turnosPagoCloseBound) {
         setTimeout(function () {
             var esTotal = pendiente.esHoraEnCurso;
             var msg = esTotal
-                ? 'Reserva queda pendiente — recuerde abonar el total (hora en curso)'
-                : 'Reserva queda pendiente — recuerde señarla (cualquier monto > 0)';
-            mostrarToast(msg, 'error');
+                ? '⚠️ Reserva queda pendiente — recuerde abonar el total (hora en curso)'
+                : '⚠️ Reserva queda pendiente — recuerde señarla';
+            mostrarToast(msg, 'warning', 5000);
             // Volver a drawer turnos para que el usuario quede en la grilla
             document.body.dataset.drawer = 'turnos';
             loadDrawer().then(function () { turnosReiniciarBotones(); turnosCargarClientes(); });
@@ -772,7 +772,7 @@ if (!window._turnosPagoSubmitBound) {
             var saldoNum = saldoTxt ? parseFloat(saldoTxt.textContent.replace(/[^0-9,.-]/g,'').replace('.','').replace(',','.')) : NaN;
             // No bloquear, solo avisar si es parcial
             if (!isNaN(saldoNum) && monto + 0.01 < saldoNum) {
-                mostrarToast('Hora en curso: se recomienda abonar el total', 'error');
+                mostrarToast('⚠️ Hora en curso: se recomienda abonar el total', 'warning', 5000);
             }
         }
         var data = {
@@ -804,7 +804,7 @@ if (!window._turnosPagoSubmitBound) {
     });
 }
 
-function mostrarToast(mensaje, tipo) {
+function mostrarToast(mensaje, tipo, duracionMs) {
     var contenedor = document.getElementById('toast-container');
     if (!contenedor) {
         contenedor = document.createElement('div');
@@ -817,8 +817,9 @@ function mostrarToast(mensaje, tipo) {
     toast.innerHTML = '<span>' + mensaje + '</span><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>';
     contenedor.appendChild(toast);
 
+    var ms = duracionMs || 3000;
     setTimeout(function () {
         toast.classList.add('toast-hiding');
         setTimeout(function () { toast.remove(); }, 300);
-    }, 3000);
+    }, ms);
 }
