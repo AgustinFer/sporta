@@ -538,6 +538,23 @@ async function turnosAbrirPagoPostReserva(reservaId, fecha, horaInicio, facturaT
     document.body.dataset.drawer = 'reservas';
     await loadDrawer();
     await turnosAsegurarReservasHelpers();
+    // Poblar métodos de pago: vía dedicada primero, fallback a listar si sigue vacío
+    if (typeof reservasMetodosPago !== 'undefined' && (!reservasMetodosPago || reservasMetodosPago.length === 0)) {
+        try {
+            if (typeof cargarMetodosPago === 'function') {
+                await cargarMetodosPago();
+            }
+        } catch (e) { /* ignore */ }
+        if ((!reservasMetodosPago || reservasMetodosPago.length === 0)) {
+            try {
+                var rMet = await fetch(BASE_URL + '/api/reservas.php?accion=listar');
+                var jMet = await rMet.json();
+                if (jMet.ok && jMet.metodos_pago && jMet.metodos_pago.length) {
+                    reservasMetodosPago = jMet.metodos_pago;
+                }
+            } catch (e2) { /* ignore */ }
+        }
+    }
 
     var elReservaId = document.getElementById('pago_reserva_id');
     var elCliente = document.getElementById('pago_cliente');
