@@ -1,5 +1,6 @@
 /* ==========================================
 TURNOS - Grilla Horaria
+Soft-assist: hoy→seña (>0), hora en curso→pago total. Ver AGENTS.md "Turnos soft-assist"
 ========================================== */
 
 const HORA_INICIO = 8;
