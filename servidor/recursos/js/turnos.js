@@ -92,8 +92,9 @@ function initTurnosPage() {
 }
 
 function turnosCargarDatos() {
-    var fecha = document.getElementById('fechaSeleccionada').value;
-    fetch(BASE_URL + '/api/turnos_canchas.php', {
+    var fechaEl = document.getElementById('fechaSeleccionada');
+    var fecha = fechaEl ? fechaEl.value : new Date().toLocaleDateString('en-CA');
+    return fetch(BASE_URL + '/api/turnos_canchas.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ accion: 'obtener_datos', fecha: fecha })
@@ -556,6 +557,14 @@ async function turnosAbrirPagoPostReserva(reservaId, fecha, horaInicio, facturaT
         }
     }
 
+    // Defensa: si el id es de una reserva cancelada, no abrir pago
+    for (var _cr = 0; _cr < turnosReservas.length; _cr++) {
+        if (String(turnosReservas[_cr].reserva_id) === String(reservaId) && Number(turnosReservas[_cr].reser_estado) === 3) {
+            mostrarToast('Esa reserva está cancelada — creá un nuevo turno en otro horario', 'error');
+            return;
+        }
+    }
+
     var elReservaId = document.getElementById('pago_reserva_id');
     var elCliente = document.getElementById('pago_cliente');
     var elCancha = document.getElementById('pago_cancha');
@@ -611,37 +620,41 @@ function turnosPostReservaExito(fecha, horaInicio, resultado) {
         ? '⚠️ Reserva creada — hora en curso: se requiere pago total'
         : '⚠️ Reserva creada — hoy: se requiere seña';
     closeDrawer();
-    turnosCargarDatos();
-    mostrarToast(msg, 'warning', 5000);
     var reservaId = resultado.reserva_id;
     var facturaTotal = resultado.factura_total;
-    // Fallback si BE viejo no retornó ids (cache): buscar última reserva creada del cliente/hora
-    if (!reservaId) {
+    // Camino feliz: usar id del BE y refrescar grilla en paralelo
+    if (reservaId) {
+        turnosCargarDatos();
+        mostrarToast(msg, 'warning', 5000);
+        setTimeout(function () { turnosAbrirPagoPostReserva(reservaId, fecha, horaInicio, facturaTotal); }, 600);
+        return;
+    }
+    // Fallback solo si BE viejo/cache no retornó id: refrescar y buscar solo pendiente/confirmada
+    mostrarToast(msg, 'warning', 5000);
+    var clienteIdFB = document.getElementById('cliente_id') ? document.getElementById('cliente_id').value : '';
+    var horaNorm = horaInicio.length === 8 ? horaInicio : horaInicio + ':00';
+    turnosCargarDatos().then(function () {
+        var foundId = null;
         for (var k = turnosReservas.length - 1; k >= 0; k--) {
             var rr = turnosReservas[k];
-            if (String(rr.cliente_id) === String(document.getElementById('cliente_id').value) && rr.tur_fecha === fecha && rr.tur_hora_inicio === (horaInicio.length === 8 ? horaInicio : horaInicio + ':00')) {
-                reservaId = rr.reserva_id; break;
+            if (Number(rr.reser_estado) === 3) continue;
+            if (String(rr.cliente_id) === String(clienteIdFB) && rr.tur_fecha === fecha && rr.tur_hora_inicio === horaNorm) {
+                foundId = rr.reserva_id; break;
             }
         }
-        if (!reservaId && turnosReservas.length) reservaId = turnosReservas[turnosReservas.length - 1].reserva_id;
-    }
-    if (reservaId) {
-        setTimeout(function () { turnosAbrirPagoPostReserva(reservaId, fecha, horaInicio, facturaTotal); }, 600);
-    } else {
-        // Si aún no hay id, recargar y reintentar
-        setTimeout(function () {
-            turnosCargarDatos();
-            setTimeout(function () {
-                var fallbackId = null;
-                for (var kk = turnosReservas.length - 1; kk >= 0; kk--) {
-                    var rrr = turnosReservas[kk];
-                    if (rrr.tur_fecha === fecha && rrr.tur_hora_inicio === (horaInicio.length === 8 ? horaInicio : horaInicio + ':00')) { fallbackId = rrr.reserva_id; break; }
-                }
-                if (fallbackId) turnosAbrirPagoPostReserva(fallbackId, fecha, horaInicio, facturaTotal);
-                else mostrarToast('Reserva creada — abra "Señas y reservas" para pagar', 'warning', 5000);
-            }, 400);
-        }, 400);
-    }
+        if (foundId) {
+            turnosAbrirPagoPostReserva(foundId, fecha, horaInicio, facturaTotal);
+            return;
+        }
+        // último intento sin cliente pero filtrando canceladas
+        for (var kk = turnosReservas.length - 1; kk >= 0; kk--) {
+            var rrr = turnosReservas[kk];
+            if (Number(rrr.reser_estado) === 3) continue;
+            if (rrr.tur_fecha === fecha && rrr.tur_hora_inicio === horaNorm) { foundId = rrr.reserva_id; break; }
+        }
+        if (foundId) turnosAbrirPagoPostReserva(foundId, fecha, horaInicio, facturaTotal);
+        else mostrarToast('Reserva creada — abra "Señas y reservas" para pagar (no se encontró pendiente)', 'warning', 5000);
+    });
 }
 
 function turnosGuardarReserva(e) {
