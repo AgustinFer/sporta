@@ -163,12 +163,6 @@ try {
                 echo json_encode(['ok' => false, 'mensaje' => 'El email ya está en uso']);
                 exit;
             }
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM clientes WHERE cliente_email = :email");
-            $stmt->execute([':email' => $email]);
-            if ($stmt->fetchColumn() > 0) {
-                echo json_encode(['ok' => false, 'mensaje' => 'El email ya pertenece a un cliente']);
-                exit;
-            }
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_email = :email WHERE usu_id = :id");
             $stmt->execute([':email' => $email, ':id' => $userId]);
             $_SESSION['usuario']->setEmail($email);
@@ -213,12 +207,6 @@ try {
             $stmt->execute([':dni' => $dni, ':id' => $userId]);
             if ($stmt->fetchColumn() > 0) {
                 echo json_encode(['ok' => false, 'mensaje' => 'El DNI ya pertenece a otro empleado']);
-                exit;
-            }
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM clientes WHERE cliente_dni = :dni");
-            $stmt->execute([':dni' => $dni]);
-            if ($stmt->fetchColumn() > 0) {
-                echo json_encode(['ok' => false, 'mensaje' => 'El DNI ya pertenece a un cliente']);
                 exit;
             }
             $stmt = $pdo->prepare("UPDATE usuarios SET usu_dni = :dni WHERE usu_id = :id");
