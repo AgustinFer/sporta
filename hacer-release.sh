@@ -4,10 +4,10 @@
 #
 # Copia servidor/ a una carpeta temporal renombrada "sporta", aplica los
 # ajustes que varían según el entorno de preproducción y empaqueta todo
-# en sporta-<VERSION>.zip en la raíz del repo.
+# en sporta-<VERSION>.zip en ~/Escritorio/Versionado.
 #
 # NO modifica el working tree del repo: trabaja siempre sobre una copia en
-# /tmp/opencode. El zip final queda en la raíz del repo.
+# /tmp/opencode. El zip final queda en ~/Escritorio/Versionado.
 #
 # Uso:
 #   ./hacer-release.sh <VERSION> [--base-url=/sporta] [--sin-recuperar|--con-recuperar]
@@ -30,7 +30,8 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_DIR="$REPO_DIR/servidor"
 BUILD_DIR="/tmp/opencode/sporta"
-OUT_FILE="$REPO_DIR/sporta-<VERSION>.zip"
+OUT_DIR="$HOME/Escritorio/Versionado"
+OUT_FILE="$OUT_DIR/sporta-<VERSION>.zip"
 
 # Valores por defecto
 BASE_URL="/sporta"
@@ -138,6 +139,7 @@ fi
 # Eliminar carpetas vacías de la copia antes de zipear (auth/)
 find "$BUILD_DIR" -type d -empty -delete 2>/dev/null || true
 
+mkdir -p "$OUT_DIR"
 rm -f "$OUT_FILE"
 echo "Empaquetando $OUT_FILE ..."
 (cd /tmp/opencode && zip -r -q "$OUT_FILE" sporta "${EXCLUDES[@]}")

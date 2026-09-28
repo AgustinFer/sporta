@@ -12,8 +12,9 @@ para descomprimir en el servidor.
 ## Regla de oro
 
 **NO modificar el working tree del repo.** Todo el trabajo se hace sobre una
-copia temporal (`/tmp/opencode/sporta`). El único artefacto que queda en el
-repo es el zip final. No commitear código modificado.
+copia temporal (`/tmp/opencode/sporta`). El zip final queda en
+`~/Escritorio/Versionado/sporta-<VERSION>.zip` (fuera del repo). No commitear
+código modificado.
 
 ## Flujo recomendado
 
