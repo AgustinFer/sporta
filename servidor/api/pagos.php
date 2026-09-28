@@ -115,7 +115,7 @@ function facturaDetalle(PDO $pdo, array $input): void
     $factura = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$factura) {
-        echo json_encode(['ok' => false, 'mensaje' => 'Factura no encontrada']);
+        echo json_encode(['ok' => false, 'mensaje' => 'Comprobante no encontrado']);
         return;
     }
 

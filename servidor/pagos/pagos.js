@@ -32,7 +32,7 @@ function renderTablaPagos() {
     var pagado = parseFloat(p.total_pagado || 0);
     var saldo = Math.max(0, total - pagado);
     var puedeImprimir = saldo <= 0.01;
-    var imprimirDisabled = puedeImprimir ? '' : ' disabled title="Factura con saldo pendiente \u2014 no se puede imprimir"';
+    var imprimirDisabled = puedeImprimir ? '' : ' disabled title="Comprobante con saldo pendiente \u2014 no se puede imprimir"';
 
     html += '<tr>' +
       '<td data-column="cliente">' + esc(p.cliente_nombre || 'Sin cliente') + '</td>' +
@@ -43,8 +43,8 @@ function renderTablaPagos() {
       '<td data-column="factura">#' + esc(p.factura_id) + '</td>' +
       '<td data-column="acciones">' +
         '<div class="table-actions">' +
-          '<button type="button" class="btn-ver" data-factura-id="' + p.factura_id + '" data-cliente="' + escAttr(p.cliente_nombre || 'Sin cliente') + '" data-cancha="Cancha ' + p.cancha_numero + '" data-horario="' + escAttr(p.tur_fecha + ' ' + horario) + '" data-total="' + total + '">Ver factura</button>' +
-          '<button type="button" class="btn-imprimir" data-factura-id="' + p.factura_id + '"' + imprimirDisabled + '>Imprimir Factura</button>' +
+          '<button type="button" class="btn-ver" data-factura-id="' + p.factura_id + '" data-cliente="' + escAttr(p.cliente_nombre || 'Sin cliente') + '" data-cancha="Cancha ' + p.cancha_numero + '" data-horario="' + escAttr(p.tur_fecha + ' ' + horario) + '" data-total="' + total + '">Ver comprobante</button>' +
+          '<button type="button" class="btn-imprimir" data-factura-id="' + p.factura_id + '"' + imprimirDisabled + '>Imprimir Comprobante</button>' +
         '</div>' +
       '</td>' +
     '</tr>';
@@ -225,7 +225,7 @@ if (!document.body.dataset.pagosFormBound) {
       e.preventDefault();
       e.stopPropagation();
       if (imprimirBtn.disabled) {
-        mostrarToast("La factura tiene saldo pendiente \u2014 no se puede imprimir", "error");
+        mostrarToast("El comprobante tiene saldo pendiente \u2014 no se puede imprimir", "error");
         return;
       }
       var facturaIdImp = imprimirBtn.dataset.facturaId;
@@ -247,7 +247,7 @@ if (!document.body.dataset.pagosFormBound) {
       e.preventDefault();
       e.stopPropagation();
       if (drawerImprimir.disabled) {
-        mostrarToast("La factura tiene saldo pendiente \u2014 no se puede imprimir", "error");
+        mostrarToast("El comprobante tiene saldo pendiente \u2014 no se puede imprimir", "error");
         return;
       }
       var fid = document.getElementById("pago_factura_id")?.value;
@@ -274,7 +274,7 @@ function abrirDetalleFactura(facturaId) {
   .then(function(r) { return r.json(); })
   .then(function(data) {
     if (!data.ok || !data.factura) {
-      container.innerHTML = '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:10px">Error al cargar factura</p>';
+      container.innerHTML = '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:10px">Error al cargar comprobante</p>';
       return;
     }
 
@@ -311,18 +311,18 @@ function abrirDetalleFactura(facturaId) {
       btnImp.style.display = "";
       var puedeImprimir = saldo <= 0.01;
       btnImp.disabled = !puedeImprimir;
-      btnImp.title = puedeImprimir ? "" : "Factura con saldo pendiente \u2014 no se puede imprimir";
+      btnImp.title = puedeImprimir ? "" : "Comprobante con saldo pendiente \u2014 no se puede imprimir";
     }
     if (hint) {
       hint.style.display = saldo <= 0.01 ? "none" : "block";
     }
 
-    document.getElementById("drawer-title").textContent = "Factura #" + f.factura_id;
+    document.getElementById("drawer-title").textContent = "Comprobante #" + f.factura_id;
     openDrawer();
   })
   .catch(function(err) {
     console.error(err);
-    container.innerHTML = '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:10px">Error al cargar factura</p>';
+    container.innerHTML = '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:10px">Error al cargar comprobante</p>';
   });
 }
 
@@ -336,7 +336,7 @@ function imprimirFactura(facturaId) {
     var saldoTxt = document.getElementById("pago_saldo")?.textContent || "";
     var saldoVal = parseFloat(saldoTxt.replace(/[^0-9,.-]/g, "").replace(/\./g, "").replace(",", ".") || 0);
     if (saldoVal > 0.01) {
-      mostrarToast("La factura tiene saldo pendiente \u2014 no se puede imprimir", "error");
+      mostrarToast("El comprobante tiene saldo pendiente \u2014 no se puede imprimir", "error");
       return;
     }
     window.print();
@@ -351,7 +351,7 @@ function imprimirFactura(facturaId) {
   .then(function(r) { return r.json(); })
   .then(function(data) {
     if (!data.ok || !data.factura) {
-      mostrarToast(data.mensaje || "Error al cargar factura", "error");
+      mostrarToast(data.mensaje || "Error al cargar comprobante", "error");
       return;
     }
     var f = data.factura;
@@ -359,7 +359,7 @@ function imprimirFactura(facturaId) {
     var pagado = parseFloat(f.total_pagado || 0);
     var saldo = Math.max(0, total - pagado);
     if (saldo > 0.01) {
-      mostrarToast("La factura tiene saldo pendiente ($" + saldo.toLocaleString('es-AR', {minimumFractionDigits:2}) + ") \u2014 no se puede imprimir", "error");
+      mostrarToast("El comprobante tiene saldo pendiente ($" + saldo.toLocaleString('es-AR', {minimumFractionDigits:2}) + ") \u2014 no se puede imprimir", "error");
       return;
     }
     // Poblar drawer y luego imprimir directamente el drawer
