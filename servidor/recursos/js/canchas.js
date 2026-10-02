@@ -1,8 +1,9 @@
 /* ==========================================
-CANCHAS - Burbujas y CRUD
+CANCHAS - Burbujas y CRUD + Mantenimiento/Inhabilitar con reubicación
 ========================================== */
 
 var canchasLista = [];
+var currentCanchaId = null;
 
 function initCanchasPage() {
     var btnNueva = document.querySelector('.fab');
@@ -94,16 +95,27 @@ function generarBurbujas() {
         if (esInhabilitado) burbuja.classList.add('burbuja-inhabilitado');
 
         var esDisponible = Number(cancha.cancha_estado) === 1;
-        var claseBotonToggle = esDisponible ? 'btn-eliminar-cancha' : 'btn-habilitar-cancha';
-        var textoBotonToggle = esDisponible ? 'Inhabilitar' : 'Habilitar';
-        var funcionToggle = esDisponible ? 'eliminarCancha' : 'habilitarCancha';
+
+        var botonesHtml = '';
+        if (esDisponible) {
+            botonesHtml =
+                '<button class="btn-mantenimiento" onclick="preverYDeshabilitar(' + cancha.cancha_id + ', 2)">Mantenimiento</button>' +
+                '<button class="btn-eliminar-cancha" onclick="preverYDeshabilitar(' + cancha.cancha_id + ', 3)">Inhabilitar</button>';
+        } else if (esMantenimiento) {
+            botonesHtml =
+                '<button class="btn-habilitar-cancha" onclick="finalizarMantenimiento(' + cancha.cancha_id + ')">Finalizar mantenimiento</button>' +
+                '<button class="btn-eliminar-cancha" onclick="preverYDeshabilitar(' + cancha.cancha_id + ', 3)">Inhabilitar</button>';
+        } else {
+            botonesHtml =
+                '<button class="btn-habilitar-cancha" onclick="habilitarCancha(' + cancha.cancha_id + ')">Habilitar</button>';
+        }
 
         burbuja.innerHTML =
             '<div class="burbuja-header">' +
             '<div class="numero-cancha">Cancha ' + cancha.cancha_numero + '</div>' +
             '<div class="botones-cancha">' +
             '<button class="btn-editar-cancha" onclick="editarCancha(' + cancha.cancha_id + ')">Editar</button>' +
-            '<button class="' + claseBotonToggle + '" onclick="' + funcionToggle + '(' + cancha.cancha_id + ')">' + textoBotonToggle + '</button>' +
+            botonesHtml +
             '</div></div>' +
             '<div class="burbuja-info">' +
             '<div class="info-label">Descripción</div>' +
@@ -113,7 +125,6 @@ function generarBurbujas() {
             '<div class="precio-label">Precio por hora</div>' +
             '<div class="precio-valor">$' + parseFloat(cancha.cancha_precio).toFixed(2) + '</div></div>';
 
-        /* Entrance animation */
         if (esInhabilitado) {
             burbuja.classList.add('burbuja-entrance-inhabilitada');
             burbuja.style.animationDelay = (index * 0.06 + 0.15) + 's';
@@ -201,7 +212,263 @@ async function guardarCancha(e) {
     }
 }
 
+/* ==========================================
+MANTENIMIENTO / INHABILITAR CON REUBICACIÓN
+========================================== */
+
+async function preverYDeshabilitar(canchaId, estadoDestino) {
+    currentCanchaId = canchaId;
+    if (estadoDestino === 2) {
+        await abrirModalConfigMantenimiento(canchaId);
+    } else {
+        await preverDeshabilitarDirecto(canchaId, estadoDestino);
+    }
+}
+
+async function abrirModalConfigMantenimiento(canchaId) {
+    var hoy = new Date().toLocaleDateString('en-CA');
+    var manana = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+
+    var modal = document.createElement('div');
+    modal.className = 'modal-plan-overlay';
+    modal.innerHTML =
+        '<div class="modal-plan-box">' +
+        '<h3>Configurar Mantenimiento - Cancha #' + canchaId + '</h3>' +
+        '<form id="formConfigMantenimiento">' +
+        '<div class="form-row">' +
+        '<div><label>Fecha desde <span class="required">*</span></label><input type="date" id="m_fecha_desde" value="' + hoy + '" required></div>' +
+        '<div><label>Fecha hasta <span class="required">*</span></label><input type="date" id="m_fecha_hasta" value="' + manana + '" required></div>' +
+        '</div>' +
+        '<div class="form-row">' +
+        '<div><label>Hora desde <span class="required">*</span></label><input type="time" id="m_hora_desde" value="08:00" required></div>' +
+        '<div><label>Hora hasta <span class="required">*</span></label><input type="time" id="m_hora_hasta" value="23:00" required></div>' +
+        '</div>' +
+        '<div><label>Motivo</label><textarea id="m_motivo" rows="2" placeholder="Ej: Reparación césped, cambio de luces..."></textarea></div>' +
+        '<div class="modal-plan-actions">' +
+        '<button type="button" class="confirm-btn confirm-cancel" onclick="this.closest(\'.modal-plan-overlay\').remove()">Cancelar</button>' +
+        '<button type="submit" class="confirm-btn confirm-ok">Ver reservas afectadas</button>' +
+        '</div>' +
+        '</form>' +
+        '</div>';
+    document.body.appendChild(modal);
+    requestAnimationFrame(function() { modal.classList.add('active'); });
+
+    document.getElementById('formConfigMantenimiento').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var fechaDesde = document.getElementById('m_fecha_desde').value;
+        var fechaHasta = document.getElementById('m_fecha_hasta').value;
+        var horaDesde = document.getElementById('m_hora_desde').value;
+        var horaHasta = document.getElementById('m_hora_hasta').value;
+        var motivo = document.getElementById('m_motivo').value;
+
+        modal.classList.remove('active');
+        setTimeout(function() { modal.remove(); }, 300);
+
+        await preverDeshabilitarDirecto(canchaId, 2, fechaDesde, fechaHasta, horaDesde, horaHasta, motivo);
+    });
+}
+
+async function preverDeshabilitarDirecto(canchaId, estadoDestino, fechaDesde, fechaHasta, horaDesde, horaHasta, motivo) {
+    try {
+        var payload = {
+            accion: 'prever_deshabilitar',
+            cancha_id: canchaId,
+            estado_destino: estadoDestino
+        };
+        if (fechaDesde) payload.fecha_desde = fechaDesde;
+        if (fechaHasta) payload.fecha_hasta = fechaHasta;
+        if (horaDesde) payload.hora_desde = horaDesde;
+        if (horaHasta) payload.hora_hasta = horaHasta;
+        if (motivo) payload.motivo = motivo;
+
+        var respuesta = await fetch(BASE_URL + '/api/turnos_canchas.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        var resultado = await respuesta.json();
+        if (!resultado.ok) {
+            if (resultado.reservas_afectadas) {
+                renderModalPlan(canchaId, resultado.reservas_afectadas, estadoDestino, {fechaDesde: fechaDesde, fechaHasta: fechaHasta, horaDesde: horaDesde, horaHasta: horaHasta, motivo: motivo});
+            } else {
+                mostrarToast(resultado.mensaje || 'Error', 'error');
+            }
+            return;
+        }
+
+        if (resultado.puede_deshabilitar) {
+            if (await showConfirm('No hay reservas afectadas. Confirmar ' + (estadoDestino === 2 ? 'mantenimiento' : 'inhabilitación') + '?', estadoDestino === 2 ? '🔧' : '🚫')) {
+                await ejecutarPlan(canchaId, [], estadoDestino, {fechaDesde: fechaDesde, fechaHasta: fechaHasta, horaDesde: horaDesde, horaHasta: horaHasta, motivo: motivo});
+            }
+        } else {
+            renderModalPlan(canchaId, resultado.reservas_afectadas, estadoDestino, {fechaDesde: fechaDesde, fechaHasta: fechaHasta, horaDesde: horaDesde, horaHasta: horaHasta, motivo: motivo});
+        }
+    } catch (error) {
+        console.error(error);
+        mostrarToast('Error de conexión', 'error');
+    }
+}
+
+function renderModalPlan(canchaId, reservas, estadoDestino, rango) {
+    var existing = document.querySelector('.modal-plan-overlay');
+    if (existing) existing.remove();
+
+    var titulo = estadoDestino === 2 ? 'Mantenimiento programado' : 'Inhabilitación de cancha';
+    var html = '<div class="modal-plan-overlay active"><div class="modal-plan-box"><h3>' + titulo + '</h3>';
+    html += '<p>Se encontraron <strong>' + reservas.length + '</strong> reserva(s) afectada(s). Elegí una acción para cada una:</p>';
+    html += '<table id="tablaPlan"><thead><tr><th>Cliente</th><th>Fecha / Hora</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>';
+
+    reservas.forEach(function(r) {
+        var cliente = (r.cliente_nombre || '') + ' ' + (r.cliente_apellido || '');
+        var fechaHora = r.tur_fecha + ' ' + (r.tur_hora_inicio || '').substring(0,5) + ' - ' + (r.tur_hora_fin || '').substring(0,5);
+        var selectHtml = '<select class="plan-accion" data-reserva-id="' + r.reserva_id + '">';
+
+        if (r.alternativa_mismo_horario) {
+            var alt = r.alternativa_mismo_horario;
+            selectHtml += '<option value="reubicar_mismo_horario" data-cancha-id="' + alt.cancha_id + '" selected>Mover a Cancha ' + alt.cancha_numero + ' (mismo horario, $' + parseFloat(alt.cancha_precio).toLocaleString('es-AR') + ')</option>';
+        }
+        if (r.alternativa_mismo_dia) {
+            var alt2 = r.alternativa_mismo_dia;
+            selectHtml += '<option value="reubicar_mismo_dia" data-cancha-id="' + alt2.cancha_id + '" data-hora="' + alt2.tur_hora_inicio + '">Mover a Cancha ' + alt2.cancha_numero + ' a las ' + (alt2.tur_hora_inicio || '').substring(0,5) + ' (mismo día, $' + parseFloat(alt2.cancha_precio).toLocaleString('es-AR') + ')</option>';
+        }
+        selectHtml += '<option value="cancelar">Cancelar reserva</option>';
+        selectHtml += '<option value="avisar"' + (!r.alternativa_mismo_horario && !r.alternativa_mismo_dia ? ' selected' : '') + '>Avisar al cliente</option>';
+        selectHtml += '</select>';
+
+        var detalleHtml = '<span class="detalle-aviso" style="display:none">TEL ' + (r.cliente_celular || 'Sin teléfono') + ' — ' + cliente + '</span>';
+
+        html += '<tr data-reserva-id="' + r.reserva_id + '">' +
+            '<td>' + cliente + '</td>' +
+            '<td>' + fechaHora + '</td>' +
+            '<td>' + selectHtml + '</td>' +
+            '<td>' + detalleHtml + '</td>' +
+            '</tr>';
+    });
+
+    html += '</tbody></table>';
+    html += '<div class="modal-plan-actions">';
+    html += '<button type="button" class="confirm-btn confirm-cancel" id="btnCancelarPlan">Cancelar</button>';
+    html += '<button type="button" class="confirm-btn confirm-ok" id="btnEjecutarPlan">Confirmar y ejecutar</button>';
+    html += '</div></div></div>';
+
+    document.body.insertAdjacentHTML('beforeend', html);
+
+    document.querySelectorAll('#tablaPlan .plan-accion').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+            var row = this.closest('tr');
+            var aviso = row.querySelector('.detalle-aviso');
+            if (aviso) aviso.style.display = this.value === 'avisar' ? 'inline' : 'none';
+        });
+        if (sel.value === 'avisar') {
+            var avisoInit = sel.closest('tr').querySelector('.detalle-aviso');
+            if (avisoInit) avisoInit.style.display = 'inline';
+        }
+    });
+
+    document.getElementById('btnCancelarPlan').addEventListener('click', cerrarModalPlan);
+    document.getElementById('btnEjecutarPlan').addEventListener('click', async function() {
+        var btn = this;
+        btn.disabled = true;
+        var plan = [];
+        document.querySelectorAll('#tablaPlan .plan-accion').forEach(function(sel) {
+            var reservaId = parseInt(sel.dataset.reservaId);
+            var accion = sel.value;
+            var item = { reserva_id: reservaId, accion: accion };
+            if (accion === 'reubicar_mismo_horario') {
+                item.nueva_cancha_id = parseInt(sel.options[sel.selectedIndex].dataset.canchaId);
+            } else if (accion === 'reubicar_mismo_dia') {
+                item.nueva_cancha_id = parseInt(sel.options[sel.selectedIndex].dataset.canchaId);
+                item.nueva_hora_inicio = sel.options[sel.selectedIndex].dataset.hora;
+            }
+            plan.push(item);
+        });
+        cerrarModalPlan();
+        await ejecutarPlan(canchaId, plan, estadoDestino, rango);
+        btn.disabled = false;
+    });
+}
+
+function cerrarModalPlan() {
+    var modal = document.querySelector('.modal-plan-overlay');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(function() { modal.remove(); }, 300);
+    }
+}
+
+async function ejecutarPlan(canchaId, plan, estadoDestino, rango) {
+    try {
+        if (!canchaId) {
+            mostrarToast('No se pudo determinar la cancha', 'error');
+            return;
+        }
+
+        var payload = {
+            accion: 'ejecutar_deshabilitar',
+            cancha_id: canchaId,
+            estado_destino: estadoDestino,
+            plan: plan
+        };
+
+        if (rango) {
+            if (rango.fechaDesde) payload.fecha_desde = rango.fechaDesde;
+            if (rango.fechaHasta) payload.fecha_hasta = rango.fechaHasta;
+            if (rango.horaDesde) payload.hora_desde = rango.horaDesde;
+            if (rango.horaHasta) payload.hora_hasta = rango.horaHasta;
+            if (rango.motivo) payload.motivo = rango.motivo;
+        }
+
+        var respuesta = await fetch(BASE_URL + '/api/turnos_canchas.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        var resultado = await respuesta.json();
+        if (!resultado.ok) {
+            mostrarToast(resultado.mensaje || 'Error al ejecutar', 'error');
+            return;
+        }
+
+        var stats = resultado.stats || {};
+        var parts = [];
+        if (stats.mismo_horario) parts.push(stats.mismo_horario + ' mismo horario');
+        if (stats.mismo_dia) parts.push(stats.mismo_dia + ' mismo día');
+        if (stats.canceladas) parts.push(stats.canceladas + ' cancelada(s)');
+        if (stats.avisar) parts.push(stats.avisar + ' avisar cliente');
+        mostrarToast('Ejecutado: ' + (parts.join(', ') || 'sin cambios'), 'success');
+        currentCanchaId = null;
+        await cargarCanchas();
+    } catch (error) {
+        console.error(error);
+        mostrarToast('Error de conexión', 'error');
+    }
+}
+
+async function finalizarMantenimiento(canchaId) {
+    if (!await showConfirm('¿Finalizar mantenimiento y liberar la cancha?', '✅')) return;
+
+    try {
+        var respuesta = await fetch(BASE_URL + '/api/turnos_canchas.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accion: 'finalizar_mantenimiento', cancha_id: canchaId })
+        });
+
+        var resultado = await respuesta.json();
+        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
+
+        mostrarToast('Mantenimiento finalizado', 'success');
+        await cargarCanchas();
+    } catch (error) {
+        console.error(error);
+        mostrarToast('Error de conexión', 'error');
+    }
+}
+
 async function eliminarCancha(canchaId) {
+    currentCanchaId = canchaId;
     if (!await showConfirm('¿Estás seguro de que deseas inhabilitar esta cancha?', '🚫')) return;
 
     var burbuja = document.querySelector('.burbuja-cancha[data-cancha-id="' + canchaId + '"]');
@@ -218,7 +485,14 @@ async function eliminarCancha(canchaId) {
         });
 
         var resultado = await respuesta.json();
-        if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
+        if (!resultado.ok) {
+            if (resultado.reservas_afectadas) {
+                renderModalPlan(canchaId, resultado.reservas_afectadas, 3, null);
+            } else {
+                mostrarToast(resultado.mensaje, 'error');
+            }
+            return;
+        }
 
         await cargarCanchas();
         mostrarToast('Cancha inhabilitada', 'success');
@@ -254,5 +528,3 @@ async function habilitarCancha(canchaId) {
         mostrarToast('Error habilitando cancha', 'error');
     }
 }
-
-

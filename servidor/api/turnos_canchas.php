@@ -32,6 +32,9 @@ try {
         case 'actualizar_cancha':
         case 'eliminar_cancha':
         case 'habilitar_cancha':
+        case 'prever_deshabilitar':
+        case 'ejecutar_deshabilitar':
+        case 'finalizar_mantenimiento':
             if (!$_SESSION['usuario']->isAdmin()) {
                 echo json_encode(['ok' => false, 'mensaje' => 'No autorizado']);
                 exit;
@@ -51,6 +54,15 @@ try {
                     break;
                 case 'habilitar_cancha':
                     habilitarCancha($pdo, $input);
+                    break;
+                case 'prever_deshabilitar':
+                    preverDeshabilitar($pdo, $input);
+                    break;
+                case 'ejecutar_deshabilitar':
+                    ejecutarDeshabilitar($pdo, $input);
+                    break;
+                case 'finalizar_mantenimiento':
+                    finalizarMantenimiento($pdo, $input);
                     break;
             }
             break;
@@ -92,6 +104,7 @@ cliente_nombre,
 cliente_apellido
 FROM clientes
 WHERE cliente_estado = 1
+  AND cliente_id != 999
 ORDER BY cliente_apellido, cliente_nombre
 ";
     $stmt = $pdo->query($sql);
@@ -113,7 +126,7 @@ ORDER BY cliente_apellido, cliente_nombre
             FROM reservas r
             INNER JOIN turnos t ON r.tur_id = t.tur_id
             INNER JOIN canchas ca ON t.id_cancha = ca.cancha_id
-            LEFT JOIN clientes c ON r.cliente_id = c.cliente_id
+            LEFT JOIN clientes c ON r.cliente_id = c.cliente_id AND c.cliente_id != 999
             WHERE t.tur_fecha = ?
             ORDER BY t.tur_hora_inicio, ca.cancha_numero
         ";
@@ -421,12 +434,28 @@ function actualizarCancha(PDO $pdo, array $input): void
 function eliminarCancha(PDO $pdo, array $input): void
 {
     $canchaId = (int)$input['cancha_id'];
-    $sql = "UPDATE canchas SET cancha_estado = 3 WHERE cancha_id = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$canchaId]);
 
+    $preview = preverDeshabilitarInterno($pdo, $canchaId, 3, null, null, null, null);
+    if (!$preview['puede_deshabilitar']) {
+        echo json_encode([
+            'ok' => false,
+            'mensaje' => 'La cancha tiene reservas futuras. Use la vista previa para decidir qué hacer con cada una.',
+            'reservas_afectadas' => $preview['reservas_afectadas']
+        ]);
+        return;
+    }
 
-    echo json_encode(['ok' => true, 'mensaje' => 'Cancha inhabilitada correctamente']);
+    $pdo->beginTransaction();
+    try {
+        $sql = "UPDATE canchas SET cancha_estado = 3 WHERE cancha_id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$canchaId]);
+        $pdo->commit();
+        echo json_encode(['ok' => true, 'mensaje' => 'Cancha inhabilitada correctamente']);
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
 }
 
 function habilitarCancha(PDO $pdo, array $input): void
@@ -438,4 +467,302 @@ function habilitarCancha(PDO $pdo, array $input): void
 
 
     echo json_encode(['ok' => true, 'mensaje' => 'Cancha habilitada correctamente']);
+}
+
+function preverDeshabilitar(PDO $pdo, array $input): void
+{
+    $canchaId = (int)($input['cancha_id'] ?? 0);
+    $estadoDestino = (int)($input['estado_destino'] ?? 3);
+    $fechaDesde = !empty($input['fecha_desde']) ? $input['fecha_desde'] : null;
+    $fechaHasta = !empty($input['fecha_hasta']) ? $input['fecha_hasta'] : null;
+    $horaDesde = !empty($input['hora_desde']) ? $input['hora_desde'] : null;
+    $horaHasta = !empty($input['hora_hasta']) ? $input['hora_hasta'] : null;
+
+    if ($canchaId <= 0 || !in_array($estadoDestino, [2, 3])) {
+        echo json_encode(['ok' => false, 'mensaje' => 'Parámetros inválidos']);
+        return;
+    }
+
+    $resultado = preverDeshabilitarInterno($pdo, $canchaId, $estadoDestino, $fechaDesde, $fechaHasta, $horaDesde, $horaHasta);
+    echo json_encode(['ok' => true] + $resultado);
+}
+
+function ejecutarDeshabilitar(PDO $pdo, array $input): void
+{
+    $canchaId = (int)($input['cancha_id'] ?? 0);
+    $estadoDestino = (int)($input['estado_destino'] ?? 3);
+    $plan = $input['plan'] ?? [];
+    $fechaDesde = !empty($input['fecha_desde']) ? $input['fecha_desde'] : null;
+    $fechaHasta = !empty($input['fecha_hasta']) ? $input['fecha_hasta'] : null;
+    $horaDesde = !empty($input['hora_desde']) ? $input['hora_desde'] : null;
+    $horaHasta = !empty($input['hora_hasta']) ? $input['hora_hasta'] : null;
+    $motivo = !empty($input['motivo']) ? $input['motivo'] : '';
+
+    if ($canchaId <= 0 || !in_array($estadoDestino, [2, 3])) {
+        echo json_encode(['ok' => false, 'mensaje' => 'Parámetros inválidos']);
+        return;
+    }
+
+    $pdo->beginTransaction();
+    try {
+        $stats = ['mismo_horario' => 0, 'mismo_dia' => 0, 'canceladas' => 0, 'avisar' => 0];
+
+        foreach ($plan as $item) {
+            $reservaId = (int)($item['reserva_id'] ?? 0);
+            $accion = $item['accion'] ?? 'avisar';
+            $nuevaCanchaId = isset($item['nueva_cancha_id']) ? (int)$item['nueva_cancha_id'] : null;
+            $nuevaHoraInicio = $item['nueva_hora_inicio'] ?? null;
+
+            if ($reservaId <= 0) continue;
+
+            $stmt = $pdo->prepare("
+                SELECT r.reserva_id, r.tur_id, r.cliente_id, r.reser_estado, t.tur_fecha, t.tur_hora_inicio, t.tur_hora_fin, ca.cancha_precio
+                FROM reservas r
+                INNER JOIN turnos t ON r.tur_id = t.tur_id
+                INNER JOIN canchas ca ON t.id_cancha = ca.cancha_id
+                WHERE r.reserva_id = ? AND r.reser_estado IN (1,2)
+            ");
+            $stmt->execute([$reservaId]);
+            $reserva = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$reserva) continue;
+
+            switch ($accion) {
+                case 'reubicar_mismo_horario':
+                    if ($nuevaCanchaId) {
+                        $stmt = $pdo->prepare("UPDATE turnos SET id_cancha = ? WHERE tur_id = ?");
+                        $stmt->execute([$nuevaCanchaId, $reserva['tur_id']]);
+                        $stats['mismo_horario']++;
+                    }
+                    break;
+                case 'reubicar_mismo_dia':
+                    if ($nuevaCanchaId && $nuevaHoraInicio) {
+                        $nuevaHoraFin = date('H:i:s', strtotime($nuevaHoraInicio . ' +1 hour'));
+                        $stmt = $pdo->prepare("UPDATE turnos SET id_cancha = ?, tur_hora_inicio = ?, tur_hora_fin = ? WHERE tur_id = ?");
+                        $stmt->execute([$nuevaCanchaId, $nuevaHoraInicio, $nuevaHoraFin, $reserva['tur_id']]);
+                        $stats['mismo_dia']++;
+                    }
+                    break;
+                case 'cancelar':
+                    $stmt = $pdo->prepare("UPDATE reservas SET reser_estado = 3 WHERE reserva_id = ?");
+                    $stmt->execute([$reservaId]);
+                    $stats['canceladas']++;
+                    break;
+                case 'avisar':
+                default:
+                    $stats['avisar']++;
+                    break;
+            }
+        }
+
+        $sql = "UPDATE canchas SET cancha_estado = ? WHERE cancha_id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$estadoDestino, $canchaId]);
+
+        if ($estadoDestino === 2) {
+            $where = "t.id_cancha = ?";
+            $params = [$canchaId];
+            if ($fechaDesde) {
+                $where .= " AND t.tur_fecha >= ?";
+                $params[] = $fechaDesde;
+            }
+            if ($fechaHasta) {
+                $where .= " AND t.tur_fecha <= ?";
+                $params[] = $fechaHasta;
+            }
+            if ($horaDesde) {
+                $where .= " AND t.tur_hora_inicio >= ?";
+                $params[] = $horaDesde;
+            }
+            if ($horaHasta) {
+                $where .= " AND t.tur_hora_inicio < ?";
+                $params[] = $horaHasta;
+            }
+
+            $sql = "SELECT t.tur_id, t.tur_fecha, t.tur_hora_inicio, t.tur_hora_fin
+                    FROM turnos t
+                    WHERE $where";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $slots = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($slots as $slot) {
+                $existe = $pdo->prepare("SELECT 1 FROM reservas r JOIN turnos t ON r.tur_id = t.tur_id WHERE t.tur_id = ? AND r.cliente_id = 999");
+                $existe->execute([$slot['tur_id']]);
+                if (!$existe->fetchColumn()) {
+                    $obs = 'Mantenimiento programado' . ($motivo ? ': ' . $motivo : '');
+                    $stmtIns = $pdo->prepare("
+                        INSERT INTO reservas (usu_id, cliente_id, tur_id, reser_fecha, reser_estado, reser_observaciones)
+                        VALUES (NULL, 999, ?, CURDATE(), 1, ?)
+                    ");
+                    $stmtIns->execute([$slot['tur_id'], $obs]);
+                }
+            }
+        }
+
+        $pdo->commit();
+        echo json_encode([
+            'ok' => true,
+            'mensaje' => 'Ejecutado correctamente',
+            'stats' => $stats
+        ]);
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
+}
+
+function finalizarMantenimiento(PDO $pdo, array $input): void
+{
+    $canchaId = (int)($input['cancha_id'] ?? 0);
+    if ($canchaId <= 0) {
+        echo json_encode(['ok' => false, 'mensaje' => 'ID de cancha inválido']);
+        return;
+    }
+
+    $pdo->beginTransaction();
+    try {
+        $stmt = $pdo->prepare("
+            DELETE r FROM reservas r
+            INNER JOIN turnos t ON r.tur_id = t.tur_id
+            WHERE t.id_cancha = ? AND r.cliente_id = 999
+        ");
+        $stmt->execute([$canchaId]);
+
+        $stmt = $pdo->prepare("UPDATE canchas SET cancha_estado = 1 WHERE cancha_id = ?");
+        $stmt->execute([$canchaId]);
+
+        $pdo->commit();
+        echo json_encode(['ok' => true, 'mensaje' => 'Mantenimiento finalizado, cancha disponible']);
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
+}
+
+function preverDeshabilitarInterno(PDO $pdo, int $canchaId, int $estadoDestino, ?string $fechaDesde, ?string $fechaHasta, ?string $horaDesde, ?string $horaHasta): array
+{
+    $hoy = date('Y-m-d');
+    $where = "t.id_cancha = ? AND r.reser_estado IN (1,2) AND t.tur_fecha >= ?";
+    $params = [$canchaId, $hoy];
+
+    if ($fechaDesde) {
+        $where .= " AND t.tur_fecha >= ?";
+        $params[] = $fechaDesde;
+    }
+    if ($fechaHasta) {
+        $where .= " AND t.tur_fecha <= ?";
+        $params[] = $fechaHasta;
+    }
+    if ($horaDesde) {
+        $where .= " AND t.tur_hora_inicio >= ?";
+        $params[] = $horaDesde;
+    }
+    if ($horaHasta) {
+        $where .= " AND t.tur_hora_inicio < ?";
+        $params[] = $horaHasta;
+    }
+
+    $sql = "
+        SELECT r.reserva_id, r.cliente_id, r.reser_estado, r.reser_observaciones,
+               c.cliente_nombre, c.cliente_apellido, c.cliente_celular,
+               t.tur_id, t.tur_fecha, t.tur_hora_inicio, t.tur_hora_fin,
+               ca.cancha_id AS cancha_origen_id, ca.cancha_numero AS cancha_origen_numero, ca.cancha_precio
+        FROM reservas r
+        INNER JOIN turnos t ON r.tur_id = t.tur_id
+        INNER JOIN canchas ca ON t.id_cancha = ca.cancha_id
+        LEFT JOIN clientes c ON r.cliente_id = c.cliente_id
+        WHERE $where
+        ORDER BY t.tur_fecha, t.tur_hora_inicio
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $reservasAfectadas = [];
+    foreach ($reservas as $r) {
+        $precio = (float)$r['cancha_precio'];
+        $altMismoHorario = buscarAlternativaMismoHorario($pdo, $canchaId, $r['tur_fecha'], $r['tur_hora_inicio'], $precio);
+        $altMismoDia = null;
+        if (!$altMismoHorario) {
+            $altMismoDia = buscarAlternativaMismoDia($pdo, $canchaId, $r['tur_fecha'], $r['tur_hora_inicio']);
+        }
+
+        $accionPropuesta = 'avisar';
+        if ($altMismoHorario) $accionPropuesta = 'reubicar_mismo_horario';
+        elseif ($altMismoDia) $accionPropuesta = 'reubicar_mismo_dia';
+
+        $reservasAfectadas[] = [
+            'reserva_id' => (int)$r['reserva_id'],
+            'cliente_id' => (int)$r['cliente_id'],
+            'cliente_nombre' => $r['cliente_nombre'],
+            'cliente_apellido' => $r['cliente_apellido'],
+            'cliente_celular' => $r['cliente_celular'],
+            'tur_fecha' => $r['tur_fecha'],
+            'tur_hora_inicio' => $r['tur_hora_inicio'],
+            'tur_hora_fin' => $r['tur_hora_fin'],
+            'cancha_origen_numero' => (int)$r['cancha_origen_numero'],
+            'precio_original' => $precio,
+            'alternativa_mismo_horario' => $altMismoHorario,
+            'alternativa_mismo_dia' => $altMismoDia,
+            'accion_propuesta' => $accionPropuesta
+        ];
+    }
+
+    return [
+        'puede_deshabilitar' => empty($reservasAfectadas),
+        'reservas_afectadas' => $reservasAfectadas
+    ];
+}
+
+function buscarAlternativaMismoHorario(PDO $pdo, int $excluirCanchaId, string $fecha, string $horaInicio, float $precio): ?array
+{
+    $sql = "
+        SELECT c.cancha_id, c.cancha_numero, c.cancha_precio
+        FROM canchas c
+        WHERE c.cancha_estado = 1
+          AND c.cancha_id != ?
+          AND c.cancha_precio = ?
+          AND NOT EXISTS (
+              SELECT 1 FROM turnos t
+              JOIN reservas r ON t.tur_id = r.tur_id
+              WHERE t.id_cancha = c.cancha_id
+                AND t.tur_fecha = ?
+                AND t.tur_hora_inicio = ?
+                AND r.reser_estado IN (1,2)
+          )
+        ORDER BY c.cancha_numero
+        LIMIT 1
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$excluirCanchaId, $precio, $fecha, $horaInicio]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ? ['cancha_id' => (int)$row['cancha_id'], 'cancha_numero' => (int)$row['cancha_numero'], 'cancha_precio' => (float)$row['cancha_precio']] : null;
+}
+
+function buscarAlternativaMismoDia(PDO $pdo, int $excluirCanchaId, string $fecha, string $horaActual): ?array
+{
+    $sql = "
+        SELECT c.cancha_id, c.cancha_numero, c.cancha_precio, t.tur_hora_inicio
+        FROM canchas c
+        INNER JOIN turnos t ON t.id_cancha = c.cancha_id
+        WHERE c.cancha_estado = 1
+          AND c.cancha_id != ?
+          AND t.tur_fecha = ?
+          AND t.tur_hora_inicio != ?
+          AND NOT EXISTS (
+              SELECT 1 FROM turnos t2
+              JOIN reservas r2 ON t2.tur_id = r2.tur_id
+              WHERE t2.id_cancha = c.cancha_id
+                AND t2.tur_fecha = ?
+                AND t2.tur_hora_inicio = t.tur_hora_inicio
+                AND r2.reser_estado IN (1,2)
+          )
+        ORDER BY c.cancha_numero, t.tur_hora_inicio
+        LIMIT 1
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$excluirCanchaId, $fecha, $horaActual, $fecha]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ? ['cancha_id' => (int)$row['cancha_id'], 'cancha_numero' => (int)$row['cancha_numero'], 'cancha_precio' => (float)$row['cancha_precio'], 'tur_hora_inicio' => $row['tur_hora_inicio']] : null;
 }

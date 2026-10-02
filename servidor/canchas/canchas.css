@@ -338,3 +338,197 @@
   75% { transform: scale(1.04); }
   100% { transform: scale(1); filter: grayscale(0); }
 }
+
+/* ======================== */
+/* BOTÓN MANTENIMIENTO      */
+/* ======================== */
+
+.btn-mantenimiento {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-top: 0;
+  width: auto;
+  box-shadow: none;
+  background: linear-gradient(90deg, #facc15, #fbbf24);
+  color: #1e1e2e;
+}
+
+.btn-mantenimiento:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ======================== */
+/* MODAL PLAN               */
+/* ======================== */
+
+.modal-plan-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-plan-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-plan-box {
+  background: var(--bg-elevated);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal-plan-overlay.active .modal-plan-box {
+  transform: scale(1);
+}
+
+.modal-plan-box h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  font-size: 18px;
+}
+
+.modal-plan-box p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+#tablaPlan {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+#tablaPlan th,
+#tablaPlan td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-light);
+  text-align: left;
+  vertical-align: middle;
+}
+
+#tablaPlan th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#tablaPlan select.plan-accion {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-medium);
+  background: var(--drawer-input-bg);
+  color: var(--text-primary);
+  font-size: 12px;
+  min-width: 280px;
+  max-width: 100%;
+}
+
+#tablaPlan select.plan-accion:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.detalle-aviso {
+  color: #facc15;
+  font-size: 11px;
+  font-style: italic;
+  display: inline-block;
+}
+
+.modal-plan-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row > div {
+  flex: 1;
+}
+
+.form-row label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.form-row input[type="date"],
+.form-row input[type="time"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-medium);
+  background: var(--drawer-input-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+#m_motivo {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-medium);
+  background: var(--drawer-input-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .modal-plan-box {
+    padding: 16px;
+    width: 95%;
+  }
+
+  #tablaPlan th,
+  #tablaPlan td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  #tablaPlan select.plan-accion {
+    min-width: 100%;
+    font-size: 11px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

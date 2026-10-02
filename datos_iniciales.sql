@@ -42,7 +42,8 @@ INSERT INTO clientes (
   cliente_localidad_id, cliente_provincia_id, cliente_pais_id
 ) VALUES
 (1, 'Carlos', 'Lopez', 'carlos@mail.com', '1199998888', '33444555', true, 1, 1, 1),
-(2, 'Maria', 'Fernandez', 'maria@mail.com', '1177776666', '30123456', true, 2, 1, 1);
+(2, 'Maria', 'Fernandez', 'maria@mail.com', '1177776666', '30123456', true, 2, 1, 1),
+(999, 'SISTEMA', 'Mantenimiento', NULL, '', '0', true, 1, 1, 1);
 
 --⚽ 7. Tipo de cancha
 INSERT INTO tipo_cancha (tipo_cancha_id, descripcion) VALUES

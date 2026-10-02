@@ -78,7 +78,7 @@ function listar(PDO $pdo): void
             FROM reservas r
             JOIN turnos t ON r.tur_id = t.tur_id
             JOIN canchas ca ON t.id_cancha = ca.cancha_id
-            LEFT JOIN clientes c ON r.cliente_id = c.cliente_id
+            LEFT JOIN clientes c ON r.cliente_id = c.cliente_id AND c.cliente_id != 999
             LEFT JOIN estado_reserva er ON r.reser_estado = er.estado_reserva_id
             LEFT JOIN facturacion f ON r.reserva_id = f.reserva_id
             LEFT JOIN (
