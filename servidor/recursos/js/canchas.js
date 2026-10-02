@@ -465,7 +465,7 @@ async function ejecutarPlan(canchaId, plan, estadoDestino, rango) {
         if (stats.mismo_horario) parts.push(stats.mismo_horario + ' mismo horario');
         if (stats.canceladas) parts.push(stats.canceladas + ' cancelada(s)');
         if (stats.avisar) parts.push(stats.avisar + ' avisar cliente');
-        if (stats.slots_pasados_omitidos) parts.push(stats.slots_pasados_omitidos + ' slot(s) pasados omitidos');
+        if (stats.slots_senados_omitidos) parts.push(stats.slots_senados_omitidos + ' slot(s) señados no tocados');
         mostrarToast('Ejecutado: ' + (parts.join(', ') || 'sin cambios'), 'success');
         currentCanchaId = null;
         if (typeof closeDrawer === 'function') closeDrawer();

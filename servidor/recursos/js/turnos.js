@@ -274,12 +274,13 @@ function turnosGenerarCuerpo() {
 
         turnosCanchas.forEach(function (cancha) {
             var reserva = turnosBuscarReserva(cancha.cancha_id, horaTexto);
+            var fantasma = reserva ? null : turnosBuscarFantasma(cancha.cancha_id, horaTexto);
 
-            if (reserva && Number(reserva.cliente_id) === 999) {
-                var motivo = reserva.reser_observaciones ? ' title="' + reserva.reser_observaciones.replace(/"/g, '') + '"' : '';
-                html += '<td class="estado-mantenimiento"' + motivo + '>En mantenimiento</td>';
-            } else if (reserva) {
+            if (reserva) {
                 html += turnosGenerarCelda(reserva);
+            } else if (fantasma) {
+                var motivo = fantasma.reser_observaciones ? ' title="' + fantasma.reser_observaciones.replace(/"/g, '') + '"' : '';
+                html += '<td class="estado-mantenimiento"' + motivo + '>En mantenimiento</td>';
             } else if (Number(cancha.cancha_estado) === 2) {
                 html += '<td class="estado-mantenimiento">En mantenimiento</td>';
             } else if (Number(cancha.cancha_estado) === 3) {
@@ -301,7 +302,21 @@ function turnosBuscarReserva(canchaId, hora) {
         var r = turnosReservas[i];
         if (Number(r.cancha_id) === Number(canchaId) &&
             r.tur_hora_inicio === hora &&
-            Number(r.reser_estado) !== 3) {
+            Number(r.reser_estado) !== 3 &&
+            Number(r.cliente_id) !== 999) {
+            return r;
+        }
+    }
+    return null;
+}
+
+function turnosBuscarFantasma(canchaId, hora) {
+    for (var i = 0; i < turnosReservas.length; i++) {
+        var r = turnosReservas[i];
+        if (Number(r.cancha_id) === Number(canchaId) &&
+            r.tur_hora_inicio === hora &&
+            Number(r.reser_estado) !== 3 &&
+            Number(r.cliente_id) === 999) {
             return r;
         }
     }

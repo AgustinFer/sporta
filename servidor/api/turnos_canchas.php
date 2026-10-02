@@ -192,6 +192,7 @@ function crearReserva(PDO $pdo, array $input): void
     $ocupado = (int)$stmt->fetchColumn();
 
     if ($ocupado > 0) {
+        // Si hay reserva real, prima ese mensaje; solo fantasma => mantenimiento.
         $stmt = $pdo->prepare("
             SELECT COUNT(*)
             FROM reservas r
@@ -199,15 +200,15 @@ function crearReserva(PDO $pdo, array $input): void
             WHERE t.id_cancha = ?
               AND t.tur_fecha = ?
               AND t.tur_hora_inicio = ?
-              AND r.cliente_id = 999
+              AND r.cliente_id != 999
               AND r.reser_estado IN (1,2)
         ");
         $stmt->execute([$canchaId, $fecha, $horaInicio]);
-        $esMantenimiento = (int)$stmt->fetchColumn() > 0;
+        $hayReal = (int)$stmt->fetchColumn() > 0;
 
         echo json_encode([
             'ok' => false,
-            'mensaje' => $esMantenimiento ? 'La cancha está en mantenimiento en ese horario' : 'El horario ya está reservado'
+            'mensaje' => $hayReal ? 'El horario ya está reservado' : 'La cancha está en mantenimiento en ese horario'
         ]);
         return;
     }
@@ -528,7 +529,7 @@ function ejecutarDeshabilitar(PDO $pdo, array $input): void
 
     $pdo->beginTransaction();
     try {
-        $stats = ['mismo_horario' => 0, 'canceladas' => 0, 'avisar' => 0, 'slots_pasados_omitidos' => 0];
+        $stats = ['mismo_horario' => 0, 'canceladas' => 0, 'avisar' => 0, 'slots_senados_omitidos' => 0];
         $ahoraEjec = date('Y-m-d H:i:s');
 
         foreach ($plan as $item) {
@@ -583,6 +584,30 @@ function ejecutarDeshabilitar(PDO $pdo, array $input): void
 
         if ($estadoDestino === 2) {
             $obs = 'Mantenimiento programado' . ($motivo ? ': ' . $motivo : '');
+            // Turnos con seña (pagado > 0): intocables, ni siquiera fantasma.
+            $sqlPagados = "
+                SELECT t.tur_id
+                FROM turnos t
+                INNER JOIN reservas r ON r.tur_id = t.tur_id
+                LEFT JOIN facturacion f ON f.reserva_id = r.reserva_id
+                LEFT JOIN pagos p ON p.factura_id = f.factura_id
+                WHERE t.id_cancha = ?
+                  AND r.reser_estado IN (1,2)
+                  AND r.cliente_id != 999
+            ";
+            $paramsPagados = [$canchaId];
+            if ($fechaDesde && $fechaHasta) {
+                $sqlPagados .= " AND t.tur_fecha >= ? AND t.tur_fecha <= ?";
+                $paramsPagados[] = $fechaDesde;
+                $paramsPagados[] = $fechaHasta;
+            }
+            $sqlPagados .= " GROUP BY t.tur_id HAVING COALESCE(SUM(p.pago_monto), 0) > 0";
+            $stmtPag = $pdo->prepare($sqlPagados);
+            $stmtPag->execute($paramsPagados);
+            $turIdsSenados = [];
+            foreach ($stmtPag->fetchAll(PDO::FETCH_COLUMN) as $tid) {
+                $turIdsSenados[(int)$tid] = true;
+            }
             if ($fechaDesde && $fechaHasta) {
                 // Cobertura completa del rango: los turnos se crean on-demand,
                 // así que se generan las filas turno que falten y se les pone
@@ -612,17 +637,19 @@ function ejecutarDeshabilitar(PDO $pdo, array $input): void
                     $fecha = $d->format('Y-m-d');
                     for ($h = $hDesde; $h < $hHasta; $h++) {
                         $horaInicio = sprintf('%02d:00:00', $h);
-                        // Slots pasados (o en curso) no se bloquean.
-                        if ($fecha . ' ' . $horaInicio < $ahoraEjec) {
-                            $stats['slots_pasados_omitidos']++;
-                            continue;
-                        }
                         $horaFin = date('H:i:s', strtotime($horaInicio . ' +1 hour'));
                         $stmtTurno->execute([$canchaId, $fecha, $horaInicio]);
                         $turId = $stmtTurno->fetchColumn();
                         if (!$turId) {
                             $stmtNewTurno->execute([$canchaId, $fecha, $horaInicio, $horaFin]);
-                            $turId = $pdo->lastInsertId();
+                            $turId = (int)$pdo->lastInsertId();
+                        } else {
+                            $turId = (int)$turId;
+                        }
+                        // Señado: no se toca ni con fantasma.
+                        if (isset($turIdsSenados[$turId])) {
+                            $stats['slots_senados_omitidos']++;
+                            continue;
                         }
                         $stmtFantasma->execute([$turId]);
                         if (!$stmtFantasma->fetchColumn()) {
@@ -631,22 +658,23 @@ function ejecutarDeshabilitar(PDO $pdo, array $input): void
                     }
                 }
             } else {
-                // Sin rango: cubrir turnos existentes futuros (compatibilidad).
-                $stmt = $pdo->prepare("SELECT tur_id, tur_fecha, tur_hora_inicio FROM turnos WHERE id_cancha = ?");
+                // Sin rango: cubrir turnos existentes (compatibilidad).
+                $stmt = $pdo->prepare("SELECT tur_id FROM turnos WHERE id_cancha = ?");
                 $stmt->execute([$canchaId]);
                 $stmtFantasma = $pdo->prepare("SELECT 1 FROM reservas WHERE tur_id = ? AND cliente_id = 999 AND reser_estado IN (1,2)");
                 $stmtNewFantasma = $pdo->prepare("
                     INSERT INTO reservas (usu_id, cliente_id, tur_id, reser_fecha, reser_estado, reser_observaciones)
                     VALUES (NULL, 999, ?, CURDATE(), 1, ?)
                 ");
-                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $slot) {
-                    if ($slot['tur_fecha'] . ' ' . $slot['tur_hora_inicio'] < $ahoraEjec) {
-                        $stats['slots_pasados_omitidos']++;
+                foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $turId) {
+                    $turId = (int)$turId;
+                    if (isset($turIdsSenados[$turId])) {
+                        $stats['slots_senados_omitidos']++;
                         continue;
                     }
-                    $stmtFantasma->execute([$slot['tur_id']]);
+                    $stmtFantasma->execute([$turId]);
                     if (!$stmtFantasma->fetchColumn()) {
-                        $stmtNewFantasma->execute([$slot['tur_id'], $obs]);
+                        $stmtNewFantasma->execute([$turId, $obs]);
                     }
                 }
             }
