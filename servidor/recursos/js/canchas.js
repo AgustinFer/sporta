@@ -315,7 +315,7 @@ async function preverDeshabilitarDirecto(canchaId, estadoDestino, fechaDesde, fe
         var resultado = await respuesta.json();
         if (!resultado.ok) {
             if (resultado.reservas_afectadas) {
-                renderModalPlan(canchaId, resultado.reservas_afectadas, estadoDestino, {fechaDesde: fechaDesde, fechaHasta: fechaHasta, horaDesde: horaDesde, horaHasta: horaHasta, motivo: motivo});
+                renderModalPlan(canchaId, resultado.reservas_afectadas, estadoDestino, {fechaDesde: fechaDesde, fechaHasta: fechaHasta, horaDesde: horaDesde, horaHasta: horaHasta, motivo: motivo}, 0);
             } else {
                 mostrarToast(resultado.mensaje || 'Error', 'error');
             }
@@ -327,7 +327,7 @@ async function preverDeshabilitarDirecto(canchaId, estadoDestino, fechaDesde, fe
                 await ejecutarPlan(canchaId, [], estadoDestino, {fechaDesde: fechaDesde, fechaHasta: fechaHasta, horaDesde: horaDesde, horaHasta: horaHasta, motivo: motivo});
             }
         } else {
-            renderModalPlan(canchaId, resultado.reservas_afectadas, estadoDestino, {fechaDesde: fechaDesde, fechaHasta: fechaHasta, horaDesde: horaDesde, horaHasta: horaHasta, motivo: motivo});
+            renderModalPlan(canchaId, resultado.reservas_afectadas, estadoDestino, {fechaDesde: fechaDesde, fechaHasta: fechaHasta, horaDesde: horaDesde, horaHasta: horaHasta, motivo: motivo}, resultado.reservas_pasadas_omitidas || 0);
         }
     } catch (error) {
         console.error(error);
@@ -335,30 +335,37 @@ async function preverDeshabilitarDirecto(canchaId, estadoDestino, fechaDesde, fe
     }
 }
 
-function renderModalPlan(canchaId, reservas, estadoDestino, rango) {
+function formatearDiferencia(dif) {
+    var n = parseFloat(dif) || 0;
+    if (n === 0) return 'mismo precio';
+    var txt = '$' + Math.abs(n).toLocaleString('es-AR');
+    return 'dif. ' + (n > 0 ? '+' : '-') + txt;
+}
+
+function renderModalPlan(canchaId, reservas, estadoDestino, rango, omitidas) {
     var existing = document.querySelector('.modal-plan-overlay');
     if (existing) existing.remove();
 
     var titulo = estadoDestino === 2 ? 'Mantenimiento programado' : 'Inhabilitación de cancha';
     var html = '<div class="modal-plan-overlay active"><div class="modal-plan-box"><h3>' + titulo + '</h3>';
     html += '<p>Se encontraron <strong>' + reservas.length + '</strong> reserva(s) afectada(s). Elegí una acción para cada una:</p>';
+    if (omitidas > 0) {
+        html += '<p class="detalle-aviso">' + omitidas + ' reserva(s) ya jugadas no se incluyen en el plan.</p>';
+    }
     html += '<table id="tablaPlan"><thead><tr><th>Cliente</th><th>Fecha / Hora</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>';
 
     reservas.forEach(function(r) {
         var cliente = (r.cliente_nombre || '') + ' ' + (r.cliente_apellido || '');
         var fechaHora = r.tur_fecha + ' ' + (r.tur_hora_inicio || '').substring(0,5) + ' - ' + (r.tur_hora_fin || '').substring(0,5);
+        var horaCorta = (r.tur_hora_inicio || '').substring(0,5);
+        var alts = r.alternativas_mismo_horario || [];
         var selectHtml = '<select class="plan-accion" data-reserva-id="' + r.reserva_id + '">';
 
-        if (r.alternativa_mismo_horario) {
-            var alt = r.alternativa_mismo_horario;
-            selectHtml += '<option value="reubicar_mismo_horario" data-cancha-id="' + alt.cancha_id + '" selected>Mover a Cancha ' + alt.cancha_numero + ' (mismo horario, $' + parseFloat(alt.cancha_precio).toLocaleString('es-AR') + ')</option>';
-        }
-        if (r.alternativa_mismo_dia) {
-            var alt2 = r.alternativa_mismo_dia;
-            selectHtml += '<option value="reubicar_mismo_dia" data-cancha-id="' + alt2.cancha_id + '" data-hora="' + alt2.tur_hora_inicio + '">Mover a Cancha ' + alt2.cancha_numero + ' a las ' + (alt2.tur_hora_inicio || '').substring(0,5) + ' (mismo día, $' + parseFloat(alt2.cancha_precio).toLocaleString('es-AR') + ')</option>';
-        }
+        alts.forEach(function(alt, idx) {
+            selectHtml += '<option value="reubicar_mismo_horario" data-cancha-id="' + alt.cancha_id + '"' + (idx === 0 ? ' selected' : '') + '>Mover a Cancha ' + alt.cancha_numero + ' (' + horaCorta + ' mismo horario, $' + parseFloat(alt.cancha_precio).toLocaleString('es-AR') + ', ' + formatearDiferencia(alt.diferencia) + ')</option>';
+        });
         selectHtml += '<option value="cancelar">Cancelar reserva</option>';
-        selectHtml += '<option value="avisar"' + (!r.alternativa_mismo_horario && !r.alternativa_mismo_dia ? ' selected' : '') + '>Avisar al cliente</option>';
+        selectHtml += '<option value="avisar"' + (alts.length === 0 ? ' selected' : '') + '>Avisar al cliente</option>';
         selectHtml += '</select>';
 
         var detalleHtml = '<span class="detalle-aviso" style="display:none">TEL ' + (r.cliente_celular || 'Sin teléfono') + ' — ' + cliente + '</span>';
@@ -402,9 +409,6 @@ function renderModalPlan(canchaId, reservas, estadoDestino, rango) {
             var item = { reserva_id: reservaId, accion: accion };
             if (accion === 'reubicar_mismo_horario') {
                 item.nueva_cancha_id = parseInt(sel.options[sel.selectedIndex].dataset.canchaId);
-            } else if (accion === 'reubicar_mismo_dia') {
-                item.nueva_cancha_id = parseInt(sel.options[sel.selectedIndex].dataset.canchaId);
-                item.nueva_hora_inicio = sel.options[sel.selectedIndex].dataset.hora;
             }
             plan.push(item);
         });
@@ -459,9 +463,9 @@ async function ejecutarPlan(canchaId, plan, estadoDestino, rango) {
         var stats = resultado.stats || {};
         var parts = [];
         if (stats.mismo_horario) parts.push(stats.mismo_horario + ' mismo horario');
-        if (stats.mismo_dia) parts.push(stats.mismo_dia + ' mismo día');
         if (stats.canceladas) parts.push(stats.canceladas + ' cancelada(s)');
         if (stats.avisar) parts.push(stats.avisar + ' avisar cliente');
+        if (stats.slots_pasados_omitidos) parts.push(stats.slots_pasados_omitidos + ' slot(s) pasados omitidos');
         mostrarToast('Ejecutado: ' + (parts.join(', ') || 'sin cambios'), 'success');
         currentCanchaId = null;
         if (typeof closeDrawer === 'function') closeDrawer();
