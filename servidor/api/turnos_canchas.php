@@ -622,9 +622,12 @@ function ejecutarDeshabilitar(PDO $pdo, array $input): void
                     throw new Exception('El rango de mantenimiento no puede superar 31 días');
                 }
                 $hDesde = $horaDesde ? (int)substr($horaDesde, 0, 2) : 8;
-                $hHasta = $horaHasta ? (int)substr($horaHasta, 0, 2) : 23;
+                $hHasta = $horaHasta ? (int)substr($horaHasta, 0, 2) : 24;
                 $hDesde = max(0, min(23, $hDesde));
-                $hHasta = max(0, min(23, $hHasta));
+                $hHasta = max(0, min(24, $hHasta));
+                if ($hDesde >= $hHasta) {
+                    throw new Exception('Rango horario inválido');
+                }
 
                 $stmtTurno = $pdo->prepare("SELECT tur_id FROM turnos WHERE id_cancha = ? AND tur_fecha = ? AND tur_hora_inicio = ?");
                 $stmtNewTurno = $pdo->prepare("INSERT INTO turnos (id_cancha, tur_fecha, tur_hora_inicio, tur_hora_fin) VALUES (?, ?, ?, ?)");

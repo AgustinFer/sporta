@@ -509,7 +509,8 @@
 }
 
 .form-row input[type="date"],
-.form-row input[type="time"] {
+.form-row input[type="time"],
+.form-row select {
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;

@@ -250,6 +250,18 @@ async function preverYDeshabilitar(canchaId, estadoDestino) {
     }
 }
 
+function opcionesHora(desde, hasta, seleccionado, etiquetaFinDia) {
+    var html = '';
+    for (var h = desde; h <= hasta; h++) {
+        var val = (h < 10 ? '0' + h : '' + h) + ':00';
+        if (h === 24) val = '24:00';
+        var txt = val;
+        if (h === 24 && etiquetaFinDia) txt = '24:00 (fin del día)';
+        html += '<option value="' + val + '"' + (val === seleccionado ? ' selected' : '') + '>' + txt + '</option>';
+    }
+    return html;
+}
+
 async function abrirModalConfigMantenimiento(canchaId) {
     var hoy = new Date().toLocaleDateString('en-CA');
     var manana = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
@@ -265,8 +277,8 @@ async function abrirModalConfigMantenimiento(canchaId) {
         '<div><label>Fecha hasta <span class="required">*</span></label><input type="date" id="m_fecha_hasta" value="' + manana + '" required></div>' +
         '</div>' +
         '<div class="form-row">' +
-        '<div><label>Hora desde <span class="required">*</span></label><input type="time" id="m_hora_desde" value="08:00" required></div>' +
-        '<div><label>Hora hasta <span class="required">*</span></label><input type="time" id="m_hora_hasta" value="23:00" required></div>' +
+        '<div><label>Hora desde <span class="required">*</span></label><select id="m_hora_desde" required>' + opcionesHora(8, 23, '08:00', false) + '</select></div>' +
+        '<div><label>Hora hasta <span class="required">*</span></label><select id="m_hora_hasta" required>' + opcionesHora(9, 24, '24:00', true) + '</select></div>' +
         '</div>' +
         '<div><label>Motivo</label><textarea id="m_motivo" rows="2" placeholder="Ej: Reparación césped, cambio de luces..."></textarea></div>' +
         '<div class="modal-plan-actions">' +
@@ -285,6 +297,15 @@ async function abrirModalConfigMantenimiento(canchaId) {
         var horaDesde = document.getElementById('m_hora_desde').value;
         var horaHasta = document.getElementById('m_hora_hasta').value;
         var motivo = document.getElementById('m_motivo').value;
+
+        if (fechaHasta < fechaDesde) {
+            mostrarToast('La fecha hasta no puede ser anterior a la fecha desde', 'error');
+            return;
+        }
+        if (parseInt(horaDesde, 10) >= parseInt(horaHasta, 10)) {
+            mostrarToast('La hora hasta debe ser posterior a la hora desde', 'error');
+            return;
+        }
 
         modal.classList.remove('active');
         setTimeout(function() { modal.remove(); }, 300);
