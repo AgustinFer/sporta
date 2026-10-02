@@ -54,7 +54,8 @@ INSERT INTO tipo_cancha (tipo_cancha_id, descripcion) VALUES
 --🟢 8. Estado de cancha
 INSERT INTO estado_cancha (estado_cancha_id, descripcion, observaciones) VALUES
 (1, 'Disponible', ''),
-(2, 'En mantenimiento', 'No disponible temporalmente');
+(2, 'En mantenimiento', 'No disponible temporalmente'),
+(3, 'Inhabilitado', 'No disponible');
 
 --🏟️ 9. Canchas
 INSERT INTO canchas (

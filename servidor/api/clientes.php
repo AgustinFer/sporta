@@ -53,7 +53,7 @@ function listar(PDO $pdo): void
 function toggleEstado(PDO $pdo, array $input): void
 {
     $id = (int) ($input['cliente_id'] ?? 0);
-    if ($id <= 0) {
+    if ($id <= 0 || $id === 999) {
         echo json_encode(['ok' => false, 'mensaje' => 'ID inválido']);
         return;
     }
@@ -185,7 +185,7 @@ function editar(PDO $pdo, array $input): void
     $celular = trim($input['celular'] ?? '');
     $dni = trim($input['dni'] ?? '');
 
-    if ($id <= 0 || empty($nombre) || empty($apellido) || empty($celular)) {
+    if ($id <= 0 || $id === 999 || empty($nombre) || empty($apellido) || empty($celular)) {
         echo json_encode(['ok' => false, 'mensaje' => 'Nombre, apellido y teléfono son obligatorios']);
         return;
     }

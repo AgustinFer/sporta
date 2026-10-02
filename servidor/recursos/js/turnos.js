@@ -275,7 +275,10 @@ function turnosGenerarCuerpo() {
         turnosCanchas.forEach(function (cancha) {
             var reserva = turnosBuscarReserva(cancha.cancha_id, horaTexto);
 
-            if (reserva) {
+            if (reserva && Number(reserva.cliente_id) === 999) {
+                var motivo = reserva.reser_observaciones ? ' title="' + reserva.reser_observaciones.replace(/"/g, '') + '"' : '';
+                html += '<td class="estado-mantenimiento"' + motivo + '>En mantenimiento</td>';
+            } else if (reserva) {
                 html += turnosGenerarCelda(reserva);
             } else if (Number(cancha.cancha_estado) === 2) {
                 html += '<td class="estado-mantenimiento">En mantenimiento</td>';
@@ -647,10 +650,11 @@ function turnosPostReservaExito(fecha, horaInicio, resultado) {
             turnosAbrirPagoPostReserva(foundId, fecha, horaInicio, facturaTotal);
             return;
         }
-        // último intento sin cliente pero filtrando canceladas
+        // último intento sin cliente pero filtrando canceladas y fantasmas de mantenimiento
         for (var kk = turnosReservas.length - 1; kk >= 0; kk--) {
             var rrr = turnosReservas[kk];
             if (Number(rrr.reser_estado) === 3) continue;
+            if (Number(rrr.cliente_id) === 999) continue;
             if (rrr.tur_fecha === fecha && rrr.tur_hora_inicio === horaNorm) { foundId = rrr.reserva_id; break; }
         }
         if (foundId) turnosAbrirPagoPostReserva(foundId, fecha, horaInicio, facturaTotal);

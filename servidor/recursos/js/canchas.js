@@ -84,17 +84,19 @@ function generarBurbujas() {
         burbuja.className = 'burbuja-cancha';
         burbuja.dataset.canchaId = cancha.cancha_id;
 
-        var esMantenimiento = Number(cancha.cancha_estado) === 2;
+        var enMantRango = Number(cancha.en_mantenimiento) === 1;
+        var esMantenimiento = Number(cancha.cancha_estado) === 2 || enMantRango;
         var esInhabilitado = Number(cancha.cancha_estado) === 3;
         var claseEstado = 'estado-disponible-badge';
         if (esMantenimiento) claseEstado = 'estado-mantenimiento-badge';
         if (esInhabilitado) claseEstado = 'estado-inhabilitado-badge';
         var textoEstado = cancha.estado_descripcion || 'Disponible';
+        if (enMantRango && Number(cancha.cancha_estado) === 1) textoEstado = 'En mantenimiento';
 
         if (esMantenimiento) burbuja.classList.add('burbuja-mantenimiento');
         if (esInhabilitado) burbuja.classList.add('burbuja-inhabilitado');
 
-        var esDisponible = Number(cancha.cancha_estado) === 1;
+        var esDisponible = Number(cancha.cancha_estado) === 1 && !enMantRango;
 
         var botonesHtml = '';
         if (esDisponible) {
@@ -164,7 +166,9 @@ function editarCancha(canchaId) {
     var estadoTexto = document.getElementById('cancha_estado_texto');
     if (estadoTexto) {
         var mapaEstado = {1: 'Disponible', 2: 'En mantenimiento', 3: 'Inhabilitado'};
-        estadoTexto.textContent = cancha.estado_descripcion || mapaEstado[Number(cancha.cancha_estado)] || 'Disponible';
+        var txt = cancha.estado_descripcion || mapaEstado[Number(cancha.cancha_estado)] || 'Disponible';
+        if (Number(cancha.cancha_estado) === 1 && Number(cancha.en_mantenimiento) === 1) txt = 'En mantenimiento';
+        estadoTexto.textContent = txt;
     }
 
     var btnToggle = document.getElementById('btnToggleEstadoCancha');

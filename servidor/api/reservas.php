@@ -86,6 +86,7 @@ function listar(PDO $pdo): void
                 FROM pagos
                 GROUP BY factura_id
             ) pg ON f.factura_id = pg.factura_id
+            WHERE r.cliente_id != 999
             ORDER BY t.tur_fecha DESC, t.tur_hora_inicio
         ");
         $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);

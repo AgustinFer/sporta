@@ -114,7 +114,7 @@ ORDER BY cliente_apellido, cliente_nombre
                 r.reserva_id,
                 r.reser_estado,
                 r.reser_observaciones,
-                c.cliente_id,
+                r.cliente_id,
                 c.cliente_nombre,
                 c.cliente_apellido,
                 t.tur_id,
@@ -192,9 +192,22 @@ function crearReserva(PDO $pdo, array $input): void
     $ocupado = (int)$stmt->fetchColumn();
 
     if ($ocupado > 0) {
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM reservas r
+            INNER JOIN turnos t ON r.tur_id = t.tur_id
+            WHERE t.id_cancha = ?
+              AND t.tur_fecha = ?
+              AND t.tur_hora_inicio = ?
+              AND r.cliente_id = 999
+              AND r.reser_estado IN (1,2)
+        ");
+        $stmt->execute([$canchaId, $fecha, $horaInicio]);
+        $esMantenimiento = (int)$stmt->fetchColumn() > 0;
+
         echo json_encode([
             'ok' => false,
-            'mensaje' => 'El horario ya está reservado'
+            'mensaje' => $esMantenimiento ? 'La cancha está en mantenimiento en ese horario' : 'El horario ya está reservado'
         ]);
         return;
     }
@@ -353,7 +366,15 @@ function obtenerCanchas(PDO $pdo, array $input): void
     $incluirInhabilitadas = !empty($input['incluir_inhabilitadas']);
 
     $sql = "
-    SELECT c.cancha_id, c.cancha_numero, c.cancha_precio, c.descripcion, c.cancha_estado, ec.descripcion AS estado_descripcion
+    SELECT c.cancha_id, c.cancha_numero, c.cancha_precio, c.descripcion, c.cancha_estado, ec.descripcion AS estado_descripcion,
+           EXISTS (
+               SELECT 1 FROM reservas r
+               INNER JOIN turnos t ON r.tur_id = t.tur_id
+               WHERE t.id_cancha = c.cancha_id
+                 AND r.cliente_id = 999
+                 AND r.reser_estado IN (1,2)
+                 AND t.tur_fecha >= CURDATE()
+           ) AS en_mantenimiento
     FROM canchas c
     LEFT JOIN estado_cancha ec ON c.cancha_estado = ec.estado_cancha_id
     ";
@@ -557,47 +578,72 @@ function ejecutarDeshabilitar(PDO $pdo, array $input): void
             }
         }
 
-        $sql = "UPDATE canchas SET cancha_estado = ? WHERE cancha_id = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$estadoDestino, $canchaId]);
+        // Inhabilitar (3) bloquea la cancha entera. Mantenimiento (2) NO toca
+        // cancha_estado: el bloqueo es por slot vía fantasmas 999 (ver abajo).
+        if ($estadoDestino === 3) {
+            $sql = "UPDATE canchas SET cancha_estado = 3 WHERE cancha_id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$canchaId]);
+        }
 
         if ($estadoDestino === 2) {
-            $where = "t.id_cancha = ?";
-            $params = [$canchaId];
-            if ($fechaDesde) {
-                $where .= " AND t.tur_fecha >= ?";
-                $params[] = $fechaDesde;
-            }
-            if ($fechaHasta) {
-                $where .= " AND t.tur_fecha <= ?";
-                $params[] = $fechaHasta;
-            }
-            if ($horaDesde) {
-                $where .= " AND t.tur_hora_inicio >= ?";
-                $params[] = $horaDesde;
-            }
-            if ($horaHasta) {
-                $where .= " AND t.tur_hora_inicio < ?";
-                $params[] = $horaHasta;
-            }
+            $obs = 'Mantenimiento programado' . ($motivo ? ': ' . $motivo : '');
+            if ($fechaDesde && $fechaHasta) {
+                // Cobertura completa del rango: los turnos se crean on-demand,
+                // así que se generan las filas turno que falten y se les pone
+                // fantasma 999 a todas (solo los slots del rango quedan bloqueados).
+                $dDesde = new DateTime($fechaDesde);
+                $dHasta = new DateTime($fechaHasta);
+                if ($dHasta < $dDesde) {
+                    $tmp = $dDesde; $dDesde = $dHasta; $dHasta = $tmp;
+                }
+                if ($dDesde->diff($dHasta)->days > 31) {
+                    throw new Exception('El rango de mantenimiento no puede superar 31 días');
+                }
+                $hDesde = $horaDesde ? (int)substr($horaDesde, 0, 2) : 8;
+                $hHasta = $horaHasta ? (int)substr($horaHasta, 0, 2) : 23;
+                $hDesde = max(0, min(23, $hDesde));
+                $hHasta = max(0, min(23, $hHasta));
 
-            $sql = "SELECT t.tur_id, t.tur_fecha, t.tur_hora_inicio, t.tur_hora_fin
-                    FROM turnos t
-                    WHERE $where";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
-            $slots = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $stmtTurno = $pdo->prepare("SELECT tur_id FROM turnos WHERE id_cancha = ? AND tur_fecha = ? AND tur_hora_inicio = ?");
+                $stmtNewTurno = $pdo->prepare("INSERT INTO turnos (id_cancha, tur_fecha, tur_hora_inicio, tur_hora_fin) VALUES (?, ?, ?, ?)");
+                $stmtFantasma = $pdo->prepare("SELECT 1 FROM reservas WHERE tur_id = ? AND cliente_id = 999 AND reser_estado IN (1,2)");
+                $stmtNewFantasma = $pdo->prepare("
+                    INSERT INTO reservas (usu_id, cliente_id, tur_id, reser_fecha, reser_estado, reser_observaciones)
+                    VALUES (NULL, 999, ?, CURDATE(), 1, ?)
+                ");
 
-            foreach ($slots as $slot) {
-                $existe = $pdo->prepare("SELECT 1 FROM reservas r JOIN turnos t ON r.tur_id = t.tur_id WHERE t.tur_id = ? AND r.cliente_id = 999");
-                $existe->execute([$slot['tur_id']]);
-                if (!$existe->fetchColumn()) {
-                    $obs = 'Mantenimiento programado' . ($motivo ? ': ' . $motivo : '');
-                    $stmtIns = $pdo->prepare("
-                        INSERT INTO reservas (usu_id, cliente_id, tur_id, reser_fecha, reser_estado, reser_observaciones)
-                        VALUES (NULL, 999, ?, CURDATE(), 1, ?)
-                    ");
-                    $stmtIns->execute([$slot['tur_id'], $obs]);
+                for ($d = clone $dDesde; $d <= $dHasta; $d->modify('+1 day')) {
+                    $fecha = $d->format('Y-m-d');
+                    for ($h = $hDesde; $h < $hHasta; $h++) {
+                        $horaInicio = sprintf('%02d:00:00', $h);
+                        $horaFin = date('H:i:s', strtotime($horaInicio . ' +1 hour'));
+                        $stmtTurno->execute([$canchaId, $fecha, $horaInicio]);
+                        $turId = $stmtTurno->fetchColumn();
+                        if (!$turId) {
+                            $stmtNewTurno->execute([$canchaId, $fecha, $horaInicio, $horaFin]);
+                            $turId = $pdo->lastInsertId();
+                        }
+                        $stmtFantasma->execute([$turId]);
+                        if (!$stmtFantasma->fetchColumn()) {
+                            $stmtNewFantasma->execute([$turId, $obs]);
+                        }
+                    }
+                }
+            } else {
+                // Sin rango: cubrir turnos existentes (compatibilidad).
+                $stmt = $pdo->prepare("SELECT tur_id FROM turnos WHERE id_cancha = ?");
+                $stmt->execute([$canchaId]);
+                $stmtFantasma = $pdo->prepare("SELECT 1 FROM reservas WHERE tur_id = ? AND cliente_id = 999 AND reser_estado IN (1,2)");
+                $stmtNewFantasma = $pdo->prepare("
+                    INSERT INTO reservas (usu_id, cliente_id, tur_id, reser_fecha, reser_estado, reser_observaciones)
+                    VALUES (NULL, 999, ?, CURDATE(), 1, ?)
+                ");
+                foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $turId) {
+                    $stmtFantasma->execute([$turId]);
+                    if (!$stmtFantasma->fetchColumn()) {
+                        $stmtNewFantasma->execute([$turId, $obs]);
+                    }
                 }
             }
         }

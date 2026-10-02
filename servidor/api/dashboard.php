@@ -18,7 +18,7 @@ try {
         JOIN turnos t ON r.tur_id = t.tur_id
         JOIN clientes c ON r.cliente_id = c.cliente_id
         JOIN canchas ca ON t.id_cancha = ca.cancha_id
-        WHERE t.tur_fecha = CURDATE() AND r.reser_estado != 3
+        WHERE t.tur_fecha = CURDATE() AND r.reser_estado != 3 AND r.cliente_id != 999
         ORDER BY t.tur_hora_inicio
         LIMIT 5
     ");
@@ -28,7 +28,7 @@ try {
     $stmt = $pdo->prepare("
         SELECT COUNT(*) FROM reservas r
         JOIN turnos t ON r.tur_id = t.tur_id
-        WHERE t.tur_fecha = CURDATE() AND r.reser_estado != 3
+        WHERE t.tur_fecha = CURDATE() AND r.reser_estado != 3 AND r.cliente_id != 999
     ");
     $stmt->execute();
     $turnosHoy = (int)$stmt->fetchColumn();
@@ -54,6 +54,7 @@ try {
             FROM pagos GROUP BY factura_id
         ) p ON f.factura_id = p.factura_id
         WHERE r.reser_estado != 3
+          AND r.cliente_id != 999
           AND (f.factura_id IS NULL OR p.total_pagado IS NULL OR p.total_pagado < f.factura_total)
         ORDER BY t.tur_fecha, t.tur_hora_inicio
         LIMIT 5
@@ -69,6 +70,7 @@ try {
             FROM pagos GROUP BY factura_id
         ) p ON f.factura_id = p.factura_id
         WHERE r.reser_estado != 3
+          AND r.cliente_id != 999
           AND (f.factura_id IS NULL OR p.total_pagado IS NULL OR p.total_pagado < f.factura_total)
     ");
     $stmt->execute();
@@ -101,7 +103,7 @@ try {
     $stmt->execute();
     $canchasActivas = (int)$stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM clientes WHERE cliente_estado = 1");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM clientes WHERE cliente_estado = 1 AND cliente_id != 999");
     $stmt->execute();
     $clientes = (int)$stmt->fetchColumn();
 
