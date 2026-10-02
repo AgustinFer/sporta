@@ -148,6 +148,28 @@
 .botones-cancha {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* ======================== */
+/* BOTONES DRAWER (TOGGLE)  */
+/* ======================== */
+
+.drawer-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.drawer-danger:hover {
+  box-shadow: 0 8px 30px rgba(239, 68, 68, 0.45);
+}
+
+.drawer-success-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.drawer-success-btn:hover {
+  box-shadow: 0 8px 30px rgba(34, 197, 94, 0.45);
 }
 
 .btn-editar-cancha,

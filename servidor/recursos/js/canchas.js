@@ -99,12 +99,10 @@ function generarBurbujas() {
         var botonesHtml = '';
         if (esDisponible) {
             botonesHtml =
-                '<button class="btn-mantenimiento" onclick="preverYDeshabilitar(' + cancha.cancha_id + ', 2)">Mantenimiento</button>' +
-                '<button class="btn-eliminar-cancha" onclick="preverYDeshabilitar(' + cancha.cancha_id + ', 3)">Inhabilitar</button>';
+                '<button class="btn-mantenimiento" onclick="preverYDeshabilitar(' + cancha.cancha_id + ', 2)">Mantenimiento</button>';
         } else if (esMantenimiento) {
             botonesHtml =
-                '<button class="btn-habilitar-cancha" onclick="finalizarMantenimiento(' + cancha.cancha_id + ')">Finalizar mantenimiento</button>' +
-                '<button class="btn-eliminar-cancha" onclick="preverYDeshabilitar(' + cancha.cancha_id + ', 3)">Inhabilitar</button>';
+                '<button class="btn-habilitar-cancha" onclick="finalizarMantenimiento(' + cancha.cancha_id + ')">Finalizar mantenimiento</button>';
         } else {
             botonesHtml =
                 '<button class="btn-habilitar-cancha" onclick="habilitarCancha(' + cancha.cancha_id + ')">Habilitar</button>';
@@ -141,6 +139,8 @@ function abrirFormularioCancha() {
     document.getElementById('drawer-title').textContent = 'Nueva Cancha';
     document.getElementById('edit_cancha_id').value = '';
     document.getElementById('formCancha').reset();
+    var btnToggle = document.getElementById('btnToggleEstadoCancha');
+    if (btnToggle) btnToggle.style.display = 'none';
     openDrawer();
 }
 
@@ -160,6 +160,22 @@ function editarCancha(canchaId) {
     document.getElementById('cancha_precio').value = cancha.cancha_precio;
     document.getElementById('cancha_descripcion').value = cancha.descripcion || '';
     document.getElementById('cancha_estado').value = cancha.cancha_estado;
+
+    var btnToggle = document.getElementById('btnToggleEstadoCancha');
+    if (btnToggle) {
+        if (Number(cancha.cancha_estado) === 3) {
+            btnToggle.textContent = 'Habilitar cancha';
+            btnToggle.classList.remove('drawer-danger');
+            btnToggle.classList.add('drawer-success-btn');
+            btnToggle.onclick = function() { habilitarCancha(cancha.cancha_id); };
+        } else {
+            btnToggle.textContent = 'Inhabilitar cancha';
+            btnToggle.classList.remove('drawer-success-btn');
+            btnToggle.classList.add('drawer-danger');
+            btnToggle.onclick = function() { preverYDeshabilitar(cancha.cancha_id, 3); };
+        }
+        btnToggle.style.display = 'block';
+    }
 
     openDrawer();
 }
@@ -439,6 +455,7 @@ async function ejecutarPlan(canchaId, plan, estadoDestino, rango) {
         if (stats.avisar) parts.push(stats.avisar + ' avisar cliente');
         mostrarToast('Ejecutado: ' + (parts.join(', ') || 'sin cambios'), 'success');
         currentCanchaId = null;
+        if (typeof closeDrawer === 'function') closeDrawer();
         await cargarCanchas();
     } catch (error) {
         console.error(error);
@@ -467,41 +484,6 @@ async function finalizarMantenimiento(canchaId) {
     }
 }
 
-async function eliminarCancha(canchaId) {
-    currentCanchaId = canchaId;
-    if (!await showConfirm('¿Estás seguro de que deseas inhabilitar esta cancha?', '🚫')) return;
-
-    var burbuja = document.querySelector('.burbuja-cancha[data-cancha-id="' + canchaId + '"]');
-    if (burbuja) {
-        burbuja.classList.add('burbuja-deshabilitar');
-        await new Promise(function (resolve) { setTimeout(resolve, 800); });
-    }
-
-    try {
-        var respuesta = await fetch(BASE_URL + '/api/turnos_canchas.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accion: 'eliminar_cancha', cancha_id: canchaId })
-        });
-
-        var resultado = await respuesta.json();
-        if (!resultado.ok) {
-            if (resultado.reservas_afectadas) {
-                renderModalPlan(canchaId, resultado.reservas_afectadas, 3, null);
-            } else {
-                mostrarToast(resultado.mensaje, 'error');
-            }
-            return;
-        }
-
-        await cargarCanchas();
-        mostrarToast('Cancha inhabilitada', 'success');
-    } catch (error) {
-        console.error(error);
-        mostrarToast('Error inhabilitando cancha', 'error');
-    }
-}
-
 async function habilitarCancha(canchaId) {
     if (!await showConfirm('¿Estás seguro de que deseas habilitar esta cancha?', '✅')) return;
 
@@ -521,6 +503,7 @@ async function habilitarCancha(canchaId) {
         var resultado = await respuesta.json();
         if (!resultado.ok) { mostrarToast(resultado.mensaje, 'error'); return; }
 
+        if (typeof closeDrawer === 'function') closeDrawer();
         await cargarCanchas();
         mostrarToast('Cancha habilitada', 'success');
     } catch (error) {
