@@ -742,27 +742,40 @@ function buscarAlternativaMismoHorario(PDO $pdo, int $excluirCanchaId, string $f
 
 function buscarAlternativaMismoDia(PDO $pdo, int $excluirCanchaId, string $fecha, string $horaActual): ?array
 {
-    $sql = "
-        SELECT c.cancha_id, c.cancha_numero, c.cancha_precio, t.tur_hora_inicio
-        FROM canchas c
-        INNER JOIN turnos t ON t.id_cancha = c.cancha_id
-        WHERE c.cancha_estado = 1
-          AND c.cancha_id != ?
-          AND t.tur_fecha = ?
-          AND t.tur_hora_inicio != ?
-          AND NOT EXISTS (
-              SELECT 1 FROM turnos t2
-              JOIN reservas r2 ON t2.tur_id = r2.tur_id
-              WHERE t2.id_cancha = c.cancha_id
-                AND t2.tur_fecha = ?
-                AND t2.tur_hora_inicio = t.tur_hora_inicio
-                AND r2.reser_estado IN (1,2)
-          )
-        ORDER BY c.cancha_numero, t.tur_hora_inicio
-        LIMIT 1
-    ";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$excluirCanchaId, $fecha, $horaActual, $fecha]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $row ? ['cancha_id' => (int)$row['cancha_id'], 'cancha_numero' => (int)$row['cancha_numero'], 'cancha_precio' => (float)$row['cancha_precio'], 'tur_hora_inicio' => $row['tur_hora_inicio']] : null;
+    // Los turnos se crean on-demand (no hay grilla pre-generada), así que los
+    // slots libres se calculan: horas 8-23 menos las ocupadas por reservas activas.
+    $stmt = $pdo->prepare("SELECT cancha_id, cancha_numero, cancha_precio FROM canchas WHERE cancha_estado = 1 AND cancha_id != ? ORDER BY cancha_numero");
+    $stmt->execute([$excluirCanchaId]);
+    $canchas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (!$canchas) return null;
+
+    $stmt = $pdo->prepare("
+        SELECT t.id_cancha, t.tur_hora_inicio
+        FROM turnos t
+        JOIN reservas r ON t.tur_id = r.tur_id
+        WHERE t.tur_fecha = ? AND r.reser_estado IN (1,2)
+    ");
+    $stmt->execute([$fecha]);
+    $ocupados = [];
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $ocupados[(int)$row['id_cancha']][] = substr($row['tur_hora_inicio'], 0, 5);
+    }
+
+    $horaActualFmt = substr($horaActual, 0, 5);
+    foreach ($canchas as $c) {
+        $cid = (int)$c['cancha_id'];
+        for ($h = 8; $h <= 23; $h++) {
+            $slot = sprintf('%02d:00', $h);
+            if ($slot === $horaActualFmt) continue;
+            if (!in_array($slot, $ocupados[$cid] ?? [], true)) {
+                return [
+                    'cancha_id' => $cid,
+                    'cancha_numero' => (int)$c['cancha_numero'],
+                    'cancha_precio' => (float)$c['cancha_precio'],
+                    'tur_hora_inicio' => $slot . ':00'
+                ];
+            }
+        }
+    }
+    return null;
 }
