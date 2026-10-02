@@ -364,8 +364,7 @@ function renderModalPlan(canchaId, reservas, estadoDestino, rango, omitidas) {
         alts.forEach(function(alt, idx) {
             selectHtml += '<option value="reubicar_mismo_horario" data-cancha-id="' + alt.cancha_id + '"' + (idx === 0 ? ' selected' : '') + '>Mover a Cancha ' + alt.cancha_numero + ' (' + horaCorta + ' mismo horario, $' + parseFloat(alt.cancha_precio).toLocaleString('es-AR') + ', ' + formatearDiferencia(alt.diferencia) + ')</option>';
         });
-        selectHtml += '<option value="cancelar">Cancelar reserva</option>';
-        selectHtml += '<option value="avisar"' + (alts.length === 0 ? ' selected' : '') + '>Avisar al cliente</option>';
+        selectHtml += '<option value="cancelar_avisar"' + (alts.length === 0 ? ' selected' : '') + '>Cancelar y avisar al cliente</option>';
         selectHtml += '</select>';
 
         var detalleHtml = '<span class="detalle-aviso" style="display:none">TEL ' + (r.cliente_celular || 'Sin teléfono') + ' — ' + cliente + '</span>';
@@ -390,9 +389,9 @@ function renderModalPlan(canchaId, reservas, estadoDestino, rango, omitidas) {
         sel.addEventListener('change', function() {
             var row = this.closest('tr');
             var aviso = row.querySelector('.detalle-aviso');
-            if (aviso) aviso.style.display = this.value === 'avisar' ? 'inline' : 'none';
+            if (aviso) aviso.style.display = this.value === 'cancelar_avisar' ? 'inline' : 'none';
         });
-        if (sel.value === 'avisar') {
+        if (sel.value === 'cancelar_avisar') {
             var avisoInit = sel.closest('tr').querySelector('.detalle-aviso');
             if (avisoInit) avisoInit.style.display = 'inline';
         }
@@ -463,8 +462,7 @@ async function ejecutarPlan(canchaId, plan, estadoDestino, rango) {
         var stats = resultado.stats || {};
         var parts = [];
         if (stats.mismo_horario) parts.push(stats.mismo_horario + ' mismo horario');
-        if (stats.canceladas) parts.push(stats.canceladas + ' cancelada(s)');
-        if (stats.avisar) parts.push(stats.avisar + ' avisar cliente');
+        if (stats.canceladas) parts.push(stats.canceladas + ' cancelada(s) y avisadas');
         if (stats.slots_senados_omitidos) parts.push(stats.slots_senados_omitidos + ' slot(s) señados no tocados');
         mostrarToast('Ejecutado: ' + (parts.join(', ') || 'sin cambios'), 'success');
         currentCanchaId = null;

@@ -529,12 +529,12 @@ function ejecutarDeshabilitar(PDO $pdo, array $input): void
 
     $pdo->beginTransaction();
     try {
-        $stats = ['mismo_horario' => 0, 'canceladas' => 0, 'avisar' => 0, 'slots_senados_omitidos' => 0];
+        $stats = ['mismo_horario' => 0, 'canceladas' => 0, 'slots_senados_omitidos' => 0];
         $ahoraEjec = date('Y-m-d H:i:s');
 
         foreach ($plan as $item) {
             $reservaId = (int)($item['reserva_id'] ?? 0);
-            $accion = $item['accion'] ?? 'avisar';
+            $accion = $item['accion'] ?? 'cancelar_avisar';
             $nuevaCanchaId = isset($item['nueva_cancha_id']) ? (int)$item['nueva_cancha_id'] : null;
 
             if ($reservaId <= 0) continue;
@@ -563,13 +563,14 @@ function ejecutarDeshabilitar(PDO $pdo, array $input): void
                     }
                     break;
                 case 'cancelar':
+                case 'cancelar_avisar':
+                    // Cancelar implica avisar: el operador llama al cliente con
+                    // el teléfono que muestra el modal (el sistema no envía SMS/mail).
                     $stmt = $pdo->prepare("UPDATE reservas SET reser_estado = 3 WHERE reserva_id = ?");
                     $stmt->execute([$reservaId]);
                     $stats['canceladas']++;
                     break;
-                case 'avisar':
                 default:
-                    $stats['avisar']++;
                     break;
             }
         }
@@ -766,7 +767,7 @@ function preverDeshabilitarInterno(PDO $pdo, int $canchaId, int $estadoDestino, 
         $precio = (float)$r['cancha_precio'];
         $altsMismoHorario = buscarAlternativasMismoHorario($pdo, $canchaId, $r['tur_fecha'], $r['tur_hora_inicio'], $precio);
 
-        $accionPropuesta = !empty($altsMismoHorario) ? 'reubicar_mismo_horario' : 'avisar';
+        $accionPropuesta = !empty($altsMismoHorario) ? 'reubicar_mismo_horario' : 'cancelar_avisar';
 
         $reservasAfectadas[] = [
             'reserva_id' => (int)$r['reserva_id'],
