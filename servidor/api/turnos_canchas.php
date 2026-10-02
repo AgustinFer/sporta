@@ -373,7 +373,8 @@ function crearCancha(PDO $pdo, array $input): void
     $numero = (int)$input['cancha_numero'];
     $precio = (float)$input['cancha_precio'];
     $descripcion = trim($input['descripcion'] ?? '');
-    $estado = (int)($input['cancha_estado'] ?? 1);
+    // Las canchas nuevas siempre nacen Disponibles (el estado es de solo lectura).
+    $estado = 1;
 
     if ($numero <= 0) {
         throw new Exception('El número de cancha debe ser mayor a 0');
@@ -405,7 +406,6 @@ function actualizarCancha(PDO $pdo, array $input): void
     $numero = (int)$input['cancha_numero'];
     $precio = (float)$input['cancha_precio'];
     $descripcion = trim($input['descripcion'] ?? '');
-    $estado = (int)($input['cancha_estado'] ?? 1);
 
     if ($numero <= 0) {
         throw new Exception('El número de cancha debe ser mayor a 0');
@@ -423,9 +423,11 @@ function actualizarCancha(PDO $pdo, array $input): void
         throw new Exception('Ya existe otra cancha con ese número');
     }
 
-    $sql = "UPDATE canchas SET cancha_numero = ?, cancha_precio = ?, descripcion = ?, cancha_estado = ? WHERE cancha_id = ?";
+    // El estado es de solo lectura en el formulario: solo cambia vía
+    // ejecutar_deshabilitar (2/3), finalizar_mantenimiento o habilitar_cancha (1).
+    $sql = "UPDATE canchas SET cancha_numero = ?, cancha_precio = ?, descripcion = ? WHERE cancha_id = ?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$numero, $precio, $descripcion, $estado, $canchaId]);
+    $stmt->execute([$numero, $precio, $descripcion, $canchaId]);
 
 
     echo json_encode(['ok' => true, 'mensaje' => 'Cancha actualizada correctamente']);

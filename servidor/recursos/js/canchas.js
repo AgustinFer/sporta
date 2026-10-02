@@ -139,6 +139,8 @@ function abrirFormularioCancha() {
     document.getElementById('drawer-title').textContent = 'Nueva Cancha';
     document.getElementById('edit_cancha_id').value = '';
     document.getElementById('formCancha').reset();
+    var estadoTexto = document.getElementById('cancha_estado_texto');
+    if (estadoTexto) estadoTexto.textContent = 'Disponible';
     var btnToggle = document.getElementById('btnToggleEstadoCancha');
     if (btnToggle) btnToggle.style.display = 'none';
     openDrawer();
@@ -159,7 +161,11 @@ function editarCancha(canchaId) {
     document.getElementById('cancha_numero').value = cancha.cancha_numero;
     document.getElementById('cancha_precio').value = cancha.cancha_precio;
     document.getElementById('cancha_descripcion').value = cancha.descripcion || '';
-    document.getElementById('cancha_estado').value = cancha.cancha_estado;
+    var estadoTexto = document.getElementById('cancha_estado_texto');
+    if (estadoTexto) {
+        var mapaEstado = {1: 'Disponible', 2: 'En mantenimiento', 3: 'Inhabilitado'};
+        estadoTexto.textContent = cancha.estado_descripcion || mapaEstado[Number(cancha.cancha_estado)] || 'Disponible';
+    }
 
     var btnToggle = document.getElementById('btnToggleEstadoCancha');
     if (btnToggle) {
@@ -204,8 +210,7 @@ async function guardarCancha(e) {
         accion: canchaId ? 'actualizar_cancha' : 'crear_cancha',
         cancha_numero: numeroIngresado,
         cancha_precio: document.getElementById('cancha_precio').value,
-        descripcion: document.getElementById('cancha_descripcion').value,
-        cancha_estado: document.getElementById('cancha_estado').value
+        descripcion: document.getElementById('cancha_descripcion').value
     };
     if (canchaId) payload.cancha_id = canchaId;
 
