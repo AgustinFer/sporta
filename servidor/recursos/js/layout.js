@@ -249,6 +249,7 @@ function initInicio() {
   initClock();
   loadWeather();
   cargarDashboard();
+  cargarHoraOficial();
 }
 
 function initClock() {
@@ -296,6 +297,39 @@ async function loadWeather() {
     iconEl.textContent = weather[0];
   } catch (err) {
     console.error('Error clima:', err);
+  }
+}
+
+async function cargarHoraOficial() {
+  var horaEl = document.getElementById('horaOficial');
+  var fechaEl = document.getElementById('fechaOficial');
+  var codigoEl = document.getElementById('codigoOficial');
+  var btn = document.getElementById('btnHoraOficial');
+  if (!horaEl || !fechaEl || !codigoEl) return;
+  if (btn && !btn.dataset.bound) {
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', cargarHoraOficial);
+  }
+  try {
+    if (btn) btn.disabled = true;
+    horaEl.textContent = '...';
+    var response = await fetch('http://34.227.17.167/api/reloj.php', {
+      headers: {
+        'Authorization': 'Basic ' + btoa('alumno:Cambiar-Esta-Clave-2026'),
+        'Accept': 'application/json'
+      }
+    });
+    if (!response.ok) throw new Error('Error HTTP ' + response.status);
+    var data = await response.json();
+    horaEl.textContent = data.hora || '--:--:--';
+    fechaEl.textContent = data.fecha || '';
+    codigoEl.textContent = data.codigo_confirmacion || '--';
+  } catch (err) {
+    console.error('Error hora oficial:', err);
+    horaEl.textContent = 'Error';
+    if (typeof mostrarToast === 'function') mostrarToast('No se pudo obtener la hora oficial', 'error');
+  } finally {
+    if (btn) btn.disabled = false;
   }
 }
 
