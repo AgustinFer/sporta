@@ -313,14 +313,12 @@ async function cargarHoraOficial() {
   try {
     if (btn) btn.disabled = true;
     horaEl.textContent = '...';
-    var response = await fetch('http://34.227.17.167/api/reloj.php', {
-      headers: {
-        'Authorization': 'Basic ' + btoa('alumno:Cambiar-Esta-Clave-2026'),
-        'Accept': 'application/json'
-      }
+    var response = await fetch(BASE_URL + '/api/reloj.php', {
+      headers: { 'Accept': 'application/json' }
     });
     if (!response.ok) throw new Error('Error HTTP ' + response.status);
     var data = await response.json();
+    if (!data.ok) throw new Error(data.mensaje || 'Error del servidor');
     horaEl.textContent = data.hora || '--:--:--';
     fechaEl.textContent = data.fecha || '';
     codigoEl.textContent = data.codigo_confirmacion || '--';
