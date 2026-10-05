@@ -56,7 +56,7 @@ $BASE = BASE_URL;
 
         <button id="btnCambiarPass" type="button">¿Olvidaste la contraseña?</button>
 
-        <p class="version">Versión: 0.3.2</p>
+        <p class="version">Versión: 0.3.3</p>
 
       </div>
 
