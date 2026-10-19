@@ -24,6 +24,8 @@ INSERT INTO roles (rol_id, rol_nombre, rol_descripcion) VALUES
 (3, 'Cliente', 'Usuario final');
 
 --👤 5. Usuarios
+-- ⚠️ usu_contrasena guarda el HASH bcrypt de la contraseña "1234".
+-- El login usa password_verify(), así que NO puede ir en texto plano.
 INSERT INTO usuarios (
   usu_id, usu_usuario, usu_contrasena, usu_rol,
   usu_nombre, usu_apellido, usu_email,
@@ -31,8 +33,8 @@ INSERT INTO usuarios (
   usu_direccion, usu_localidad_id, usu_provincia_id, usu_pais_id,
   usu_fecha_alta, usu_estado
 ) VALUES
-(1, 'admin', '1234', 1, 'Juan', 'Perez', 'admin@mail.com', '1122334455', '30111222', 'Calle 123', 1, 1, 1, '2026-01-01', true),
-(2, 'empleado1', '1234', 2, 'Ana', 'Gomez', 'ana@mail.com', '1166677788', '28999888', 'Av Siempre Viva 742', 2, 1, 1, '2026-01-10', true);
+(1, 'admin', '$2y$10$t85Y5mManYT8Wpb2LlIHBuCFzK02P86R3C11uu78fUwh6gA2HlAlW', 1, 'Juan', 'Perez', 'admin@mail.com', '1122334455', '30111222', 'Calle 123', 1, 1, 1, '2026-01-01', true),
+(2, 'empleado1', '$2y$10$t85Y5mManYT8Wpb2LlIHBuCFzK02P86R3C11uu78fUwh6gA2HlAlW', 2, 'Ana', 'Gomez', 'ana@mail.com', '1166677788', '28999888', 'Av Siempre Viva 742', 2, 1, 1, '2026-01-10', true);
 
 --🧍 6. Clientes
 INSERT INTO clientes (
