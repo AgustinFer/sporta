@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
-$url = getenv('RELOJ_API_URL') ?: 'http://34.227.17.167/api/reloj.php';
+$url = getenv('RELOJ_API_URL') ?: 'http://24cloud.duckdns.org/api/reloj.php';
 $user = getenv('RELOJ_API_USER') ?: 'alumno';
 $pass = getenv('RELOJ_API_PASS') ?: 'Cambiar-Esta-Clave-2026';
 
