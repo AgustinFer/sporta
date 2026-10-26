@@ -28,7 +28,7 @@ $BASE = BASE_URL;
     </div>
 
     <div class="logo-wrapper">
-      <img src="<?= $BASE ?>/recursos/img/logo.png" alt="Sporta Logo" class="logo" width="612" height="408">
+      <img src="<?= $BASE ?>/recursos/img/logo.png" alt="Sporta Logo" class="logo">
     </div>
 
     <div class="login-card">
