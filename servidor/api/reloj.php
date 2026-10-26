@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
-$url = getenv('RELOJ_API_URL') ?: 'http://24cloud.duckdns.org/api/reloj.php';
+$url = getenv('RELOJ_API_URL') ?: 'https://24cloud.duckdns.org/api/reloj.php';
 $user = getenv('RELOJ_API_USER') ?: 'alumno';
 $pass = getenv('RELOJ_API_PASS') ?: 'Cambiar-Esta-Clave-2026';
 
@@ -20,6 +20,7 @@ curl_setopt_array($ch, [
     CURLOPT_USERPWD => $user . ':' . $pass,
     CURLOPT_HTTPHEADER => ['Accept: application/json'],
     CURLOPT_TIMEOUT => 8,
+    CURLOPT_FOLLOWLOCATION => true,
 ]);
 $body = curl_exec($ch);
 $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
